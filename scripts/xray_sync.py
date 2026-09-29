@@ -16,7 +16,7 @@ Commands (all print JSON or one result line; secrets are never printed):
                                               create a Test Execution (manual testing) with these Tests
   get-execution EXEC-KEY                      status of every test run in an execution
   import-junit test-results/junit.xml ["SUMMARY"]
-                                              CI results -> a new Xray Test Execution
+                                              pytest results (local run) -> a new Xray Test Execution
 
 Reads JIRA_* / XRAY_* from .env (or the CI environment).
 GraphQL shapes follow the Xray Cloud GraphQL API; confirm them once on your site during the dry run

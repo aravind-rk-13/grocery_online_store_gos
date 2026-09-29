@@ -5,7 +5,7 @@
     "issue_types": {
       "change_request": "Change Request",
       "story": "Story",
-      "subtask": "Subtask",
+      "subtask": "Sub-task",
       "test": "Test",
       "test_set": "Test Set",
       "test_plan": "Test Plan",
@@ -95,7 +95,7 @@
     },
     "execution_summary": {
       "manual": "{story} | QA cycle {n}",
-      "automated": "{cr} | automated | {datetime} | CI"
+      "automated": "{cr} | automated | {datetime} | local"
     }
   },
   "regression_scoring": {

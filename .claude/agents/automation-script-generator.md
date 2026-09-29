@@ -25,7 +25,7 @@ Adapted from CODIFAi "automation-script-generator" (Part I Phase 8, Part IV). Ch
 5. Assert reality: if the app contradicts the case, assert what the app does and report "SPEC DIVERGENCE: <TC> expects X; app does Y; asserted Y". Never weaken an assertion to force a pass.
 
 ## LOCATOR PRIORITY (strict; never skip ahead)
-1. data-testid → page.get_by_test_id() · 2. static id (reject generated/numeric) → "#id" · 3. role / accessible name → get_by_role(role, name=...) or get_by_label() · 4. stable CSS: framework classes (.alert, .table) or attribute selectors (input[name="password"]); reject hashed classes · 5. relative XPath, last resort; never absolute. More than 5 XPaths → locator-quality warning (scripts/lint_locators.py enforces it in CI).
+1. data-testid → page.get_by_test_id() · 2. static id (reject generated/numeric) → "#id" · 3. role / accessible name → get_by_role(role, name=...) or get_by_label() · 4. stable CSS: framework classes (.alert, .table) or attribute selectors (input[name="password"]); reject hashed classes · 5. relative XPath, last resort; never absolute. More than 5 XPaths → locator-quality warning (scripts/lint_locators.py enforces it; run it before every PR).
 Every locator is a class constant in the Object file with `# src: live DOM · <strategy> (priority n)`.
 
 ## PHASE 1 — FETCH THE APPROVED CASES
@@ -62,7 +62,7 @@ Fix root causes. Skip only a confirmed app defect with @pytest.mark.xfail(reason
 ## PHASE 5 — REPORT, GIT, LABEL
 Report: files (new/extended), locator counts (live DOM / [LOCATOR_NEEDED]), tiers, validation result, confidence (locator / flow / assertion: HIGH/MED/LOW), spec divergences.
 Git — interactive: ask once: 1) branch automation/<STORY>-<short> + PR, 2) keep local, 3) no Git. Headless: always option 1.
-Commit: "feat(automation): <TC IDs> <short description>" with Story, Tier and Locator-source lines. PR body: TC IDs, story link, validation result, open [LOCATOR_NEEDED] items. Push and `gh pr create --base main`.
+Commit: "feat(automation): <TC IDs> <short description>" with Story, Tier and Locator-source lines. PR body: TC IDs, story link, validation result (lint + pytest summary from Phase 4), open [LOCATOR_NEEDED] items. Push and `gh pr create --base main`; if `gh` is not installed, push the branch and give the user the compare link `https://github.com/<config github.repo>/compare/main...<branch>` plus the PR body to paste.
 After the PR exists: add the `automated` label to each scripted Test and comment "[CODIFAi] Automated in PR <link> (test_<tc_id>_…)".
 
 ## LOAD TEST TRACK (Locust, only when asked for a load/performance test)
@@ -83,5 +83,5 @@ Discover real requests from the live app (browser_network_requests); unknown →
 2. Table: | TC ID | Jira Key | Test function | File | Tier | Coverage | Status |
 3. [LOCATOR_NEEDED] and [TO BE CONFIRMED] items; cases not automated and why.
 4. Spec divergences.
-5. Next step: QA reviews the PR; CI runs the regression_p1 gate; the QA Lead runs "e2e" with the CR key for the automated QA run.
+5. Next step: QA reviews the PR and runs `python scripts/lint_locators.py` + `python -m pytest -m regression_p1` locally before merging; for the automated QA run the QA Lead runs the tests locally and imports them with `python scripts/xray_sync.py import-junit test-results/junit.xml "<CR-KEY> | automated | <YYYY-MM-DD HH:MM> | local"` (docs/automation/rules.md).
 </output_format>

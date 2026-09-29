@@ -1,43 +1,80 @@
-# Running the pipeline: manual first, then automation rules
+# Running the pipeline (manual mode)
 
-The agents work in two modes (CODIFAi "Operating Modes"):
-- **Manual flow (start here):** a person runs each agent in Claude Code, e.g. `Use the cr-intake agent for page 123456`.
-- **Programmatic flow:** Confluence/Jira Automation rules call GitHub, and `.github/workflows/ai-pipeline.yml` runs the agent headless.
-  Switch it on per step only after the team trusts that step's manual output.
+The project runs in **manual mode**: a person starts every agent in Claude Code, in this repo, after the previous gate
+is closed. Nothing runs by itself. Automated tests also run locally; there is no CI workflow.
+The headless pipeline (`.github/workflows/ai-pipeline.yml`) is kept dormant for later; see the last section.
 
 ## The flow (one Change Request)
-| # | Trigger | Agent | Output | Human gate |
-|---|---|---|---|---|
-| 1 | PM sets CR page Status = Ready for Jira | cr-intake | Jira Change Request, key written on the page | - |
-| 2 | CR issue created | requirement-analyst (CR mode) | "CR brief" page, size label, sub-task "Approve CR brief" | PM closes the sub-task |
-| 3 | "Approve CR brief" sub-task Done | user-story-creator | Stories linked to the CR, sub-task "Approve stories" | PM closes the sub-task |
-| 4 | "Approve stories" sub-task Done | test-case-generator (per story) | Xray Tests, Test Sets, sub-task "Review AI test cases" | Tester fixes/deletes cases, closes the sub-task |
-| 5 | "Review AI test cases" sub-task Done | regression-marker | regression-p1/p2/p3 labels + scoring comments | QA Lead reviews |
-| 6 | Story -> Ready for QA (after the staging deploy) | execution-planner, then automation-script-generator | Manual Test Execution "QA cycle n"; scripts PR | Testers execute; QA reviews the PR |
-| 7 | QA Lead runs e2e (Run workflow, CR key set) | - (CI) | Automated Test Execution "<CR> \| automated \| ..." | QA Lead chooses when/where |
-| 8 | Manual Test Execution -> Done | results-reporter | Bugs, story comment, CR page Results + Status | QA Lead reads |
-| 9 | Before release (manual run) | bug-summary-creator | "Defect Summary" page, Go / Conditional Go / No Go | QA Lead + PO decide |
-| - | CR page Status = Changed | cr-intake | Comment on the CR + "input needed" listing stale stories/tests | PM confirms what to regenerate |
-| - | Sprint start (manual) | testplan-creator | Sprint Test Plan | QA Lead signs off |
-Hotfix: create the Jira issue directly (skip the page), run the P1 suite on its PR, then create the CR page afterwards so the log stays complete.
+| # | Start it when | Say in Claude Code | Agent | Output | Human gate |
+|---|---|---|---|---|---|
+| 1 | CR page Status = Ready for Jira | `send CR-001 to Jira` (or `sync CR pages`) | cr-intake | Jira Change Request, key written on the page | - |
+| 2 | CR issue exists | `analyse CR GOS-15` | requirement-analyst (CR mode) | "CR brief" page, size label, sub-task "Approve CR brief" | PM closes the sub-task |
+| 3 | "Approve CR brief" sub-task Done | `create stories for GOS-15` | user-story-creator | Stories linked to the CR, sub-task "Approve stories" | PM closes the sub-task |
+| 4 | "Approve stories" sub-task Done | `create test cases for GOS-21` (once per story) | test-case-generator | Xray Tests, Test Sets, sub-task "Review AI test cases" | Tester fixes/deletes cases, closes the sub-task |
+| 5 | "Review AI test cases" sub-task Done | `mark regression for GOS-21` | regression-marker | regression-p1/p2/p3 labels + scoring comments | QA Lead reviews |
+| 6 | Story -> Ready for QA (after the staging deploy) | `plan the QA run for GOS-21`, then `automate GOS-21` | execution-planner, automation-script-generator | Manual Test Execution "QA cycle n"; scripts PR | Testers execute; QA reviews the PR |
+| 7 | Scripts merged, QA cycle running | run locally (see "Automated test runs") | - | Automated Test Execution "<CR> \| automated \| ... \| local" | QA Lead chooses when |
+| 8 | Manual Test Execution -> Done | `report results for GOS-21` | results-reporter | Bugs, story comment, CR page Results + Status | QA Lead reads |
+| 9 | Before release | `release readiness for <version>` | bug-summary-creator | "Defect Summary" page, Go / Conditional Go / No Go | QA Lead + PO decide |
+| - | CR page Status = Changed | `sync CR pages` | cr-intake | Comment on the CR + "input needed" listing stale stories/tests | PM confirms what to regenerate |
+| - | Sprint start | `create test plan for the current sprint` | testplan-creator | Sprint Test Plan | QA Lead signs off |
 
-## When automated tests run
-Pull request (P1 + lint, merge gate) · after each staging deploy (P1, if the deploy can send `run-tests`) · QA cycle (QA Lead: P1 + affected module) · nightly 02:00 IST (P1 + P2) · hotfix/retest (P1 + linked tests).
+Keys above are examples (GOS-15 = the CR issue, GOS-21 = a story). Check a gate is closed before starting the next step;
+the agents also check and stop if it is not.
+Hotfix: create the Jira issue directly (skip the page), run the P1 suite locally on its branch, then create the CR page
+afterwards so the log stays complete.
 
-## One-time set-up
-1. **Bot account:** an Atlassian user (e.g. qa-bot@...) with Jira GOS + Confluence GOS access and an API token. It usually needs a paid seat.
-2. **GitHub secrets** (Settings > Secrets and variables > Actions): APP_USERNAME, APP_PASSWORD, JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN, CONFLUENCE_URL, XRAY_CLIENT_ID, XRAY_CLIENT_SECRET, ANTHROPIC_API_KEY, optional SLACK_WEBHOOK_URL. Variable: APP_URL.
-3. **Switch on the pipeline:** repository variable `CODIFAI_PIPELINE_ENABLED = true` (until then ai-pipeline.yml does nothing).
-4. **Branch protection** on main: require the `e2e` check.
-5. **GitHub token for the rules:** a fine-grained token with "Contents: read and write" on this repo only (needed by the dispatch API). Store it only inside the automation rules' web-request headers.
-6. **Jira:** issue type "Change Request" in GOS (or change `issue_types.change_request` in config/workflow.json), status "Ready for QA", Components "Login" and "Verify Users".
-7. **Confluence:** docs/confluence/cr-page-template.md.
+## Automated test runs (local)
+Run from the repo root with `.env` filled in (APP_*, JIRA_*, XRAY_*):
 
-## Automation rules (all send the same kind of web request)
+| When | Command |
+|---|---|
+| Before merging any PR | `python scripts/lint_locators.py` and `python -m pytest -m regression_p1` |
+| After each staging deploy | `python -m pytest -m regression_p1` |
+| QA cycle for a CR (step 7) | `python -m pytest -m "regression_p1 or <module>"`, then `python scripts/xray_sync.py import-junit test-results/junit.xml "<CR-KEY> \| automated \| <YYYY-MM-DD HH:MM> \| local"` |
+| Before release | `python -m pytest -m "regression_p1 or regression_p2"` |
+| Hotfix / retest | `python -m pytest -m regression_p1` plus the Tests linked to the bug (`-k "<tc ids>"`) |
+
+Report and traces: `test-results/report.html`. Paste the pass/fail summary into the PR description when you merge.
+
+## One-time set-up (manual mode)
+1. **Local environment:** Python 3.10+, `pip install -r requirements.txt`, `python -m playwright install chromium`,
+   `.env` from `.env.example` (APP_*, JIRA_*, CONFLUENCE_URL, XRAY_* for scripts/xray_sync.py).
+2. **Claude Code connectors:** Atlassian MCP (Jira + Confluence) and Playwright MCP (`.mcp.json`).
+3. **Jira (GOS):** issue type "Change Request" (done), sub-task type "Sub-task" (name in config/workflow.json),
+   status "Ready for QA", Components "Login" and "Verify Users" (plus one per new module).
+4. **Confluence:** docs/confluence/cr-page-template.md (done: "Change Requests", "QA Reports", "Template - Change Request").
+5. **GitHub:** repo aravind-rk-13/grocery_online_store_gos; protect `main` so changes arrive through pull requests.
+   No secrets are needed in GitHub for manual mode.
+
+## Claude scheduled task (optional)
+In the Claude app, a daily scheduled task with this prompt, using the Atlassian connector:
+"In the repo aravind-rk-13/grocery_online_store_gos, use the cr-intake agent to sync CR pages in Confluence space GOS (nightly sweep). Report created, updated and errored pages."
+
+## Verify before relying on it (dry run checklist)
+- xray_sync.py GraphQL calls (steps, add-to-set, create-execution, get-execution) on one throwaway Test.
+- The "Tests" link direction on one throwaway Test (`python scripts/xray_sync.py link TEST STORY`).
+- `python scripts/xray_sync.py import-junit` once with a local run.
+
+## Dormant: automated flow (switch on later, step by step)
+Not in use. To automate a step, Confluence/Jira Automation rules call GitHub and `.github/workflows/ai-pipeline.yml`
+runs the same agent headless (`MODE: headless`). Automated test runs would also need a CI test workflow again
+(it was removed when the project moved to manual mode).
+
+Set-up it needs:
+1. **Bot account:** an Atlassian user with Jira GOS + Confluence GOS access and an API token.
+2. **GitHub secrets:** ANTHROPIC_API_KEY, JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN, CONFLUENCE_URL, XRAY_CLIENT_ID,
+   XRAY_CLIENT_SECRET, APP_USERNAME, APP_PASSWORD. Variable: APP_URL.
+3. **Switch:** repository variable `CODIFAI_PIPELINE_ENABLED = true`, and uncomment the `schedule:` block in ai-pipeline.yml.
+4. **GitHub token for the rules:** a fine-grained token with "Contents: read and write" on this repo only; store it
+   only inside the automation rules' web-request headers.
+5. **Before the first run:** make the workflow commit `cases/jira-map.json` back after each headless run (it doesn't
+   yet), and check the Claude Code CLI flags in ai-pipeline.yml against the current docs.
+
 Web request for every rule: `POST https://api.github.com/repos/aravind-rk-13/grocery_online_store_gos/dispatches`,
-headers `Accept: application/vnd.github+json`, `Authorization: Bearer <token from step 5>`,
+headers `Accept: application/vnd.github+json`, `Authorization: Bearer <token>`,
 body `{"event_type": "<event>", "client_payload": {"key": "<value>"}}`.
-Smart-value names below follow Atlassian's documentation; check them in the rule editor's preview once.
+Smart-value names follow Atlassian's documentation; check them in the rule editor's preview once.
 
 | Rule | Product | Trigger | Condition | event_type | key |
 |---|---|---|---|---|---|
@@ -48,15 +85,3 @@ Smart-value names below follow Atlassian's documentation; check them in the rule
 | R5 | Jira | Work item transitioned to Done | sub-task summary starts "Review AI test cases" | tests-approved | `{{issue.parent.key}}` |
 | R6 | Jira | Work item transitioned to Ready for QA | type = Story | ready-for-qa | `{{issue.key}}` |
 | R7 | Jira | Work item transitioned to Done | type = Test Execution, summary contains "QA cycle" | execution-done | `{{issue.key}}` |
-If your Confluence plan has no automation web requests, keep R1 manual: the PM (or you) runs "sync CR pages" in Claude Code, and the nightly sweep in ai-pipeline.yml catches anything missed.
-
-## Claude scheduled task (optional, no CI needed)
-In the Claude app, a daily scheduled task with this prompt, using the Atlassian connector:
-"In the repo aravind-rk-13/grocery_online_store_gos, use the cr-intake agent to sync CR pages in Confluence space GOS (nightly sweep). Report created, updated and errored pages."
-
-## Verify before relying on it (dry run checklist)
-- xray_sync.py GraphQL calls (steps, add-to-set, create-execution, get-execution) on one throwaway Test.
-- The "Tests" link direction on one throwaway Test (`python scripts/xray_sync.py link TEST STORY`).
-- Jira search endpoint `/rest/api/3/search/jql` works on your site.
-- Claude Code CLI flags in ai-pipeline.yml match the current Claude Code docs.
-- Each automation rule once with a test page/issue; watch the Actions run.

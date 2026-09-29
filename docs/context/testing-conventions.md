@@ -21,18 +21,18 @@ Coverage label values: functional-ui, negative, boundary, edge, security, sessio
 | Stories | Jira stories under the CR | PM closes sub-task "Approve stories for <CR>" |
 | Test cases | Xray Tests of a story | Tester closes sub-task "Review AI test cases for <STORY>"; cases needing rework are fixed or deleted before closing |
 | Regression tiers | regression-p1/p2/p3 labels | QA Lead reviews the scoring comment; edits a label to override |
-| Scripts | Pull request | QA review + CI green before merge |
+| Scripts | Pull request | QA review + P1 suite and locator lint pass locally before merge (summary in the PR) |
 | Release | Confluence release-readiness page | QA Lead + PO decide Go / No Go |
 
 ## Tiers (CODIFAi Phase 5)
 - Proposed by test-case-generator as a note only; SET by regression-marker (score out of 100: P1 >= 75, P2 50-74, P3 < 50) and reviewed by the QA Lead.
 - Code markers mirror the labels: @pytest.mark.regression_p1 / regression_p2 / regression_p3. No other tier marker names.
-- P1 = every PR and every staging deploy (target < 5 min for this suite; framework ceiling 30 min) · P2 = nightly + before release · P3 = manual/scheduled.
+- All runs are local (no CI). P1 = before every PR merge and after every staging deploy (target < 5 min for this suite; framework ceiling 30 min) · P2 = before release · P3 = on demand.
 
 ## Bugs
 - Severity: S1 crash/data loss/security · S2 major function broken, no workaround · S3 workaround exists · S4 cosmetic. Priority is set by the PM.
 - Every bug links to the failed Test ("is tested by" chain) and to its story; summary "<STORY> | <Module> | <what is wrong>".
 
 ## Automation
-- Definition of Done: passes locally and in CI, no inline selectors, no fixed waits, module + coverage markers applied, PR reviewed, Test labelled automated.
+- Definition of Done: passes locally (lint + the new tests + P1), no inline selectors, no fixed waits, module + coverage markers applied, PR reviewed, Test labelled automated.
 - Flaky policy: passes only on rerun -> quarantine (remove the regression_p1 marker) within 24 h, fix within a week.

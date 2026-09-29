@@ -1,5 +1,7 @@
 name: ai-pipeline
-# Runs one CODIFAi agent headless with Claude Code when an automation rule fires (docs/automation/rules.md).
+# DORMANT. The project runs in MANUAL mode: a person starts every agent in Claude Code (docs/automation/rules.md).
+# Kept only so the automated flow can be switched on later ("Dormant: automated flow" in rules.md).
+# Runs one CODIFAi agent headless with Claude Code when an automation rule fires.
 # OFF until the repository variable CODIFAI_PIPELINE_ENABLED = true and these secrets exist: ANTHROPIC_API_KEY, JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN, CONFLUENCE_URL,
 # XRAY_CLIENT_ID, XRAY_CLIENT_SECRET, APP_USERNAME, APP_PASSWORD.
 # In CI the Atlassian MCP (OAuth) is not available, so agents use scripts/atlassian_rest.py with the bot token.
@@ -15,8 +17,8 @@ on:
       key:
         description: "Page id, CR key, story key, execution key or version (depends on the event)"
         required: false
-  schedule:
-    - cron: "0 19 * * *"   # 00:30 IST safety net: re-check CR pages the triggers may have missed
+  # schedule:               # dormant: re-enable together with CODIFAI_PIPELINE_ENABLED
+  #   - cron: "0 19 * * *"   # 00:30 IST safety net: re-check CR pages the triggers may have missed
 
 permissions:
   contents: write        # automation-script-generator / regression-marker push a branch

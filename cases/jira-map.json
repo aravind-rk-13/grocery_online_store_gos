@@ -1,7 +1,7 @@
 {
   "project": "GOS",
   "site": "https://aravindrk13.atlassian.net",
-  "_note": "Maintained by scripts/xray_sync.py map. crs: CR ID -> Jira CR key, Confluence page and stories. tests: TC ID -> Xray Test key (used by conftest to attach CI results).",
+  "_note": "Maintained by scripts/xray_sync.py map. crs: CR ID -> Jira CR key, Confluence page and stories. tests: TC ID -> Xray Test key (used by conftest to attach automated results).",
   "crs": {
     "CR-001": {
       "jira": "GOS-15",

@@ -4,7 +4,7 @@ Changes vs the TypeScript version:
 - Page Object (pages/login_page.py); no selectors inline in tests.
 - No fixed waits (waitForTimeout). Playwright's auto-waiting expect() is used instead.
 - Credentials only from .env; non-sensitive data from fixtures/login.json.
-- Tier + coverage markers so CI can select the P1 smoke set.
+- Tier + coverage markers so the P1 smoke set can be selected (-m regression_p1).
 """
 import re
 

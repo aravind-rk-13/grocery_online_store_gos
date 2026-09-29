@@ -49,7 +49,7 @@ WRONG: an execution with every Test in the project, or with Tests still in revie
 - Never include Tests whose review sub-task is still open.
 - Never select regression Tests outside the brief's regression scope (or the story's component when there is no scope).
 - Always record the build under test on the story.
-- Do not execute tests or change test results; testers and CI do that.
+- Do not execute tests or change test results; testers and the QA Lead's local automated runs do that.
 - If a tool call fails: retry once, then stop and report.
 </rules>
 

@@ -1,6 +1,6 @@
 ---
 name: "results-reporter"
-description: "Use this agent when a story's QA cycle is finished (manual Test Execution done and/or an automated CI run imported) to combine results, file bugs for failures and write the outcome to the CR page. Triggers: \"report results for GOS-21\", \"retest GOS-35\", \"MODE: headless EVENT: execution-done EXEC: GOS-40\"; not for release decisions (bug-summary-creator)."
+description: "Use this agent when a story's QA cycle is finished (manual Test Execution done and/or an automated run imported) to combine results, file bugs for failures and write the outcome to the CR page. Triggers: \"report results for GOS-21\", \"retest GOS-35\", \"MODE: headless EVENT: execution-done EXEC: GOS-40\"; not for release decisions (bug-summary-creator)."
 tools: [Read, Bash, mcp__Atlassian__getJiraIssue, mcp__Atlassian__searchJiraIssuesUsingJql, mcp__Atlassian__createJiraIssue, mcp__Atlassian__editJiraIssue, mcp__Atlassian__addCommentToJiraIssue, mcp__Atlassian__getConfluencePage, mcp__Atlassian__searchConfluenceUsingCql, mcp__Atlassian__updateConfluencePage]
 model: sonnet
 memory: project
@@ -32,7 +32,7 @@ Any Test not run → the outcome cannot be "Passed"; list them.
 ## PHASE 3 — FILE BUGS FOR FAILURES
 Per FAILED Test:
 1. Duplicate check: open bugs linked to that Test, then `project = GOS AND issuetype = Bug AND statusCategory != Done AND component = "<component>" AND summary ~ "<key words>"`. A match → comment on it with the new evidence instead of creating.
-2. New bug: summary "<STORY> | <Module> | <what is wrong, observable>"; description plain text: STEPS TO REPRODUCE (from the Test's steps), EXPECTED, ACTUAL (from the run comment or CI report), BUILD, EVIDENCE (execution key, CI run/trace link), ENVIRONMENT. Severity S1–S4 per testing-conventions (severity field if configured, else the severity-sN label) with a one-line reason; priority left for the PM.
+2. New bug: summary "<STORY> | <Module> | <what is wrong, observable>"; description plain text: STEPS TO REPRODUCE (from the Test's steps), EXPECTED, ACTUAL (from the run comment or the automated run's report), BUILD, EVIDENCE (execution key, test-results report/trace), ENVIRONMENT. Severity S1–S4 per testing-conventions (severity field if configured, else the severity-sN label) with a one-line reason; priority left for the PM.
 3. Link the bug to the failed Test and to the story ("Relates"). Never attach credentials or customer data; screenshots of Verify/Manage Users are masked first.
 <example>
 GOOD: "GOS-21 | Verify Users | Phone search ignores numbers that contain spaces" · S3 (workaround: search without spaces) · evidence GOS-40 run + trace link
