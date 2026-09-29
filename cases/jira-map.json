@@ -1,0 +1,30 @@
+{
+  "project": "GOS",
+  "site": "https://aravindrk13.atlassian.net",
+  "_note": "Maintained by scripts/xray_sync.py map. crs: CR ID -> Jira CR key, Confluence page and stories. tests: TC ID -> Xray Test key (used by conftest to attach CI results).",
+  "crs": {
+    "CR-001": {
+      "jira": "GOS-15",
+      "page_id": "9043986",
+      "stories": []
+    }
+  },
+  "stories": {
+    "GOS-1": "Sign in to the admin console"
+  },
+  "tests": {
+    "TC-LOGIN-01": "GOS-2",
+    "TC-LOGIN-02": "GOS-3",
+    "TC-LOGIN-03": "GOS-4",
+    "TC-LOGIN-04": "GOS-5",
+    "TC-LOGIN-05": "GOS-6",
+    "TC-LOGIN-06": "GOS-7",
+    "TC-LOGIN-07": "GOS-8",
+    "TC-LOGIN-08": "GOS-9",
+    "TC-LOGIN-09": "GOS-10",
+    "TC-LOGIN-10": "GOS-11",
+    "TC-LOGIN-11": "GOS-12",
+    "TC-LOGIN-12": "GOS-13"
+  },
+  "bugs": {}
+}

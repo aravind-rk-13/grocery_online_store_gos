@@ -1,0 +1,409 @@
+[
+  {
+    "tc_id": "TC-LOGIN-01",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | functional-ui | Valid credentials open the dashboard",
+    "coverage": "functional-ui",
+    "title": "Valid credentials open the dashboard",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Username, Password, Sign In are visible"
+      },
+      {
+        "action": "Enter valid credentials",
+        "data": "[VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD]",
+        "expected": "Fields accept input"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "URL is /admin and the sidebar with 'Verify Users' is visible"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "automate": true,
+    "automation_rationale": "Core gate for every admin test",
+    "source": "AC1",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-02",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | negative | Wrong password shows the generic alert",
+    "coverage": "negative",
+    "title": "Wrong password shows the generic alert",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Form visible"
+      },
+      {
+        "action": "Enter valid username and wrong password",
+        "data": "[VALID_ADMIN_USERNAME] / [WRONG_PASSWORD]",
+        "expected": "Fields accept input"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "Alert 'Invalid Username/Password'; URL stays /admin/login"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "automate": true,
+    "automation_rationale": "Most common failure",
+    "source": "AC2",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-03",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | negative | Unknown username shows the same alert",
+    "coverage": "negative",
+    "title": "Unknown username shows the same alert",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Form visible"
+      },
+      {
+        "action": "Enter unknown username and valid password",
+        "data": "[UNKNOWN_USERNAME] / [VALID_ADMIN_PASSWORD]",
+        "expected": "Fields accept input"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "Same alert text as TC-LOGIN-02 (no user enumeration)"
+      }
+    ],
+    "priority": "High",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Stable, cheap",
+    "source": "AC2",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-04",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | boundary | Both fields empty are blocked in the browser",
+    "coverage": "boundary",
+    "title": "Both fields empty are blocked in the browser",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Form visible"
+      },
+      {
+        "action": "Leave both fields empty",
+        "data": "[EMPTY_STRING]",
+        "expected": "-"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "'Please fill out this field.' on Username; no alert; URL unchanged"
+      }
+    ],
+    "priority": "High",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "HTML5 behaviour, stable",
+    "source": "AC3",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-05",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | boundary | Empty password is blocked in the browser",
+    "coverage": "boundary",
+    "title": "Empty password is blocked in the browser",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Form visible"
+      },
+      {
+        "action": "Enter username only",
+        "data": "[VALID_ADMIN_USERNAME]",
+        "expected": "-"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "Required message on Password; URL unchanged"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Stable",
+    "source": "AC3",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-06",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | edge | Uppercase username is accepted",
+    "coverage": "edge",
+    "title": "Uppercase username is accepted",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Form visible"
+      },
+      {
+        "action": "Enter the username in uppercase with the valid password",
+        "data": "[VALID_ADMIN_USERNAME_UPPER]",
+        "expected": "-"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "Dashboard opens (observed case-insensitive)"
+      }
+    ],
+    "priority": "Low",
+    "tier": "P3",
+    "automate": true,
+    "automation_rationale": "Documents current behaviour",
+    "source": "Open question 1",
+    "notes": "[TO BE CONFIRMED] intended?"
+  },
+  {
+    "tc_id": "TC-LOGIN-07",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | edge | Spaces around the username are trimmed",
+    "coverage": "edge",
+    "title": "Spaces around the username are trimmed",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Form visible"
+      },
+      {
+        "action": "Enter the username padded with spaces",
+        "data": "[PADDED_USERNAME]",
+        "expected": "-"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "Dashboard opens"
+      }
+    ],
+    "priority": "Low",
+    "tier": "P3",
+    "automate": true,
+    "automation_rationale": "Documents current behaviour",
+    "source": "Open question 1",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-08",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | boundary | 2,000-character input is rejected safely",
+    "coverage": "boundary",
+    "title": "2,000-character input is rejected safely",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Form visible"
+      },
+      {
+        "action": "Enter 2,000 characters in both fields",
+        "data": "[MAX_LENGTH_STRING]",
+        "expected": "-"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "Normal alert; no stack trace or server error text"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Guards server robustness",
+    "source": "AC5",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-09",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | security | Injection strings do not sign in or leak errors",
+    "coverage": "security",
+    "title": "Injection strings do not sign in or leak errors",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Form visible"
+      },
+      {
+        "action": "Enter SQL string as username and script tag as password",
+        "data": "[SQL_INJECTION_STRING] / [XSS_STRING]",
+        "expected": "-"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "Normal alert; no SQL error; no script runs"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "automate": true,
+    "automation_rationale": "Security regression guard",
+    "source": "AC5",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-10",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | session-state | Protected page redirects when not signed in",
+    "coverage": "session-state",
+    "title": "Protected page redirects when not signed in",
+    "preconditions": [
+      "Browser has no 7rmart cookies"
+    ],
+    "steps": [
+      {
+        "action": "Open /admin directly",
+        "data": "none",
+        "expected": "Redirected to /admin/login"
+      },
+      {
+        "action": "Observe the page",
+        "data": "none",
+        "expected": "Login form is shown"
+      },
+      {
+        "action": "Check cookies",
+        "data": "none",
+        "expected": "No authenticated session exists"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "automate": true,
+    "automation_rationale": "Access control",
+    "source": "AC4",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-11",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | accessibility | Keyboard-only sign in works",
+    "coverage": "accessibility",
+    "title": "Keyboard-only sign in works",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Focus Username and type",
+        "data": "[VALID_ADMIN_USERNAME]",
+        "expected": "Text entered"
+      },
+      {
+        "action": "Press Tab and type the password",
+        "data": "[VALID_ADMIN_PASSWORD]",
+        "expected": "Focus moves to Password"
+      },
+      {
+        "action": "Press Enter",
+        "data": "none",
+        "expected": "Dashboard opens"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Cheap a11y check",
+    "source": "Coverage checklist",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-12",
+    "story": "GOS-1",
+    "summary": "GOS-1 | Login | functional-ui | Password characters are masked",
+    "coverage": "functional-ui",
+    "title": "Password characters are masked",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Form visible"
+      },
+      {
+        "action": "Inspect the Password input",
+        "data": "none",
+        "expected": "type = password"
+      },
+      {
+        "action": "Type any text",
+        "data": "[ANY_TEXT]",
+        "expected": "Characters shown as dots"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Cheap",
+    "source": "Coverage checklist",
+    "notes": ""
+  }
+]

@@ -1,0 +1,9 @@
+# Versions left unpinned where compatibility not yet confirmed on the team's machines (CODIFAi Phase 6.5).
+pytest>=8.0
+pytest-playwright>=0.5
+playwright>=1.47
+pytest-rerunfailures>=14.0
+pytest-check>=2.3
+pytest-html>=4.1
+python-dotenv>=1.0
+requests>=2.31

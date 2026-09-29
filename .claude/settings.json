@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./playwright/.auth/**)",
+      "Bash(cat .env)",
+      "Bash(type .env)"
+    ],
+    "allow": [
+      "Bash(python -m pytest:*)",
+      "Bash(python scripts/xray_sync.py:*)",
+      "Bash(python scripts/atlassian_rest.py:*)",
+      "Bash(python scripts/lint_locators.py:*)",
+      "Bash(python scripts/churn.py:*)"
+    ]
+  }
+}

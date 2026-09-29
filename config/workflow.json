@@ -1,0 +1,155 @@
+{
+  "_note": "Single source of names for every CODIFAi agent. Rename here, never inside an agent file. Values marked TO BE CONFIRMED must be checked on the live site once.",
+  "jira": {
+    "project_key": "GOS",
+    "issue_types": {
+      "change_request": "Change Request",
+      "story": "Story",
+      "subtask": "Subtask",
+      "test": "Test",
+      "test_set": "Test Set",
+      "test_plan": "Test Plan",
+      "test_execution": "Test Execution",
+      "bug": "Bug"
+    },
+    "statuses": {
+      "todo": "To Do",
+      "in_progress": "In Progress",
+      "ready_for_qa": "Ready for QA",
+      "done": "Done"
+    },
+    "link_types": {
+      "tests": "Test",
+      "relates": "Relates",
+      "blocks": "Blocks",
+      "duplicates": "Duplicate"
+    },
+    "approval_subtasks": {
+      "cr_brief": "Approve CR brief for {cr}",
+      "stories": "Approve stories for {cr}",
+      "test_cases": "Review AI test cases for {story}"
+    },
+    "input_needed_prefix": "[CODIFAi - input needed]",
+    "bot_comment_prefix": "[CODIFAi]",
+    "severity_field": null,
+    "_severity_note": "If the site has a Severity custom field, put its field id in severity_field; agents then use it instead of the severity-sN labels."
+  },
+  "labels": {
+    "cr_id_prefix": "CR-",
+    "coverage": [
+      "functional-ui",
+      "negative",
+      "boundary",
+      "edge",
+      "security",
+      "session-state",
+      "accessibility",
+      "network",
+      "api",
+      "data-persistence"
+    ],
+    "tiers": {
+      "P1": "regression-p1",
+      "P2": "regression-p2",
+      "P3": "regression-p3"
+    },
+    "automated": "automated",
+    "size": {
+      "trivial": "size-trivial",
+      "standard": "size-standard",
+      "large": "size-large"
+    },
+    "client_confirmation_pending": "client-confirmed-no",
+    "legacy_freeze_before": "2026-09-29",
+    "severity": {
+      "S1": "severity-s1",
+      "S2": "severity-s2",
+      "S3": "severity-s3",
+      "S4": "severity-s4"
+    }
+  },
+  "confluence": {
+    "space_key": "GOS",
+    "cr_parent_title": "Change Requests",
+    "cr_page_label": "change-request",
+    "reports_parent_title": "QA Reports",
+    "cr_statuses": [
+      "New",
+      "Ready for Jira",
+      "In Jira",
+      "Changed",
+      "In QA",
+      "Tested: Passed",
+      "Tested: Failed",
+      "Closed"
+    ]
+  },
+  "xray": {
+    "test_sets": {
+      "smoke": "GOS | Smoke",
+      "functional_ui": "GOS | Functional – UI",
+      "negative_boundary": "GOS | Negative & Boundary",
+      "api_integration": "GOS | API & Integration",
+      "accessibility": "GOS | Accessibility",
+      "regression_p1": "GOS | Regression P1"
+    },
+    "execution_summary": {
+      "manual": "{story} | QA cycle {n}",
+      "automated": "{cr} | automated | {datetime} | CI"
+    }
+  },
+  "regression_scoring": {
+    "tiers": {
+      "P1": 75,
+      "P2": 50
+    },
+    "defect_points": {
+      "0": 0,
+      "1-2": 8,
+      "3-5": 17,
+      "6+": 25
+    },
+    "integration_points": {
+      "0": 0,
+      "1": 8,
+      "2-3": 17,
+      "4+": 25
+    },
+    "churn_points": {
+      "0": 0,
+      "1-3": 8,
+      "4-10": 17,
+      "11+": 25
+    },
+    "window_days": 90
+  },
+  "modules": {
+    "login": {
+      "component": "Login",
+      "marker": "login",
+      "tc_prefix": "TC-LOGIN",
+      "business_criticality": 25,
+      "integration_depth": null,
+      "app_paths": []
+    },
+    "verify_users": {
+      "component": "Verify Users",
+      "marker": "verify_users",
+      "tc_prefix": "TC-USRSRCH",
+      "business_criticality": 20,
+      "integration_depth": null,
+      "app_paths": []
+    }
+  },
+  "github": {
+    "repo": "aravind-rk-13/grocery_online_store_gos",
+    "base_branch": "main",
+    "automation_branch": "automation/{story}-{short}"
+  },
+  "release_readiness": {
+    "_note": "Proposed rule - confirm with the QA Lead before first use.",
+    "no_go": "any open S1 bug, or any open S2 bug without written PO acceptance, or any in-scope story with no executed tests",
+    "conditional_go": "no open S1; every open S2 and every untested story has written PO acceptance",
+    "go": "no open S1/S2 bugs and every in-scope story Tested: Passed"
+  }
+}

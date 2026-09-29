@@ -1,0 +1,8 @@
+{
+  "_note": "Non-sensitive test data only. Valid credentials come from .env (APP_USERNAME / APP_PASSWORD).",
+  "wrong_password": "wrong-password-xyz",
+  "unknown_username": "not-a-real-user",
+  "long_string_length": 2000,
+  "sql_injection": "' OR '1'='1' -- ",
+  "xss": "<script>alert(1)</script>"
+}

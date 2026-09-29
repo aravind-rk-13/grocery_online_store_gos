@@ -1,0 +1,96 @@
+name: ai-pipeline
+# Runs one CODIFAi agent headless with Claude Code when an automation rule fires (docs/automation/rules.md).
+# OFF until the repository variable CODIFAI_PIPELINE_ENABLED = true and these secrets exist: ANTHROPIC_API_KEY, JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN, CONFLUENCE_URL,
+# XRAY_CLIENT_ID, XRAY_CLIENT_SECRET, APP_USERNAME, APP_PASSWORD.
+# In CI the Atlassian MCP (OAuth) is not available, so agents use scripts/atlassian_rest.py with the bot token.
+on:
+  repository_dispatch:
+    types: [cr-page-updated, cr-created, cr-brief-approved, stories-approved, tests-approved, ready-for-qa, execution-done, pre-release]
+  workflow_dispatch:
+    inputs:
+      event:
+        description: "Event to simulate"
+        type: choice
+        options: [cr-page-updated, cr-created, cr-brief-approved, stories-approved, tests-approved, ready-for-qa, execution-done, pre-release, nightly-sweep]
+      key:
+        description: "Page id, CR key, story key, execution key or version (depends on the event)"
+        required: false
+  schedule:
+    - cron: "0 19 * * *"   # 00:30 IST safety net: re-check CR pages the triggers may have missed
+
+permissions:
+  contents: write        # automation-script-generator / regression-marker push a branch
+  pull-requests: write   # ...and open a PR
+
+concurrency:
+  group: ai-pipeline-${{ github.event.client_payload.key || inputs.key || 'sweep' }}
+  cancel-in-progress: false
+
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: ${{ vars.CODIFAI_PIPELINE_ENABLED == 'true' }}
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      JIRA_URL: ${{ secrets.JIRA_URL }}
+      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      JIRA_PROJECT_KEY: GOS
+      CONFLUENCE_URL: ${{ secrets.CONFLUENCE_URL }}
+      CONFLUENCE_SPACE_KEY: GOS
+      XRAY_CLIENT_ID: ${{ secrets.XRAY_CLIENT_ID }}
+      XRAY_CLIENT_SECRET: ${{ secrets.XRAY_CLIENT_SECRET }}
+      APP_URL: ${{ vars.APP_URL || 'https://groceryapp.uniqassosiates.com/admin' }}
+      APP_USERNAME: ${{ secrets.APP_USERNAME }}
+      APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+      GH_TOKEN: ${{ github.token }}
+      EVENT: ${{ github.event.action || inputs.event || 'nightly-sweep' }}
+      KEY: ${{ github.event.client_payload.key || inputs.key || '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: pip install -r requirements.txt && python -m playwright install --with-deps chromium
+      - run: npm install -g @anthropic-ai/claude-code
+      - run: |
+          git config user.name "codifai-bot"
+          git config user.email "codifai-bot@users.noreply.github.com"
+
+      - name: Choose the agent for this event
+        id: route
+        run: |
+          case "$EVENT" in
+            cr-page-updated)   P="Use the cr-intake agent for Confluence page $KEY." ;;
+            nightly-sweep)     P="Use the cr-intake agent to sync CR pages (nightly sweep)." ;;
+            cr-created)        P="Use the requirement-analyst agent in CR mode for $KEY." ;;
+            cr-brief-approved) P="Use the user-story-creator agent for $KEY." ;;
+            stories-approved)  P="For each story linked to $KEY, one at a time, use the test-case-generator agent." ;;
+            tests-approved)    P="Use the regression-marker agent for story $KEY." ;;
+            ready-for-qa)      P="Use the execution-planner agent for story $KEY. Then use the automation-script-generator agent for story $KEY." ;;
+            execution-done)    P="Use the results-reporter agent for execution $KEY." ;;
+            pre-release)       P="Use the bug-summary-creator agent for release readiness of version $KEY." ;;
+            *) echo "Unknown event $EVENT"; exit 1 ;;
+          esac
+          echo "prompt=MODE: headless. EVENT: $EVENT. KEY: $KEY. $P The Atlassian MCP is not available here: use scripts/atlassian_rest.py for Jira and Confluence, scripts/xray_sync.py for Xray." >> "$GITHUB_OUTPUT"
+
+      - name: Run Claude Code headless
+        # Verify these CLI flags against the current Claude Code docs during the dry run.
+        run: |
+          claude -p "${{ steps.route.outputs.prompt }}" \
+            --permission-mode acceptEdits \
+            --allowedTools "Read,Write,Edit,Grep,Glob,Bash(python:*),Bash(git:*),Bash(gh pr create:*)" \
+            --max-turns 60 \
+            --output-format text | tee agent-output.txt
+
+      - name: Keep the agent's report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-output-${{ env.EVENT }}
+          path: agent-output.txt
