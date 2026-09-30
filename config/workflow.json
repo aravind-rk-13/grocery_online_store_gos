@@ -91,7 +91,8 @@
       "negative_boundary": "GOS | Negative & Boundary",
       "api_integration": "GOS | API & Integration",
       "accessibility": "GOS | Accessibility",
-      "regression_p1": "GOS | Regression P1"
+      "regression_p1": "GOS | Regression P1",
+      "backlog": "GOS | Backlog"
     },
     "execution_summary": {
       "manual": "{story} | QA cycle {n}",

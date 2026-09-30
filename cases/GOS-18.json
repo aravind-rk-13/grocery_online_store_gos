@@ -1,0 +1,581 @@
+[
+  {
+    "tc_id": "TC-ADMUSR-01",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | List opens from the sidebar with heading, breadcrumb, table and columns",
+    "coverage": "functional-ui",
+    "title": "List opens from the sidebar with heading, breadcrumb, table and columns",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Dashboard (/admin) is displayed",
+      "Admin Users list URL is not known in advance; it is recorded at run time in step 1"
+    ],
+    "steps": [
+      {
+        "action": "In the sidebar, click 'Admin Users', then record the page URL",
+        "data": "[ADMIN_USERS_LIST_URL] read at run time",
+        "expected": "The Admin Users list opens; its URL is recorded as [ADMIN_USERS_LIST_URL]"
+      },
+      {
+        "action": "Read the page heading",
+        "data": "none",
+        "expected": "Heading reads 'Admin Users'"
+      },
+      {
+        "action": "Read the breadcrumb",
+        "data": "none",
+        "expected": "Breadcrumb reads 'Home / Admin Users'"
+      },
+      {
+        "action": "Read the table panel title",
+        "data": "none",
+        "expected": "A table panel titled 'Admin Users' is shown"
+      },
+      {
+        "action": "Read the table column headers left to right",
+        "data": "none",
+        "expected": "Columns are Username, Usertype, Status, Password, Action"
+      },
+      {
+        "action": "Count the rows on the page",
+        "data": "none",
+        "expected": "At least one row is shown"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P1",
+    "automate": true,
+    "automation_rationale": "Read-only, stable, core screen check",
+    "source": "AC1; prototype admin_users_list.png, side_navigation_bar.png",
+    "notes": "Smoke candidate. The list URL is captured at run time (PM answer 2026-09-30). Tier proposed: P1, core screen of the CR."
+  },
+  {
+    "tc_id": "TC-ADMUSR-02",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | List opens from the dashboard card More info",
+    "coverage": "functional-ui",
+    "title": "List opens from the dashboard card More info",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Dashboard (/admin) is displayed",
+      "Admin Users list URL has been recorded via the sidebar entry 'Admin Users' as [ADMIN_USERS_LIST_URL] (TC-ADMUSR-01 step 1)"
+    ],
+    "steps": [
+      {
+        "action": "On the dashboard, locate the 'Admin Users' card",
+        "data": "none",
+        "expected": "Card shows a total and a 'More info' link"
+      },
+      {
+        "action": "Click 'More info' on the 'Admin Users' card, then record the page URL",
+        "data": "none",
+        "expected": "The Admin Users list opens"
+      },
+      {
+        "action": "Read the heading and breadcrumb",
+        "data": "none",
+        "expected": "Heading 'Admin Users'; breadcrumb 'Home / Admin Users'"
+      },
+      {
+        "action": "Read the table column headers",
+        "data": "none",
+        "expected": "Columns are Username, Usertype, Status, Password, Action"
+      },
+      {
+        "action": "Compare the URL reached via 'More info' with [ADMIN_USERS_LIST_URL] reached via the sidebar",
+        "data": "[ADMIN_USERS_LIST_URL]",
+        "expected": "Both URLs are identical"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Read-only navigation, stable",
+    "source": "AC1; prototype side_navigation_bar.png",
+    "notes": "Card display itself is GOS-20 (out of scope here). The list URL is captured at run time (PM answer 2026-09-30)."
+  },
+  {
+    "tc_id": "TC-ADMUSR-03",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | Every row shows an Active or Inactive status badge",
+    "coverage": "functional-ui",
+    "title": "Every row shows an Active or Inactive status badge",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list is open on page 1"
+    ],
+    "steps": [
+      {
+        "action": "Read the Status cell of every row on page 1",
+        "data": "none",
+        "expected": "Each Status cell shows a badge"
+      },
+      {
+        "action": "Compare each badge text with the allowed values",
+        "data": "none",
+        "expected": "Every badge reads exactly 'Active' or 'Inactive'; no blank or other value"
+      },
+      {
+        "action": "Open the last page with Last and repeat the check",
+        "data": "none",
+        "expected": "Every badge on the last page reads 'Active' or 'Inactive'"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Read-only assertion over rows",
+    "source": "AC1; prototype admin_users_list.png",
+    "notes": "Inactive accounts are listed (PM answer 2026-09-30). Badge colours not asserted."
+  },
+  {
+    "tc_id": "TC-ADMUSR-04",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | Usertype column shows a value for every row",
+    "coverage": "functional-ui",
+    "title": "Usertype column shows a value for every row",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list has more than one page (20 rows per page)",
+      "Admin Users list is open on page 1"
+    ],
+    "steps": [
+      {
+        "action": "Read the Usertype cell of every row on page 1",
+        "data": "none",
+        "expected": "Every row on page 1 shows a non-empty Usertype value"
+      },
+      {
+        "action": "Open one other page (for example click 'Next')",
+        "data": "none",
+        "expected": "The other page opens and its page number is highlighted"
+      },
+      {
+        "action": "Read the Usertype cell of every row on that page",
+        "data": "none",
+        "expected": "Every row on that page shows a non-empty Usertype value"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Read-only assertion over rows; no data from other screens needed",
+    "source": "AC1; PM answer 2026-09-30 (all listed rows are admin users)",
+    "notes": "All listed rows are admin users whatever the Usertype value (admin, staff, db, partner/customer); there is no customer-exclusion check (PM answer 2026-09-30). The Usertype value itself is not asserted, only that it is not empty."
+  },
+  {
+    "tc_id": "TC-ADMUSR-05",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | Next opens the following page",
+    "coverage": "functional-ui",
+    "title": "Next opens the following page",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list has more than one page (20 rows per page)",
+      "Admin Users list is open on page 1"
+    ],
+    "steps": [
+      {
+        "action": "Note the highlighted page number",
+        "data": "none",
+        "expected": "Page 1 is highlighted; 20 rows are shown"
+      },
+      {
+        "action": "Click 'Next' below the table",
+        "data": "none",
+        "expected": "Page 2 opens"
+      },
+      {
+        "action": "Read the highlighted page number",
+        "data": "none",
+        "expected": "Page number 2 is highlighted and no other number is"
+      },
+      {
+        "action": "Look at the pagination controls",
+        "data": "none",
+        "expected": "'First' and 'Previous' are shown (page 2 is not page 1); 'Next' and 'Last' are shown unless page 2 is the last page"
+      },
+      {
+        "action": "Count the rows",
+        "data": "none",
+        "expected": "20 rows are shown if page 2 is not the last page"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P1",
+    "automate": true,
+    "automation_rationale": "Read-only pagination, stable",
+    "source": "AC2; prototype pagination_1.png",
+    "notes": "The list sort order is random (PM answer 2026-09-30): page change is verified by the highlighted page number, never by row content. Row counts per page are valid."
+  },
+  {
+    "tc_id": "TC-ADMUSR-06",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | Previous opens the preceding page",
+    "coverage": "functional-ui",
+    "title": "Previous opens the preceding page",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list has more than one page (20 rows per page)",
+      "Admin Users list is open on a middle page [MIDDLE_PAGE]"
+    ],
+    "steps": [
+      {
+        "action": "Note the highlighted page number",
+        "data": "[MIDDLE_PAGE]",
+        "expected": "[MIDDLE_PAGE] is highlighted"
+      },
+      {
+        "action": "Click 'Previous' below the table",
+        "data": "none",
+        "expected": "The preceding page opens"
+      },
+      {
+        "action": "Read the highlighted page number",
+        "data": "none",
+        "expected": "Highlighted page is [MIDDLE_PAGE] minus 1 and no other number is"
+      },
+      {
+        "action": "Look at the pagination controls",
+        "data": "none",
+        "expected": "'Next' and 'Last' are shown; 'First' and 'Previous' are shown unless the target page is page 1"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Read-only pagination, stable",
+    "source": "AC2; prototype admin_users_list.png",
+    "notes": "Middle page chosen at run time from the last page number. Sort order is random (PM answer 2026-09-30): verify by the highlighted page number, never by row content."
+  },
+  {
+    "tc_id": "TC-ADMUSR-07",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | A page number opens that page",
+    "coverage": "functional-ui",
+    "title": "A page number opens that page",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list has more than one page (20 rows per page)",
+      "Admin Users list is open on page 1"
+    ],
+    "steps": [
+      {
+        "action": "Note the highlighted page number",
+        "data": "none",
+        "expected": "Page 1 is highlighted"
+      },
+      {
+        "action": "Click a page number that is not the current page",
+        "data": "[TARGET_PAGE]",
+        "expected": "The chosen page opens"
+      },
+      {
+        "action": "Read the highlighted page number",
+        "data": "none",
+        "expected": "[TARGET_PAGE] is highlighted and no other number is"
+      },
+      {
+        "action": "Look at the pagination controls",
+        "data": "none",
+        "expected": "Controls match AC4 for [TARGET_PAGE]: 'First' and 'Previous' are shown (target is not page 1); 'Next' and 'Last' are shown unless [TARGET_PAGE] is the last page"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Read-only pagination, stable",
+    "source": "AC2; prototype admin_users_list.png",
+    "notes": "Sort order is random (PM answer 2026-09-30): verify by the highlighted page number, never by row content."
+  },
+  {
+    "tc_id": "TC-ADMUSR-08",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | Last opens the highest page",
+    "coverage": "functional-ui",
+    "title": "Last opens the highest page",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list has more than one page (20 rows per page)",
+      "Admin Users list is open on page 1"
+    ],
+    "steps": [
+      {
+        "action": "Read the highest page number shown in the pagination",
+        "data": "none",
+        "expected": "A highest number [LAST_PAGE] is visible"
+      },
+      {
+        "action": "Click 'Last'",
+        "data": "none",
+        "expected": "The last page opens"
+      },
+      {
+        "action": "Read the highlighted page number",
+        "data": "none",
+        "expected": "[LAST_PAGE] is highlighted and no other number is"
+      },
+      {
+        "action": "Look at the pagination controls",
+        "data": "none",
+        "expected": "'First' and 'Previous' are shown; 'Next' and 'Last' are not shown"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Read-only pagination, stable",
+    "source": "AC2; prototype pagination_2.png",
+    "notes": "Sort order is random (PM answer 2026-09-30): verify by the highlighted page number, never by row content."
+  },
+  {
+    "tc_id": "TC-ADMUSR-09",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | First opens page 1",
+    "coverage": "functional-ui",
+    "title": "First opens page 1",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list has more than one page (20 rows per page)",
+      "Admin Users list is open on the last page"
+    ],
+    "steps": [
+      {
+        "action": "Note the highlighted page number",
+        "data": "none",
+        "expected": "[LAST_PAGE] is highlighted"
+      },
+      {
+        "action": "Click 'First'",
+        "data": "none",
+        "expected": "Page 1 opens"
+      },
+      {
+        "action": "Read the highlighted page number",
+        "data": "none",
+        "expected": "Page number 1 is highlighted and no other number is"
+      },
+      {
+        "action": "Look at the pagination controls",
+        "data": "none",
+        "expected": "'First' and 'Previous' are not shown; 'Next' and 'Last' are shown"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Read-only pagination, stable",
+    "source": "AC2; prototype pagination_2.png",
+    "notes": "Sort order is random (PM answer 2026-09-30): verify by the highlighted page number, never by row content."
+  },
+  {
+    "tc_id": "TC-ADMUSR-10",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | functional-ui | Counted list total equals the dashboard Admin Users card",
+    "coverage": "functional-ui",
+    "title": "Counted list total equals the dashboard Admin Users card",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Dashboard (/admin) is displayed",
+      "No data is changed during the check (shared environment)"
+    ],
+    "steps": [
+      {
+        "action": "Read the total shown on the dashboard 'Admin Users' card",
+        "data": "[N] read at run time",
+        "expected": "A number [N] is shown"
+      },
+      {
+        "action": "Click 'More info' on the card",
+        "data": "none",
+        "expected": "The Admin Users list opens on page 1"
+      },
+      {
+        "action": "Click 'Last' and read the highlighted page number",
+        "data": "none",
+        "expected": "[LAST_PAGE] is highlighted"
+      },
+      {
+        "action": "Count the rows on the last page",
+        "data": "[ROWS_LAST]",
+        "expected": "Between 1 and 20 rows"
+      },
+      {
+        "action": "Calculate ([LAST_PAGE] - 1) x 20 + [ROWS_LAST]",
+        "data": "none",
+        "expected": "The result equals [N]"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P1",
+    "automate": true,
+    "automation_rationale": "Read-only; N read at run time. Depends on GOS-20 card total",
+    "source": "AC3; prototype side_navigation_bar.png, pagination_2.png",
+    "notes": "Open question 4: prototype card and list totals differ; built app must match at the same moment. Never hard-code N."
+  },
+  {
+    "tc_id": "TC-ADMUSR-11",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | edge | Walking every page with Next gives the same total as the card",
+    "coverage": "edge",
+    "title": "Walking every page with Next gives the same total as the card",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Dashboard (/admin) is displayed",
+      "No data is changed during the check (shared environment)"
+    ],
+    "steps": [
+      {
+        "action": "Read the dashboard 'Admin Users' card total",
+        "data": "[N] read at run time",
+        "expected": "A number [N] is shown"
+      },
+      {
+        "action": "Open the Admin Users list from the card and count the rows on page 1 (count only; do not read or record usernames)",
+        "data": "none",
+        "expected": "20 rows; page 1 is highlighted"
+      },
+      {
+        "action": "Click 'Next' and count the rows; repeat until 'Next' is no longer shown (count only; do not compare or collect usernames)",
+        "data": "none",
+        "expected": "Every page before the last shows 20 rows; after each move the highlighted page number changes to the new page"
+      },
+      {
+        "action": "Add the row counts of all pages",
+        "data": "none",
+        "expected": "The sum equals [N]"
+      },
+      {
+        "action": "Compare the sum with the formula total from TC-ADMUSR-10",
+        "data": "none",
+        "expected": "Both totals are equal"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Read-only but walks ~50 pages; run nightly, not per PR",
+    "source": "AC3; PM answer 2026-09-30 (sort order is random)",
+    "notes": "The list sort order is RANDOM (PM answer 2026-09-30). Count the rows on each page and never compare or collect usernames; page moves are verified by the highlighted page number. If totals differ, log an OPEN QUESTION or bug; do not adjust the expected result."
+  },
+  {
+    "tc_id": "TC-ADMUSR-12",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | boundary | Page 1 hides First and Previous and shows 20 rows",
+    "coverage": "boundary",
+    "title": "Page 1 hides First and Previous and shows 20 rows",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list has more than one page (20 rows per page)",
+      "Admin Users list is open on page 1"
+    ],
+    "steps": [
+      {
+        "action": "Read the highlighted page number",
+        "data": "none",
+        "expected": "Page 1 is highlighted"
+      },
+      {
+        "action": "Look for 'First' and 'Previous' below the table",
+        "data": "none",
+        "expected": "Neither 'First' nor 'Previous' is shown"
+      },
+      {
+        "action": "Look for 'Next' and 'Last'",
+        "data": "none",
+        "expected": "Both 'Next' and 'Last' are shown"
+      },
+      {
+        "action": "Count the rows",
+        "data": "none",
+        "expected": "20 rows are shown"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P1",
+    "automate": true,
+    "automation_rationale": "Read-only, stable",
+    "source": "AC4; prototype pagination_1.png",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-ADMUSR-13",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | boundary | A middle page shows First, Previous, Next and Last",
+    "coverage": "boundary",
+    "title": "A middle page shows First, Previous, Next and Last",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list has more than one page (20 rows per page)",
+      "Admin Users list has at least three pages"
+    ],
+    "steps": [
+      {
+        "action": "Open a page that is neither page 1 nor the last page",
+        "data": "[MIDDLE_PAGE]",
+        "expected": "[MIDDLE_PAGE] is highlighted"
+      },
+      {
+        "action": "Look for 'First' and 'Previous'",
+        "data": "none",
+        "expected": "Both are shown"
+      },
+      {
+        "action": "Look for 'Next' and 'Last'",
+        "data": "none",
+        "expected": "Both are shown"
+      },
+      {
+        "action": "Count the rows",
+        "data": "none",
+        "expected": "20 rows are shown"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Read-only, stable",
+    "source": "AC4; prototype admin_users_list.png",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-ADMUSR-14",
+    "story": "GOS-18",
+    "summary": "GOS-18 | Admin Users | boundary | Last page hides Next and Last and shows 1 to 20 rows",
+    "coverage": "boundary",
+    "title": "Last page hides Next and Last and shows 1 to 20 rows",
+    "preconditions": [
+      "User is logged in as [VALID_ADMIN_USERNAME]",
+      "Admin Users list has more than one page (20 rows per page)",
+      "Admin Users list is open on page 1"
+    ],
+    "steps": [
+      {
+        "action": "Click 'Last'",
+        "data": "none",
+        "expected": "The last page opens; [LAST_PAGE] is highlighted"
+      },
+      {
+        "action": "Look for 'Next' and 'Last'",
+        "data": "none",
+        "expected": "Neither 'Next' nor 'Last' is shown"
+      },
+      {
+        "action": "Look for 'First' and 'Previous'",
+        "data": "none",
+        "expected": "Both are shown"
+      },
+      {
+        "action": "Count the rows",
+        "data": "[ROWS_LAST]",
+        "expected": "Between 1 and 20 rows"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P1",
+    "automate": true,
+    "automation_rationale": "Read-only, stable",
+    "source": "AC4; prototype pagination_2.png",
+    "notes": "Exact last-page row count is never asserted (read at run time)."
+  }
+]

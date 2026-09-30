@@ -14,7 +14,8 @@
     }
   },
   "stories": {
-    "GOS-1": "Sign in to the admin console"
+    "GOS-1": "Sign in to the admin console",
+    "GOS-18": ""
   },
   "tests": {
     "TC-LOGIN-01": "GOS-2",
@@ -28,7 +29,21 @@
     "TC-LOGIN-09": "GOS-10",
     "TC-LOGIN-10": "GOS-11",
     "TC-LOGIN-11": "GOS-12",
-    "TC-LOGIN-12": "GOS-13"
+    "TC-LOGIN-12": "GOS-13",
+    "TC-ADMUSR-01": "GOS-21",
+    "TC-ADMUSR-02": "GOS-22",
+    "TC-ADMUSR-03": "GOS-23",
+    "TC-ADMUSR-04": "GOS-24",
+    "TC-ADMUSR-05": "GOS-25",
+    "TC-ADMUSR-06": "GOS-26",
+    "TC-ADMUSR-07": "GOS-27",
+    "TC-ADMUSR-08": "GOS-28",
+    "TC-ADMUSR-09": "GOS-29",
+    "TC-ADMUSR-10": "GOS-30",
+    "TC-ADMUSR-11": "GOS-31",
+    "TC-ADMUSR-12": "GOS-32",
+    "TC-ADMUSR-13": "GOS-33",
+    "TC-ADMUSR-14": "GOS-34"
   },
   "bugs": {}
 }

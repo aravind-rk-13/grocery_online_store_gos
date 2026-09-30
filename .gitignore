@@ -6,3 +6,5 @@ test-results/
 playwright/.auth/
 .claude/settings.local.json
 .claude/checkpoints/
+.playwright-mcp/
+docs/prototype_images/

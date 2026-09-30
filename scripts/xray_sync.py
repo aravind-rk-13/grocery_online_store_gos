@@ -11,6 +11,7 @@ Commands (all print JSON or one result line; secrets are never printed):
   find-set "NAME"                             Test Set keys whose summary matches NAME exactly (lowest key first)
   set-members SET-KEY                         Test keys in a Test Set
   add-to-set SET-KEY TEST-KEY [TEST-KEY ...]  add Tests to a Test Set
+  remove-from-set SET-KEY TEST-KEY [...]      remove Tests from a Test Set (the Tests themselves are kept)
   create-plan "SUMMARY" TEST-KEY [...]        create an Xray Test Plan with these Tests
   add-to-plan PLAN-KEY TEST-KEY [...]         add Tests to an existing Test Plan
   create-execution "SUMMARY" TEST-KEY [...] [--plan PLAN-KEY]
@@ -184,6 +185,13 @@ def add_to_set(set_key: str, *test_keys: str) -> None:
     print(f"{set_key}: added {len(test_keys)} tests")
 
 
+def remove_from_set(set_key: str, *test_keys: str) -> None:
+    ids = issue_ids([set_key, *test_keys])
+    gql("mutation($id:String!,$t:[String]!){removeTestsFromTestSet(issueId:$id,testIssueIds:$t)}",
+        {"id": ids[set_key], "t": [ids[k] for k in test_keys]})
+    print(f"{set_key}: removed {len(test_keys)} tests")
+
+
 def create_plan(summary: str, *test_keys: str) -> None:
     ids = issue_ids(list(test_keys)) if test_keys else {}
     data = gql('mutation($t:[String],$j:JSON!){createTestPlan(testIssueIds:$t,jira:$j)'
@@ -280,7 +288,7 @@ def import_junit(path: str, summary: str = "") -> None:
 
 COMMANDS = {
     "link": link, "steps": steps, "map": map_test, "map-cr": map_cr,
-    "find-set": find_set, "set-members": set_members, "add-to-set": add_to_set,
+    "find-set": find_set, "set-members": set_members, "add-to-set": add_to_set, "remove-from-set": remove_from_set,
     "create-plan": create_plan, "add-to-plan": add_to_plan,
     "create-execution": create_execution, "get-execution": get_execution,
     "import-junit": import_junit,

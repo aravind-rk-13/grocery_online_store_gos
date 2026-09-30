@@ -36,3 +36,13 @@ Coverage label values: functional-ui, negative, boundary, edge, security, sessio
 ## Automation
 - Definition of Done: passes locally (lint + the new tests + P1), no inline selectors, no fixed waits, module + coverage markers applied, PR reviewed, Test labelled automated.
 - Flaky policy: passes only on rerun -> quarantine (remove the regression_p1 marker) within 24 h, fix within a week.
+
+## Test isolation and start screens (agreed 2026-09-30)
+- Log in once per run: conftest `admin_storage_state` saves the session cookie; never log in inside a test (keeps site hits low; the host blocks repeated hits).
+- One fresh browser context per test (conftest `admin_page`), closed after the test. Never depend on the screen or order of a previous test.
+- Each screen's URL lives once in its page object (`URL = f"{APP_URL}/<route>"  # src: live DOM ...`) with an `open()` method; never put URLs in specs. Record the route from the live sidebar link the first time the screen is automated.
+- Navigation tests (sidebar entry, dashboard card "More info") start on the dashboard and click the real link. All other tests of a screen open its URL directly via `open()`.
+- After every `open()` or navigation, assert the screen heading (e.g. "Admin Users"). If the login page appears instead, the session expired: the fixture logs in again once, otherwise the test fails with that reason.
+- Deep-link to a page state (e.g. a specific list page) only when the app exposes it in the URL and the control itself is not what the test checks (a test for "Last" clicks Last).
+- Walk-every-page or other heavy tests run nightly/before release (regression_p2 or lower), never in the per-PR P1 set.
+- Manual runs: log in once, run the cases in sequence without logging out; reach each case's start screen from the sidebar ("Dashboard", "Admin Users"). Shared start states can be one Xray Precondition issue linked to the Tests.
