@@ -16,8 +16,11 @@ copy .env.example .env -> fill in (never commit .env; Claude cannot read it)
 python -m pytest -m regression_p1          # P1 smoke: before every PR merge and after each staging deploy
 python -m pytest tests/login --headed      # watch one module
 python scripts/lint_locators.py            # locator gate: before every PR
-python scripts/xray_sync.py import-junit test-results/junit.xml "<CR-KEY> | automated | <YYYY-MM-DD HH:MM> | local"
-                                           # automated QA run -> Xray Test Execution (results-reporter reads it)
+python scripts/xray_sync.py import-junit latest "<CR-KEY> | automated | <YYYY-MM-DD HH:MM> | local"
+                                           # newest run -> Xray Test Execution; then "report results for <EXEC-KEY>"
+Every run gets its own folder test-results/<YYYY-MM-DD_HH-MM-SS>/ (junit_<ts>.xml, report_<ts>.html, artifacts/);
+test-results/latest.txt names the newest. Nothing is overwritten. Each run is documented in Confluence
+QA Reports > Test Results (one page per run, scripts/results_page.py).
 
 ## Pipeline: from a phone call to a release decision
 | # | Step | Agent | Human gate after it |

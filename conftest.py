@@ -6,6 +6,7 @@
 """
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -19,6 +20,30 @@ AUTH_STATE = Path("playwright/.auth/admin.json")
 FIXTURES = Path(__file__).parent / "fixtures"
 JIRA_MAP = Path(__file__).parent / "cases" / "jira-map.json"
 TC_ID_IN_NAME = re.compile(r"^test_tc_([a-z]+)_(\d+)_")
+RESULTS_ROOT = Path(__file__).parent / "test-results"
+TIER_MARKERS = ("regression_p1", "regression_p2", "regression_p3")
+COVERAGE_MARKERS = ("functional_ui", "negative", "boundary", "edge", "security", "session_state",
+                    "accessibility", "network", "api", "data_persistence")
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_configure(config):
+    """Give every run its own folder so no report is overwritten:
+    test-results/<YYYY-MM-DD_HH-MM-SS>/junit_<ts>.xml, report_<ts>.html and artifacts/ (traces, screenshots).
+    Runs before the junitxml / pytest-html plugins read their options; explicit CLI paths are kept."""
+    if config.option.collectonly or hasattr(config, "workerinput"):
+        return
+    ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    run_dir = RESULTS_ROOT / ts
+    if not config.option.xmlpath:
+        config.option.xmlpath = str(run_dir / f"junit_{ts}.xml")
+    if not getattr(config.option, "htmlpath", None):
+        config.option.htmlpath = str(run_dir / f"report_{ts}.html")
+        config.option.self_contained_html = True
+    if getattr(config.option, "output", "test-results") == "test-results":
+        config.option.output = str(run_dir / "artifacts")
+    run_dir.mkdir(parents=True, exist_ok=True)
+    (RESULTS_ROOT / "latest.txt").write_text(f"test-results/{ts}\n", encoding="utf-8")
 
 
 @pytest.fixture(scope="session")
@@ -36,6 +61,14 @@ def _xray_test_key(request, record_property, _xray_test_keys):
         key = _xray_test_keys.get(f"TC-{match.group(1).upper()}-{match.group(2)}")
         if key:
             record_property("test_key", key)
+    # tier and coverage markers, shown on the Confluence results page (scripts/results_page.py)
+    marks = {m.name for m in request.node.iter_markers()}
+    tier = next((t for t in TIER_MARKERS if t in marks), None)
+    if tier:
+        record_property("tier", tier.replace("regression_", "").upper())
+    coverage = [c for c in COVERAGE_MARKERS if c in marks]
+    if coverage:
+        record_property("coverage", ",".join(c.replace("_", "-") for c in coverage))
 
 
 @pytest.fixture(scope="session")

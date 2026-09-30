@@ -31,11 +31,11 @@ Run from the repo root with `.env` filled in (APP_* for pytest, XRAY_* for the i
 |---|---|
 | Before merging any PR | `python scripts/lint_locators.py` and `python -m pytest -m regression_p1` |
 | After each staging deploy | `python -m pytest -m regression_p1` |
-| QA cycle for a CR (step 7) | `python -m pytest -m "regression_p1 or <module>"`, then `python scripts/xray_sync.py import-junit test-results/junit.xml "<CR-KEY> \| automated \| <YYYY-MM-DD HH:MM> \| local"` |
+| QA cycle for a CR (step 7) | `python -m pytest -m "regression_p1 or <module>"`, then `python scripts/xray_sync.py import-junit latest "<CR-KEY> \| automated \| <YYYY-MM-DD HH:MM> \| local"`, then say `report results for <EXEC-KEY>` |
 | Before release | `python -m pytest -m "regression_p1 or regression_p2"` |
 | Hotfix / retest | `python -m pytest -m regression_p1` plus the Tests linked to the bug (`-k "<tc ids>"`) |
 
-Report and traces: `test-results/report.html`. Paste the pass/fail summary into the PR description when you merge.
+Report and traces: one folder per run, `test-results/<YYYY-MM-DD_HH-MM-SS>/` (`report_<ts>.html`, `junit_<ts>.xml`, `artifacts/`); `test-results/latest.txt` names the newest run and older runs are kept. Any run imported to Xray gets its own Confluence page under QA Reports > Test Results: say `report results for <EXEC-KEY>` (results-reporter renders it with `scripts/results_page.py`). Paste the pass/fail summary into the PR description when you merge.
 
 ## One-time set-up (manual mode)
 1. **Local environment:** Python 3.10+, `pip install -r requirements.txt`, `python -m playwright install chromium`,

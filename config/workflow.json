@@ -81,6 +81,8 @@
     "cr_parent_title": "Change Requests",
     "cr_page_label": "change-request",
     "reports_parent_title": "QA Reports",
+    "results_parent_title": "Test Results",
+    "results_page_title": "{scope} | {kind} | {date} | {env}",
     "cr_statuses": [
       "New",
       "Ready for Jira",
