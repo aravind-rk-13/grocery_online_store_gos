@@ -22,7 +22,8 @@ Choose the mode from the input: a CR issue key or CR-ID → CR mode; a PRD/requi
 ## PHASE 1 — READ THE SOURCE
 CR mode: read the CR issue. Extract ONLY: summary, description sections (CALL NOTES, WHAT THE CLIENT WANTS, OPEN QUESTIONS), priority, labels, the SOURCE PAGE link. Read the CR page only for "Change history" entries.
 PRD mode: search Confluence for the page by name; read requirements content only, skipping page-properties tables, change history, approvals and navigation footers.
-Both: read docs/context/app-map.md, known-risks.md, business-rules.md, domain-glossary.md.
+Both: read docs/context/app-map.md, known-risks.md, business-rules.md, domain-glossary.md, prototypes.md.
+Prototypes: read every docs/prototype_images/CR_<NNN>_image_*.png for the CR (docs/context/prototypes.md). They are the intended design, not the built app: use them to resolve layout, label, message and flow questions (cite the file), never as evidence that a feature exists or works. The app is in build (config/workflow.json app.console_usable = false): the BRD is a requirements reference, not the current state. No images, or a point they don't answer → an Ambiguity with a specific question.
 If the source is missing: say so and ask for the exact key or page title. If it is empty of requirements: report that and stop.
 
 ## PHASE 2 — CHECK FOR AN EXISTING ANALYSIS

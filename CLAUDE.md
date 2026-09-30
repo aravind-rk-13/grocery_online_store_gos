@@ -2,7 +2,9 @@
 
 ## What this is
 Python + Playwright (pytest-playwright) automation and the CODIFAi AI QA pipeline for the 7rmart
-Supermarket admin console (CodeIgniter/AdminLTE; no source code, treated as a black box).
+Supermarket admin console (CodeIgniter/AdminLTE; no source code). **The app is being built, not live:** the console is
+not usable until the PM releases a build (`app.console_usable` in config/workflow.json). Until then the sources are the
+CR page, CR brief, stories and the PM's **prototype images** (design only, not the real workflow): docs/context/prototypes.md.
 Jira project **GOS** with Xray; Confluence space **GOS**. All names (statuses, labels, Test Sets, modules) live in
 `config/workflow.json`; read it instead of guessing. Reference standard: "AI QA Programme - CODIFAI".
 
@@ -37,7 +39,9 @@ step, and the one-time set-up: docs/automation/rules.md. The headless pipeline (
 - **Modes.** Interactive (a person in Claude Code; the normal mode): ask all questions in ONE message, then wait.
   Headless (dormant; only when the launch prompt contains `MODE: headless`): never ask in chat. Post the question(s) as ONE comment on the
   named Jira issue starting with `[CODIFAi - input needed]`, write nothing else, and stop.
-- **Connectors.** Interactive: Atlassian MCP for Jira/Confluence, Playwright MCP for the live app.
+- **Prototypes first.** For every CR, read `docs/prototype_images/CR_<NNN>_image_*.png` (if any) to answer layout, label
+  and flow doubts; they are design, never proof that something exists. No image or no answer -> open question.
+- **Connectors.** Interactive: Atlassian MCP for Jira/Confluence; Playwright MCP for the app only when `app.console_usable` is true.
   Headless or MCP unavailable: `python scripts/atlassian_rest.py ...` (Jira/Confluence) with the bot token.
   Xray always through `python scripts/xray_sync.py ...` (there is no Xray MCP); it needs only XRAY_* in .env.
   Live console: the user logs in in the Playwright MCP browser when asked; agents never type or see credentials.
@@ -57,12 +61,13 @@ cases/<STORY>.json (approved cases) · cases/jira-map.json (CR/story/TC -> Jira 
 
 ## Read before any task
 @docs/context/domain-glossary.md @docs/context/business-rules.md @docs/context/testing-conventions.md
-@docs/context/data-rules.md @docs/context/app-map.md @docs/context/known-risks.md
+@docs/context/data-rules.md @docs/context/app-map.md @docs/context/known-risks.md @docs/context/prototypes.md
 docs/7rmart_supermarket_brd.md: read only the section a task names (4.x, 5.2, 8), never the whole file.
 
 ## Hard rules
 - Never write credentials, tokens or real personal data into any file, log, Jira issue, page or prompt. Placeholder tokens only: [VALID_ADMIN_USERNAME], [EXISTING_PENDING_USER_NAME].
-- Never click Verify / Delete / Block / Save / Send / toggle on the live console while exploring; it's a shared environment.
+- Never open or probe the console while `app.console_usable` is false. Once it is usable: never click Verify / Delete / Block / Save / Send / toggle while exploring; it's a shared environment.
+- Never commit or push to main. Every change (scripts, agents, docs, config) goes on a branch -> pull request -> a person approves and merges. Scripts get a PR only after lint + tests pass locally.
 - Locator order: data-testid -> static id -> role/name -> stable CSS/attribute -> relative XPath. Never absolute XPath.
 - No fixed waits (time.sleep, wait_for_timeout); use expect().
-- Cite a file path, page, ticket or live-DOM observation for every claim. Unknown -> [TO BE CONFIRMED].
+- Cite a file path, page, ticket, prototype image or live-DOM observation for every claim. Unknown -> [TO BE CONFIRMED].

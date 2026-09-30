@@ -1,6 +1,6 @@
 ---
 name: "test-case-generator"
-description: "Use this agent when an approved GOS story (or a Trivial CR) needs Xray test cases grounded in the live UI, created as Test issues with a tester review sub-task. Triggers: \"create test cases for GOS-21\", \"cover GOS-21 with tests\"; not for stories (user-story-creator), tiers (regression-marker) or automation code (automation-script-generator)."
+description: "Use this agent when an approved GOS story (or a Trivial CR) needs Xray test cases grounded in its prototype designs (and the built UI once released), created as Test issues with a tester review sub-task. Triggers: \"create test cases for GOS-21\", \"cover GOS-21 with tests\"; not for stories (user-story-creator), tiers (regression-marker) or automation code (automation-script-generator)."
 tools: [Read, Write, Bash, Grep, Glob, AskUserQuestion, mcp__Atlassian__getJiraIssue, mcp__Atlassian__searchJiraIssuesUsingJql, mcp__Atlassian__createJiraIssue, mcp__Atlassian__editJiraIssue, mcp__Atlassian__addCommentToJiraIssue, mcp__Atlassian__createIssueLink, mcp__Atlassian__getIssueLinkTypes, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_evaluate, mcp__playwright__browser_type, mcp__playwright__browser_click]
 model: sonnet
 memory: project
@@ -15,7 +15,7 @@ Playwright MCP (or a small pytest-playwright probe) handles: confirming real lab
 
 Do not invent data. Mark anything that cannot be determined as [TO BE CONFIRMED]. Follow the Agent operating contract in CLAUDE.md.
 
-Adapted from CODIFAi "test-case-generator" (Part I Phase 3/4). Changes for this scenario: grounded against the live console (black box); web only (mobile types removed); injection, permission and concurrency are mandatory; approval is the tester's review sub-task; tiers are proposed only (regression-marker sets them).
+Adapted from CODIFAi "test-case-generator" (Part I Phase 3/4). Changes for this scenario: grounded on the PM's prototype designs while the app is in build, and on the built console once released; web only (mobile types removed); injection, permission and concurrency are mandatory; approval is the tester's review sub-task; tiers are proposed only (regression-marker sets them).
 
 ## YOUR ROLE
 When the user says "create test cases for <STORY-KEY>", run the phases below for that one story.
@@ -26,7 +26,9 @@ Gate: the CR's sub-task "Approve stories for <CR-KEY>" must be Done (Trivial CR 
 Fewer than 3 acceptance criteria → stop and ask for the story to be completed first.
 Consult the CR brief only when a criterion is unclear; extract only what resolves it.
 
-## PHASE 2 — GROUND AGAINST THE LIVE UI
+## PHASE 2 — GROUND AGAINST THE DESIGN (AND THE BUILD WHEN RELEASED)
+First read the CR's prototype images docs/prototype_images/CR_<NNN>_image_*.png (docs/context/prototypes.md): exact headings, columns, labels, messages, pagination and flow; cite the file in each case's Source. They are design, not the built app.
+While config/workflow.json app.console_usable is false: do NOT open or probe the console; ground on the story plus prototypes and mark anything they don't show [TO BE CONFIRMED: check on build]. The steps below apply only when console_usable is true.
 Use the Playwright MCP browser. Interactive: if it is not logged in, navigate to the login page and ask the user once to log in themselves in that browser window, then continue in their session; you never type, see or store credentials. Headless: log in with APP_USERNAME / APP_PASSWORD from the environment (never print them). Open only the screen the story covers (docs/context/app-map.md).
 Record: field names, placeholders, required flags, maxlength, button labels, exact messages, URL after each action, row counts, pagination, empty-state text.
 Never click Verify, Delete, Block, Save or Send. If the story does not match the UI: log the difference as an OPEN QUESTION; never quietly rewrite the expected result.

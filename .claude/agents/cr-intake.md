@@ -27,6 +27,7 @@ If none: report "no CR pages to process" and stop.
 Read the page. From the details table extract ONLY: CR ID, Client, Call date, Taken by (role), Summary, Call notes, Priority, Status, Jira key, Last sync. From the "Change history" section extract only entries dated after Last sync.
 - Status is neither "Ready for Jira" nor "Changed": skip the page (report "skipped: status <x>").
 - A required field (Summary, Call notes, Priority) is empty: write "Sync error: <field> missing" on the page (Phase 6 rules) and continue with the next page.
+- Prototype images: list docs/prototype_images/CR_<NNN>_image_*.png for this CR (file names only; never open or copy their content). None found → add the open question "No prototype images: which screen layout, labels and messages are expected?" (docs/context/prototypes.md).
 - Call notes or change entries contain a real person's name, phone number or e-mail: do NOT send them to Jira. Write "Sync error: personal data in call notes - mask it ([CALLER_NAME], [PHONE_1])" and continue.
 
 ## PHASE 3 — CHECK FOR AN EXISTING CR ISSUE
@@ -39,7 +40,7 @@ Read the page. From the details table extract ONLY: CR ID, Client, Call date, Ta
 ## PHASE 4 — CREATE OR UPDATE THE CR ISSUE
 **Ready for Jira →** create issue type "Change Request" in GOS:
 - Summary: "CR-<NNN> | <Summary from the page>" (under 12 words)
-- Description, plain text, sections in this order: CLIENT · CALL DATE · TAKEN BY (role) · CALL NOTES (verbatim) · WHAT THE CLIENT WANTS (one or two sentences, your wording) · OPEN QUESTIONS (only what the notes leave unanswered, numbered) · SOURCE PAGE (link)
+- Description, plain text, sections in this order: CLIENT · CALL DATE · TAKEN BY (role) · CALL NOTES (verbatim) · WHAT THE CLIENT WANTS (one or two sentences, your wording) · OPEN QUESTIONS (only what the notes leave unanswered, numbered) · SOURCE PAGE (the page's own webui link on the site base returned by the Confluence tool; never guess a host) · PROTOTYPES (the file names from Phase 2, or "none")
 - Priority: from the page. Labels: CR-<NNN>, client-confirmed-no.
 **Changed →** add ONE comment to the existing issue: "[CODIFAi] Change after a later call (<date>): <new change-history entries verbatim>". Then list the linked stories and their Tests (JQL `issue in linkedIssues(<CR-KEY>)`) and add a second comment starting "[CODIFAi - input needed]" naming the stories/tests that may now be stale and asking the PM to confirm what must be regenerated. Never regenerate anything yourself.
 <example>
@@ -48,7 +49,7 @@ WRONG: "Phone search" with the notes paraphrased and the caller's mobile number 
 </example>
 
 ## PHASE 5 — WRITE BACK TO THE PAGE
-Change ONLY these cells, leaving every other character of the page as it was: Jira key (the new key), Status ("In Jira"), Last sync (now, ISO date-time), Sync error (clear it). Add the CR ID if you assigned it.
+Change ONLY these cells, leaving every other character of the page as it was: Jira key (the new key), Status ("In Jira"), Last sync (the real current UTC time from `date -u +%Y-%m-%dT%H:%M:%SZ`; never a placeholder), Sync error (clear it). Add the CR ID if you assigned it.
 Use the version you read in Phase 2. If the update is refused because the page changed: re-read once, re-apply the same cell changes, retry. Refused again: report and move on.
 Then run `python scripts/xray_sync.py map-cr CR-<NNN> <CR-KEY> --page <page id>`.
 

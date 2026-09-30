@@ -1,5 +1,12 @@
 {
   "_note": "Single source of names for every CODIFAi agent. Rename here, never inside an agent file. Values marked TO BE CONFIRMED must be checked on the live site once.",
+  "app": {
+    "_note": "App is being built, not live. Flip console_usable to true only when the PM releases a build for testing.",
+    "status": "in-build",
+    "console_usable": false,
+    "prototype_dir": "docs/prototype_images",
+    "prototype_pattern": "CR_{nnn}_image_{n}.png"
+  },
   "jira": {
     "project_key": "GOS",
     "issue_types": {

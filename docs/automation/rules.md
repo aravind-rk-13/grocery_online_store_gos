@@ -12,8 +12,8 @@ The headless pipeline (`.github/workflows/ai-pipeline.yml`) is kept dormant for 
 | 3 | "Approve CR brief" sub-task Done | `create stories for GOS-15` | user-story-creator | Stories linked to the CR, sub-task "Approve stories" | PM closes the sub-task |
 | 4 | "Approve stories" sub-task Done | `create test cases for GOS-21` (once per story) | test-case-generator | Xray Tests, Test Sets, sub-task "Review AI test cases" | Tester fixes/deletes cases, closes the sub-task |
 | 5 | "Review AI test cases" sub-task Done | `mark regression for GOS-21` | regression-marker | regression-p1/p2/p3 labels + scoring comments | QA Lead reviews |
-| 6 | Story -> Ready for QA (after the staging deploy) | `plan the QA run for GOS-21`, then `automate GOS-21` | execution-planner, automation-script-generator | Manual Test Execution "QA cycle n"; scripts PR | Testers execute; QA reviews the PR |
-| 7 | Scripts merged, QA cycle running | run locally (see "Automated test runs") | - | Automated Test Execution "<CR> \| automated \| ... \| local" | QA Lead chooses when |
+| 6 | Story -> Ready for QA (after the staging deploy) | `plan the QA run for GOS-21`, then `automate GOS-21` | execution-planner, automation-script-generator | Manual Test Execution "QA cycle n"; scripts on a branch + PR (after local tests pass) | Testers execute; QA reviews, approves and merges the PR |
+| 7 | Scripts PR approved and merged, QA cycle running | run locally (see "Automated test runs") | - | Automated Test Execution "<CR> \| automated \| ... \| local" | QA Lead chooses when |
 | 8 | Manual Test Execution -> Done | `report results for GOS-21` | results-reporter | Bugs, story comment, CR page Results + Status | QA Lead reads |
 | 9 | Before release | `release readiness for <version>` | bug-summary-creator | "Defect Summary" page, Go / Conditional Go / No Go | QA Lead + PO decide |
 | - | CR page Status = Changed | `sync CR pages` | cr-intake | Comment on the CR + "input needed" listing stale stories/tests | PM confirms what to regenerate |
@@ -46,7 +46,7 @@ Report and traces: `test-results/report.html`. Paste the pass/fail summary into 
 3. **Jira (GOS):** issue type "Change Request" (done), sub-task type "Sub-task" (name in config/workflow.json),
    status "Ready for QA", Components "Login" and "Verify Users" (plus one per new module).
 4. **Confluence:** docs/confluence/cr-page-template.md (done: "Change Requests", "QA Reports", "Template - Change Request").
-5. **GitHub:** repo aravind-rk-13/grocery_online_store_gos; protect `main` so changes arrive through pull requests.
+5. **GitHub:** repo aravind-rk-13/grocery_online_store_gos; protect `main` (Settings > Branches: require a pull request and 1 approval). Every change, scripts and project files alike, goes branch -> PR -> approval -> merge; nobody pushes to main directly.
    No secrets are needed in GitHub for manual mode.
 
 ## Claude scheduled task (optional)

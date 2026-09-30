@@ -21,7 +21,7 @@ Coverage label values: functional-ui, negative, boundary, edge, security, sessio
 | Stories | Jira stories under the CR | PM closes sub-task "Approve stories for <CR>" |
 | Test cases | Xray Tests of a story | Tester closes sub-task "Review AI test cases for <STORY>"; cases needing rework are fixed or deleted before closing |
 | Regression tiers | regression-p1/p2/p3 labels | QA Lead reviews the scoring comment; edits a label to override |
-| Scripts | Pull request | QA review + P1 suite and locator lint pass locally before merge (summary in the PR) |
+| Scripts | Pull request from a branch | Lint + new tests + P1 pass locally before the PR is opened (summary in the PR) -> QA reviews and approves -> QA merges; never pushed to main directly |
 | Release | Confluence release-readiness page | QA Lead + PO decide Go / No Go |
 
 ## Tiers (CODIFAi Phase 5)
@@ -34,7 +34,7 @@ Coverage label values: functional-ui, negative, boundary, edge, security, sessio
 - Every bug links to the failed Test ("is tested by" chain) and to its story; summary "<STORY> | <Module> | <what is wrong>".
 
 ## Automation
-- Definition of Done: passes locally (lint + the new tests + P1), no inline selectors, no fixed waits, module + coverage markers applied, PR reviewed, Test labelled automated.
+- Definition of Done: passes locally (lint + the new tests + P1), no inline selectors, no fixed waits, module + coverage markers applied, PR approved and merged by QA, then Test labelled automated.
 - Flaky policy: passes only on rerun -> quarantine (remove the regression_p1 marker) within 24 h, fix within a week.
 
 ## Test isolation and start screens (agreed 2026-09-30)

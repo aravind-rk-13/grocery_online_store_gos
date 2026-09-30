@@ -25,6 +25,7 @@ When the user says "create stories for <CR-KEY | CR-ID | page | BRD section>", r
 - SIZE is Trivial → stop: "Trivial CR: no stories; run test-case-generator on <CR-KEY>".
 - Requirement Analysis page (new build): Machine Handoff block first, then the sections needed for scope.
 - BRD section: read only that section plus 5.2 and 8 where they relate.
+- Prototypes: read docs/prototype_images/CR_<NNN>_image_*.png for the CR (docs/context/prototypes.md). Use them for exact labels, columns, messages and flow in the acceptance criteria and cite the file in SOURCE; they are design, not proof of behaviour. Features seen only in an image go to OUT OF SCOPE (future work). No image for a detail → [TO BE CONFIRMED] + OPEN QUESTION.
 Extract ONLY: FR lines (ID, module, priority, description), persona hints, business rules, limits, ambiguities affecting scope, source IDs.
 Never re-fetch the original call notes or the whole BRD; fetch more only when a specific FR lacks the detail needed for 3 acceptance criteria.
 

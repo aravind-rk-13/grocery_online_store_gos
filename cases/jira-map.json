@@ -11,6 +11,11 @@
         "GOS-18",
         "GOS-20"
       ]
+    },
+    "CR-002": {
+      "jira": "GOS-49",
+      "page_id": "11501569",
+      "stories": []
     }
   },
   "stories": {
