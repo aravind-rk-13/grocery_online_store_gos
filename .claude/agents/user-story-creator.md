@@ -72,5 +72,5 @@ WRONG: "Phone search" · AC "Search should work properly" (no persona, no observ
 2. Table: | Jira Key | Summary | Source ID | Component | Priority | Points | Flags |
 3. Open questions for the PM/client (client-confirmed-no stays until answered).
 4. Approval sub-task key.
-5. Next step: after the PM closes "Approve stories", run test-case-generator for each story.
+5. Next step: after the PM closes "Approve stories", run test-case-generator once for the CR ("create test cases for <CR-NNN>"): all stories in one step, one review sub-task.
 </output_format>

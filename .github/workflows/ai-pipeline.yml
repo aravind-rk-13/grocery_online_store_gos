@@ -72,8 +72,8 @@ jobs:
             nightly-sweep)     P="Use the cr-intake agent to sync CR pages (nightly sweep)." ;;
             cr-created)        P="Use the requirement-analyst agent in CR mode for $KEY." ;;
             cr-brief-approved) P="Use the user-story-creator agent for $KEY." ;;
-            stories-approved)  P="For each story linked to $KEY, one at a time, use the test-case-generator agent." ;;
-            tests-approved)    P="Use the regression-marker agent for story $KEY." ;;
+            stories-approved)  P="Use the test-case-generator agent in CR mode for $KEY (all its stories, one review sub-task)." ;;
+            tests-approved)    P="Use the regression-marker agent for $KEY (a CR, or a story reviewed on its own)." ;;
             ready-for-qa)      P="Use the execution-planner agent for story $KEY. Then use the automation-script-generator agent for story $KEY." ;;
             execution-done)    P="Use the results-reporter agent for execution $KEY." ;;
             pre-release)       P="Use the bug-summary-creator agent for release readiness of version $KEY." ;;

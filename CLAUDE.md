@@ -25,7 +25,7 @@ python scripts/xray_sync.py import-junit test-results/junit.xml "<CR-KEY> | auto
 | 1 | CR page (Confluence) -> Jira Change Request | cr-intake | - |
 | 2 | CR brief: impact, regression scope, questions (CR mode); PRD analysis (PRD mode) | requirement-analyst | PM closes "Approve CR brief" sub-task |
 | 3 | Stories under the CR | user-story-creator | PM closes "Approve stories" sub-task |
-| 4 | Xray Test cases per story (while devs build) | test-case-generator | Tester closes "Review AI test cases" sub-task |
+| 4 | Xray Test cases for all stories of the CR in one step (while devs build) | test-case-generator | Tester closes "Review AI test cases for <CR>" sub-task |
 | 5 | Regression tiers (regression-p1/p2/p3) | regression-marker | QA Lead reviews scores |
 | 6 | Sprint Test Plan | testplan-creator | QA Lead signs off |
 | 7 | Ready for QA -> manual Test Execution (+ affected regression) | execution-planner | Testers execute |
