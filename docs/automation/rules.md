@@ -10,8 +10,8 @@ The headless pipeline (`.github/workflows/ai-pipeline.yml`) is kept dormant for 
 | 1 | CR page Status = Ready for Jira | `send CR-001 to Jira` (or `sync CR pages`) | cr-intake | Jira Change Request, key written on the page | - |
 | 2 | CR issue exists | `analyse CR GOS-15` | requirement-analyst (CR mode) | "CR brief" page, size label, sub-task "Approve CR brief" | PM closes the sub-task |
 | 3 | "Approve CR brief" sub-task Done | `create stories for GOS-15` | user-story-creator | Stories linked to the CR, sub-task "Approve stories" | PM closes the sub-task |
-| 4 | "Approve stories" sub-task Done | `create test cases for GOS-21` (once per story) | test-case-generator | Xray Tests, Test Sets, sub-task "Review AI test cases" | Tester fixes/deletes cases, closes the sub-task |
-| 5 | "Review AI test cases" sub-task Done | `mark regression for GOS-21` | regression-marker | regression-p1/p2/p3 labels + scoring comments | QA Lead reviews |
+| 4 | "Approve stories" sub-task Done | `create test cases for CR-002` (all approved stories of the CR, one review sub-task on the CR) or `create test cases for GOS-21` (one story) | test-case-generator | Xray Tests, Test Sets, sub-task "Review AI test cases" | Tester fixes/deletes cases, closes the sub-task |
+| 5 | "Review AI test cases" sub-task Done | `mark regression for CR-002` or `mark regression for GOS-21` | regression-marker | regression-p1/p2/p3 labels + scoring comments | QA Lead reviews |
 | 6 | Story -> Ready for QA (after the staging deploy) | `plan the QA run for GOS-21`, then `automate GOS-21` | execution-planner, automation-script-generator | Manual Test Execution "QA cycle n"; scripts on a branch + PR (after local tests pass) | Testers execute; QA reviews, approves and merges the PR |
 | 7 | Scripts PR approved and merged, QA cycle running | run locally (see "Automated test runs") | - | Automated Test Execution "<CR> \| automated \| ... \| local" | QA Lead chooses when |
 | 8 | Manual Test Execution -> Done | `report results for GOS-21` | results-reporter | Bugs, story comment, CR page Results + Status | QA Lead reads |
@@ -84,6 +84,6 @@ Smart-value names follow Atlassian's documentation; check them in the rule edito
 | R2 | Jira | Work item created | type = Change Request | cr-created | `{{issue.key}}` |
 | R3 | Jira | Work item transitioned to Done | sub-task summary starts "Approve CR brief" | cr-brief-approved | `{{issue.parent.key}}` |
 | R4 | Jira | Work item transitioned to Done | sub-task summary starts "Approve stories" | stories-approved | `{{issue.parent.key}}` |
-| R5 | Jira | Work item transitioned to Done | sub-task summary starts "Review AI test cases" | tests-approved | `{{issue.parent.key}}` |
+| R5 | Jira | Work item transitioned to Done | sub-task summary starts "Review AI test cases" | tests-approved | `{{issue.parent.key}}` (a story, or the CR for a per-CR review) |
 | R6 | Jira | Work item transitioned to Ready for QA | type = Story | ready-for-qa | `{{issue.key}}` |
 | R7 | Jira | Work item transitioned to Done | type = Test Execution, summary contains "QA cycle" | execution-done | `{{issue.key}}` |

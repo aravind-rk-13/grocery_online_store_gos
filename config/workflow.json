@@ -34,7 +34,8 @@
     "approval_subtasks": {
       "cr_brief": "Approve CR brief for {cr}",
       "stories": "Approve stories for {cr}",
-      "test_cases": "Review AI test cases for {story}"
+      "test_cases": "Review AI test cases for {story}",
+      "test_cases_cr": "Review AI test cases for {cr}"
     },
     "input_needed_prefix": "[CODIFAi - input needed]",
     "bot_comment_prefix": "[CODIFAi]",

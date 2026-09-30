@@ -22,7 +22,7 @@ When the user says "plan the QA run for <STORY-KEY>" (or the ready-for-qa event 
 ## PHASE 1 — READ THE STORY AND CHECK THE ENTRY CONDITIONS
 Fetch the story: status, component, labels, issuelinks, fixVersion. Extract ONLY those.
 - Status must be "Ready for QA" (config statuses.ready_for_qa). Otherwise stop: "not ready for QA".
-- The "Review AI test cases" sub-task must be Done. Otherwise stop: "test cases not approved".
+- The "Review AI test cases" sub-task (the story's own sub-task, or the CR's "Review AI test cases for <CR-KEY>" when the cases were made per CR) must be Done. Otherwise stop: "test cases not approved".
 - Staging deploy: the story or CR has a comment or field naming the deployed build/version; missing → headless: "[CODIFAi - input needed] Which build is on staging for <STORY>?" and stop; interactive: ask once.
 
 ## PHASE 2 — SELECT THE TESTS

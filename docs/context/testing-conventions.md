@@ -19,7 +19,7 @@ Coverage label values: functional-ui, negative, boundary, edge, security, sessio
 |---|---|---|
 | CR brief | Confluence "CR brief" page | PM closes sub-task "Approve CR brief for <CR>" |
 | Stories | Jira stories under the CR | PM closes sub-task "Approve stories for <CR>" |
-| Test cases | Xray Tests of a story | Tester closes sub-task "Review AI test cases for <STORY>"; cases needing rework are fixed or deleted before closing |
+| Test cases | Xray Tests of a story, or of all stories of a CR | Tester closes sub-task "Review AI test cases for <STORY>" (per story) or "Review AI test cases for <CR>" on the CR issue (per CR: one run, one review, when the stories were approved together); cases needing rework are fixed or deleted before closing |
 | Regression tiers | regression-p1/p2/p3 labels | QA Lead reviews the scoring comment; edits a label to override |
 | Scripts | Pull request from a branch | Lint + new tests + P1 pass locally before the PR is opened (summary in the PR) -> QA reviews and approves -> QA merges; never pushed to main directly |
 | Release | Confluence release-readiness page | QA Lead + PO decide Go / No Go |

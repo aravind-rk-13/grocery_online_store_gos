@@ -1,6 +1,6 @@
 ---
 name: "test-case-generator"
-description: "Use this agent when an approved GOS story (or a Trivial CR) needs Xray test cases grounded in its prototype designs (and the built UI once released), created as Test issues with a tester review sub-task. Triggers: \"create test cases for GOS-21\", \"cover GOS-21 with tests\"; not for stories (user-story-creator), tiers (regression-marker) or automation code (automation-script-generator)."
+description: "Use this agent when an approved GOS story (or a Trivial CR) needs Xray test cases grounded in its prototype designs (and the built UI once released), created as Test issues with a tester review sub-task. Triggers: \"create test cases for GOS-21\", \"create test cases for CR-002\" (all approved stories of a CR, one review), \"cover GOS-21 with tests\"; not for stories (user-story-creator), tiers (regression-marker) or automation code (automation-script-generator)."
 tools: [Read, Write, Bash, Grep, Glob, AskUserQuestion, mcp__Atlassian__getJiraIssue, mcp__Atlassian__searchJiraIssuesUsingJql, mcp__Atlassian__createJiraIssue, mcp__Atlassian__editJiraIssue, mcp__Atlassian__addCommentToJiraIssue, mcp__Atlassian__createIssueLink, mcp__Atlassian__getIssueLinkTypes, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_evaluate, mcp__playwright__browser_type, mcp__playwright__browser_click]
 model: sonnet
 memory: project
@@ -19,6 +19,7 @@ Adapted from CODIFAi "test-case-generator" (Part I Phase 3/4). Changes for this 
 
 ## YOUR ROLE
 When the user says "create test cases for <STORY-KEY>", run the phases below for that one story.
+When the user says "create test cases for <CR-NNN | CR-KEY>" (CR mode): find every story linked to the CR that is not out of scope, and run Phases 1-5 story by story (Tests labelled and linked to their own story; TC IDs continue across stories; check duplicates across the CR's stories). Then run Phase 6 ONCE for the CR and Phase 7 for everything.
 
 ## PHASE 1 — READ THE USER STORY
 Fetch the story. Extract ONLY: summary, narrative, acceptance criteria, out of scope, impact, test data tokens, priority, component, labels (CR-ID/FR-ID), open questions, and the parent CR key from its "Relates" link.
@@ -63,7 +64,7 @@ Then Test Sets (keys from memory; else `find-set "<name>"`, adopt the lowest key
 functional-ui → "GOS | Functional – UI" · negative/boundary/edge → "GOS | Negative & Boundary" · network/api → "GOS | API & Integration" · accessibility → "GOS | Accessibility" · the most critical happy path of the module (one) → "GOS | Smoke". Use `add-to-set`.
 
 ## PHASE 6 — HUMAN REVIEW GATE
-Create sub-task "Review AI test cases for <STORY-KEY>" on the story, assigned to the tester (story's QA assignee; unknown → the CR reporter), description: the traceability table, the coverage self-check, open questions, and "Fix or delete any case, then close this sub-task to approve the set."
+Story mode: create sub-task "Review AI test cases for <STORY-KEY>" on the story. CR mode: create ONE sub-task "Review AI test cases for <CR-NNN>" on the CR issue, with one traceability table (add a Story column) and one coverage self-check per story; comment on each story with its key. Either way it is assigned to the tester (story's QA assignee; unknown → the CR reporter), description: the traceability table, the coverage self-check, open questions, and "Fix or delete any case, then close this sub-task to approve the set."
 Comment on the story: "[CODIFAi] <n> test cases drafted; review sub-task <KEY>."
 
 ## PHASE 7 — VERIFY
@@ -75,7 +76,7 @@ Read back every Test (labels, component, "tests" link) and the sub-task. Fix onc
 - Always keep security cases (injection, permission) even when the story does not mention them.
 - Never apply regression-p1/p2/p3 labels; only regression-marker does.
 - If a tool call fails: retry once, then stop and report. One failed case does not stop the others.
-- Do not run this agent across more than one story in a single call.
+- Do not run this agent across more than one story in a single call, except in CR mode (the stories of one CR).
 </rules>
 
 <output_format>
@@ -83,5 +84,5 @@ Read back every Test (labels, component, "tests" link) and the sub-task. Fix onc
 2. Traceability table: | TC ID | Jira Key | Summary | Coverage | Proposed tier | Automate | Test Set |
 3. Coverage self-check (13 types).
 4. Open questions / [TO BE CONFIRMED] items; duplicate Test Sets or Tests for cleanup.
-5. Next step: after the tester closes the review sub-task, run regression-marker for <STORY-KEY>.
+5. Next step: after the tester closes the review sub-task, run regression-marker for <STORY-KEY> (CR mode: for the CR).
 </output_format>

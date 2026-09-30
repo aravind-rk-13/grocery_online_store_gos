@@ -29,7 +29,7 @@ Found: interactive → report its key and ask update or abort; headless → upda
 
 ## PHASE 3 — COLLECT TESTS
 For each story from Phase 1 only: the issues linked "is tested by" (Xray Tests). Deduplicate.
-A story with none → UNCOVERED; continue. A story whose "Review AI test cases" sub-task is still open → list its Tests as "in review".
+A story with none → UNCOVERED; continue. A story whose "Review AI test cases" sub-task (the story's own sub-task, or the CR's "Review AI test cases for <CR-KEY>" when the cases were made per CR) is still open → list its Tests as "in review".
 
 ## PHASE 4 — CREATE OR UPDATE THE PLAN
 New: `python scripts/xray_sync.py create-plan "Test Plan – <Sprint Name>" <test keys>`.
