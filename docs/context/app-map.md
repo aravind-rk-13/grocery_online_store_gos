@@ -36,4 +36,5 @@ Never click data-changing controls (Verify, Delete, Block, Save, Send) while exp
 |---|---|---|---|
 | Login | Login | login | 25 [TO BE CONFIRMED] |
 | Verify Users | Verify Users | verify_users | 20 [TO BE CONFIRMED] |
+| Admin Users (incl. its sidebar entry) | Admin Users | admin_users | [TO BE CONFIRMED] (CR-001 / GOS-15) |
 Add a row (and register the marker in pytest.ini) before the first story for a new module.

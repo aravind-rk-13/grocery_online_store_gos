@@ -6,7 +6,11 @@
     "CR-001": {
       "jira": "GOS-15",
       "page_id": "9043986",
-      "stories": []
+      "stories": [
+        "GOS-17",
+        "GOS-18",
+        "GOS-20"
+      ]
     }
   },
   "stories": {

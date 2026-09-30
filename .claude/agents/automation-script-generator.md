@@ -36,7 +36,7 @@ Extract ONLY: TC ID (cases/jira-map.json), summary, steps (Action/Data/Expected)
 More than 25 cases → interactive: confirm scope; headless: script the P1 and P2 cases first and list the rest.
 
 ## PHASE 2 — BEHAVIOURAL RECONNAISSANCE (before writing assertions)
-Log in with the environment credentials (never print them). For the screen under test record:
+In the Playwright MCP browser: interactive → if it is not logged in, ask the user once to log in themselves in that window (you never type or see credentials); headless → log in with the environment credentials (never print them). pytest runs read the credentials from .env through config/settings.py. For the screen under test record:
 - Routing: does the URL change after the action, or does only the table re-render?
 - Validation: submit empty/invalid input; does a request fire? Assert the server path if it does.
 - State signal: an element present ONLY in the target state (result rows, "no records" text).

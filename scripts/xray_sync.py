@@ -1,7 +1,8 @@
-"""Jira/Xray helper used by the CODIFAi agents (no Xray MCP: Jira REST + Xray Cloud REST/GraphQL).
+"""Xray helper used by the CODIFAi agents (there is no Xray MCP: Xray Cloud REST/GraphQL).
 
 Commands (all print JSON or one result line; secrets are never printed):
-  link TEST-KEY STORY-KEY                     "Tests" link (Test tests Story), verified after creation
+  link TEST-KEY STORY-KEY                     "Tests" link via Jira REST (fallback only: agents create it with the
+                                              Atlassian MCP; this command needs JIRA_URL/JIRA_EMAIL/JIRA_API_TOKEN)
   steps TEST-KEY cases/<STORY>.json TC-ID [--replace]
                                               push structured Action/Data/Expected steps to an Xray Test
   map TC-ID TEST-KEY [--story STORY-KEY]      record TC ID -> Test key in cases/jira-map.json
@@ -18,7 +19,8 @@ Commands (all print JSON or one result line; secrets are never printed):
   import-junit test-results/junit.xml ["SUMMARY"]
                                               pytest results (local run) -> a new Xray Test Execution
 
-Reads JIRA_* / XRAY_* from .env (or the CI environment).
+Needs only XRAY_CLIENT_ID / XRAY_CLIENT_SECRET in .env (issue ids and Test Sets are looked up through Xray itself).
+The project key comes from config/workflow.json (or JIRA_PROJECT_KEY). JIRA_* is needed only by `link`.
 GraphQL shapes follow the Xray Cloud GraphQL API; confirm them once on your site during the dry run
 (docs/automation/rules.md, "Verify before relying on it").
 """
@@ -46,26 +48,35 @@ def _env(name: str) -> str:
     return value
 
 
+def _project_key() -> str:
+    """JIRA_PROJECT_KEY from the environment, else config/workflow.json (not a secret)."""
+    cfg = Path(__file__).resolve().parent.parent / "config" / "workflow.json"
+    return os.getenv("JIRA_PROJECT_KEY", "").strip() or json.loads(cfg.read_text(encoding="utf-8"))["jira"]["project_key"]
+
+
 def jira_session() -> tuple[requests.Session, str]:
+    """Jira REST with an API token - only the `link` command needs it (agents use the Atlassian MCP instead)."""
     s = requests.Session()
     s.auth = (_env("JIRA_EMAIL"), _env("JIRA_API_TOKEN"))
     s.headers.update({"Accept": "application/json", "Content-Type": "application/json"})
     return s, _env("JIRA_URL").rstrip("/")
 
 
+# One Xray GraphQL call covers every Xray issue type, so key -> id needs no Jira credentials.
+_IDS_QUERY = ('query($j:String){'
+              + ''.join(f'{alias}:{field}(jql:$j,limit:100){{results{{issueId jira(fields:["key"])}}}}'
+                        for alias, field in (("t", "getTests"), ("s", "getTestSets"),
+                                             ("p", "getTestPlans"), ("e", "getTestExecutions")))
+              + '}')
+
+
 def issue_ids(keys: list[str]) -> dict[str, str]:
-    """Jira key -> numeric issue id (Xray GraphQL works with ids)."""
-    s, base = jira_session()
-    r = s.post(f"{base}/rest/api/3/search/jql",
-               json={"jql": f"key in ({','.join(keys)})", "fields": ["summary"], "maxResults": len(keys)})
-    if r.status_code == 404:  # older sites
-        r = s.post(f"{base}/rest/api/3/search",
-                   json={"jql": f"key in ({','.join(keys)})", "fields": ["summary"], "maxResults": len(keys)})
-    r.raise_for_status()
-    found = {i["key"]: i["id"] for i in r.json().get("issues", [])}
+    """Jira key -> numeric issue id (Xray GraphQL works with ids). Keys must be Xray issues (Test, Test Set, ...)."""
+    data = gql(_IDS_QUERY, {"j": f"key in ({','.join(keys)})"})
+    found = {r["jira"]["key"]: r["issueId"] for part in data.values() for r in (part or {}).get("results", [])}
     missing = [k for k in keys if k not in found]
     if missing:
-        sys.exit(f"Not found in Jira: {', '.join(missing)}")
+        sys.exit(f"Not found as Xray issues: {', '.join(missing)}")
     return found
 
 
@@ -150,12 +161,10 @@ def steps(test_key: str, cases_file: str, tc_id: str, *flags: str) -> None:
 
 
 def find_set(name: str) -> None:
-    s, base = jira_session()
-    project = _env("JIRA_PROJECT_KEY")
-    jql = f'project = {project} AND issuetype = "Test Set" AND summary ~ "\\"{name}\\"" ORDER BY key ASC'
-    r = s.post(f"{base}/rest/api/3/search/jql", json={"jql": jql, "fields": ["summary"], "maxResults": 20})
-    r.raise_for_status()
-    exact = [i["key"] for i in r.json().get("issues", []) if i["fields"]["summary"].strip() == name]
+    jql = f'project = {_project_key()} AND summary ~ "\\"{name}\\""'
+    data = gql('query($j:String){getTestSets(jql:$j,limit:100){results{jira(fields:["key","summary"])}}}', {"j": jql})
+    sets = [r["jira"] for r in data["getTestSets"]["results"]]
+    exact = [s["key"] for s in sets if s.get("summary", "").strip() == name]
     exact.sort(key=lambda k: int(k.split("-")[1]))
     print(json.dumps({"name": name, "keys": exact, "adopt": exact[0] if exact else None}))
 
@@ -180,7 +189,7 @@ def create_plan(summary: str, *test_keys: str) -> None:
     data = gql('mutation($t:[String],$j:JSON!){createTestPlan(testIssueIds:$t,jira:$j)'
                '{testPlan{jira(fields:["key"])} warnings}}',
                {"t": list(ids.values()), "j": {"fields": {"summary": summary,
-                                                          "project": {"key": _env("JIRA_PROJECT_KEY")}}}})
+                                                          "project": {"key": _project_key()}}}})
     print(json.dumps({"testPlan": data["createTestPlan"]["testPlan"]["jira"]["key"], "tests": len(ids)}))
 
 
@@ -198,7 +207,7 @@ def create_execution(*args: str) -> None:
     data = gql('mutation($t:[String],$j:JSON!){createTestExecution(testIssueIds:$t,jira:$j)'
                '{testExecution{issueId jira(fields:["key"])} warnings}}',
                {"t": list(ids.values()), "j": {"fields": {"summary": summary,
-                                                          "project": {"key": _env("JIRA_PROJECT_KEY")}}}})
+                                                          "project": {"key": _project_key()}}}})
     ex = data["createTestExecution"]["testExecution"]
     if plan:
         pid = issue_ids([plan])[plan]
@@ -256,7 +265,7 @@ def default_summary(path: str) -> str:
 def import_junit(path: str, summary: str = "") -> None:
     """Create an Xray Test Execution from pytest's JUnit XML, with a readable summary (multipart endpoint)."""
     info = {"fields": {
-        "project": {"key": _env("JIRA_PROJECT_KEY")},
+        "project": {"key": _project_key()},
         "summary": summary or default_summary(path),
         "issuetype": {"name": "Test Execution"},
     }}

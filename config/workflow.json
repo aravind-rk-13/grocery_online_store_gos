@@ -139,6 +139,14 @@
       "business_criticality": 20,
       "integration_depth": null,
       "app_paths": []
+    },
+    "admin_users": {
+      "component": "Admin Users",
+      "marker": "admin_users",
+      "tc_prefix": "TC-ADMUSR",
+      "business_criticality": null,
+      "integration_depth": null,
+      "app_paths": []
     }
   },
   "github": {

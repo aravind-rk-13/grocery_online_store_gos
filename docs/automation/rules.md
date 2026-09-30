@@ -25,7 +25,7 @@ Hotfix: create the Jira issue directly (skip the page), run the P1 suite locally
 afterwards so the log stays complete.
 
 ## Automated test runs (local)
-Run from the repo root with `.env` filled in (APP_*, JIRA_*, XRAY_*):
+Run from the repo root with `.env` filled in (APP_* for pytest, XRAY_* for the import):
 
 | When | Command |
 |---|---|
@@ -39,7 +39,9 @@ Report and traces: `test-results/report.html`. Paste the pass/fail summary into 
 
 ## One-time set-up (manual mode)
 1. **Local environment:** Python 3.10+, `pip install -r requirements.txt`, `python -m playwright install chromium`,
-   `.env` from `.env.example` (APP_*, JIRA_*, CONFLUENCE_URL, XRAY_* for scripts/xray_sync.py).
+   `.env` from `.env.example`: XRAY_CLIENT_ID/SECRET (scripts/xray_sync.py) and APP_USERNAME/PASSWORD (pytest runs).
+   No Jira/Confluence token: agents use the Atlassian MCP. While exploring the console you log in yourself in the
+   Playwright MCP browser when an agent asks.
 2. **Claude Code connectors:** Atlassian MCP (Jira + Confluence) and Playwright MCP (`.mcp.json`).
 3. **Jira (GOS):** issue type "Change Request" (done), sub-task type "Sub-task" (name in config/workflow.json),
    status "Ready for QA", Components "Login" and "Verify Users" (plus one per new module).
@@ -53,7 +55,7 @@ In the Claude app, a daily scheduled task with this prompt, using the Atlassian 
 
 ## Verify before relying on it (dry run checklist)
 - xray_sync.py GraphQL calls (steps, add-to-set, create-execution, get-execution) on one throwaway Test.
-- The "Tests" link direction on one throwaway Test (`python scripts/xray_sync.py link TEST STORY`).
+- The "Tests" link direction on one throwaway Test (created by test-case-generator with the Atlassian MCP; the Test must show "tests <STORY>").
 - `python scripts/xray_sync.py import-junit` once with a local run.
 
 ## Dormant: automated flow (switch on later, step by step)

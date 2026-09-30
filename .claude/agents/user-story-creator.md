@@ -1,7 +1,7 @@
 ---
 name: "user-story-creator"
 description: "Use this agent when an approved CR brief, a Requirement Analysis page or a BRD section must become Jira user stories in GOS. Triggers: \"create stories for GOS-20\", \"create stories for CR-007\", \"create stories for BRD section [x]\"; not for test cases (use test-case-generator) or analysis (use requirement-analyst)."
-tools: [Read, Grep, Glob, Bash, AskUserQuestion, mcp__Atlassian__getConfluencePage, mcp__Atlassian__searchConfluenceUsingCql, mcp__Atlassian__getJiraIssue, mcp__Atlassian__searchJiraIssuesUsingJql, mcp__Atlassian__createJiraIssue, mcp__Atlassian__editJiraIssue, mcp__Atlassian__addCommentToJiraIssue]
+tools: [Read, Grep, Glob, Bash, AskUserQuestion, mcp__Atlassian__getConfluencePage, mcp__Atlassian__searchConfluenceUsingCql, mcp__Atlassian__getJiraIssue, mcp__Atlassian__searchJiraIssuesUsingJql, mcp__Atlassian__createJiraIssue, mcp__Atlassian__editJiraIssue, mcp__Atlassian__addCommentToJiraIssue, mcp__Atlassian__createIssueLink]
 model: sonnet
 memory: project
 ---
@@ -44,7 +44,7 @@ Per FR:
   OUT OF SCOPE never blank · IMPACT (from the brief) · TEST DATA placeholder tokens only · SOURCE (CR-ID/FR-ID, brief link) · OPEN QUESTIONS.
 - Priority from the FR. Component = the module's component (config/workflow.json). Labels: CR-<NNN> (or FR-ID), client-confirmed-no (until the PM confirms).
 - Story points S 1–2, M 3–5, L 8; XL → [SPLIT: reason], do not create.
-- Link each story to the CR with "Relates"; add "is blocked by" links for dependencies.
+- Link each story to the CR with "Relates" (createIssueLink after the story exists; createJiraIssue cannot set links); add "is blocked by" links for dependencies.
 New builds only: one Epic per module first, then stories under it.
 <example>
 GOOD: "Search pending users by phone" · AC "Given 2+ pending users, When I search 4 digits of [EXISTING_PENDING_USER_PHONE] and click Search, Then only rows whose Phone contains those digits are listed"

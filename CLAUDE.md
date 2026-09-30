@@ -39,7 +39,8 @@ step, and the one-time set-up: docs/automation/rules.md. The headless pipeline (
   named Jira issue starting with `[CODIFAi - input needed]`, write nothing else, and stop.
 - **Connectors.** Interactive: Atlassian MCP for Jira/Confluence, Playwright MCP for the live app.
   Headless or MCP unavailable: `python scripts/atlassian_rest.py ...` (Jira/Confluence) with the bot token.
-  Xray always through `python scripts/xray_sync.py ...` (there is no Xray MCP).
+  Xray always through `python scripts/xray_sync.py ...` (there is no Xray MCP); it needs only XRAY_* in .env.
+  Live console: the user logs in in the Playwright MCP browser when asked; agents never type or see credentials.
 - **Minimal fetch.** Request only the fields you use; discard the rest. Never re-fetch an issue to read a label
   already in context. Cache field ids and Test Set keys in agent memory; on a field/key error, rediscover once and retry.
 - **Existence check before every create; read-back after every write.** A write is done only when read back.
