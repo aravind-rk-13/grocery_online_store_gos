@@ -38,6 +38,18 @@ QA Reports > Test Results (one page per run, scripts/results_page.py).
 **Mode: manual.** A person starts every step in Claude Code, after the previous gate is closed. What to say for each
 step, and the one-time set-up: docs/automation/rules.md. The headless pipeline (.github/workflows/ai-pipeline.yml) is dormant.
 
+## Answering "what is the next step (in CR-NNN)?"
+Read the live state first (never from memory): the CR's sub-tasks (Approve CR brief / Approve stories / Review AI test
+cases), story statuses, Test count and tier labels, `app.console_usable`. One CR; none named and several open -> one line
+each. Max ~10 lines, every item with an owner and a Jira key, the next command verbatim:
+```
+CR-002 (GOS-49): step 5 of 10, <what is done>
+Do now in Jira: <owner>: <action> <KEY>          (1-3 lines)
+Pending / blocked: <item> (<owner or reason>)    (1-3 lines)
+Then: say `<exact command>` -> <agent> does <one line>
+Repo: <PRs to merge / files to commit>           (only if any)
+```
+
 ## Agent operating contract (every agent follows this; not repeated in agent files)
 - **Modes.** Interactive (a person in Claude Code; the normal mode): ask all questions in ONE message, then wait.
   Headless (dormant; only when the launch prompt contains `MODE: headless`): never ask in chat. Post the question(s) as ONE comment on the

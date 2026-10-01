@@ -24,6 +24,16 @@ the agents also check and stop if it is not.
 Hotfix: create the Jira issue directly (skip the page), run the P1 suite locally on its branch, then create the CR page
 afterwards so the log stays complete.
 
+Ask "what is the next step in CR-002?" at any point. Claude reads the live Jira state and answers in this short form
+(CLAUDE.md, "Answering what is the next step"):
+```
+CR-002 (GOS-49): step 5 of 10, regression tiers done
+Do now in Jira: QA Lead: review the tiers on the 36 Tests (P1 set GOS-93)
+Pending / blocked: execution and automation wait for a released build (console_usable = false)
+Then: say `create test plan for the current sprint` -> testplan-creator builds the sprint plan
+Repo: merge the open PRs; commit cases/jira-map.json and cases/GOS-51..53.json
+```
+
 ## Automated test runs (local)
 Run from the repo root with `.env` filled in (APP_* for pytest, XRAY_* for the import):
 
