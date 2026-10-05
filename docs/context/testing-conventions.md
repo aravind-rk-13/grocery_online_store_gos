@@ -25,7 +25,7 @@ Coverage label values: functional-ui, negative, boundary, edge, security, sessio
 | Release | Confluence release-readiness page | QA Lead + PO decide Go / No Go |
 
 ## Tiers (CODIFAi Phase 5)
-- Proposed by test-case-generator as a note only; SET by regression-marker (score out of 100: P1 >= 75, P2 50-74, P3 < 50) and reviewed by the QA Lead.
+- Proposed by test-case-generator per case; SET by regression-marker, which applies the proposed tier (standing rule, PM 2026-10-05) and records the module score (out of 100: P1 >= 75, P2 50-74, P3 < 50) for information only; reviewed by the QA Lead, who overrides by editing the label.
 - Code markers mirror the labels: @pytest.mark.regression_p1 / regression_p2 / regression_p3. No other tier marker names.
 - All runs are local (no CI). P1 = before every PR merge and after every staging deploy (target < 5 min for this suite; framework ceiling 30 min) · P2 = before release · P3 = on demand.
 

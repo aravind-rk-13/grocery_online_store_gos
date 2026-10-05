@@ -29,18 +29,19 @@ Extract ONLY: key, summary, component, labels, created date. Drop Tests created 
 1. Defect frequency: per module, `project = GOS AND issuetype = Bug AND component = "<component>" AND created >= -90d` → count.
 2. Code churn: `python scripts/churn.py --repo <app repo path from memory>` → points; no app repo or "unknown" → churn = [TO BE CONFIRMED].
 3. Business criticality and integration depth: from config/workflow.json modules; null → missing.
-Any missing value: interactive → ask the QA Lead ONCE for all missing values together; headless → "[CODIFAi - input needed]" comment on the story/CR listing them, then stop. Never default a missing score to 0.
+Any missing value: never default it to 0; record it as [TO BE CONFIRMED] in the comments. It does not stop the run, because the tier comes from the proposal (Phase 3).
 
 ## PHASE 3 — SCORE
 Per Test, 0–25 per criterion (config regression_scoring bands): business criticality · defect frequency (0 bugs=0, 1–2=8, 3–5=17, 6+=25) · integration depth (0=0, 1=8, 2–3=17, 4+=25) · code churn (0=0, 1–3=8, 4–10=17, 11+=25).
-Total out of 100 → P1 ≥ 75 · P2 50–74 · P3 < 50. The test-case-generator's proposed tier is a hint only; state when your tier differs.
+Total out of 100 → P1 ≥ 75 · P2 50–74 · P3 < 50.
+**Standing rule (PM, 2026-10-05): the tier is the test-case-generator's proposed tier** (`tier` in cases/<STORY>.json, or "Proposed tier" in the Test's NOTES). The module score above is computed and written in each comment for information only; it does not decide the tier, because all four inputs are per module and would give every Test of a module the same tier. No proposal for a Test → use the module-score tier and say so. The QA Lead overrides by editing the label.
 <example>
 GOOD: GOS-23 | total 79 → P1 | "Core admin search (25) with 4 bugs in 90 days (17), 2 dependencies (17), 12 commits (25 after QA Lead input)"
 WRONG: GOS-23 → P1 "important test" (no scores, no data)
 </example>
 
 ## PHASE 4 — APPLY
-Per Test: remove any other regression-p* label, add the new one (the only agent allowed to change tier labels); comment "[CODIFAi] Tier <P> (score N): criticality a, defects b, integration c, churn d. <rationale>."
+Per Test: remove any other regression-p* label, add the new one (the only agent allowed to change tier labels); comment "[CODIFAi] Tier <P> (proposed tier). Module score N: criticality a, defects b, integration c, churn d. <one-line reason from the proposal>."
 P1 Tests → `python scripts/xray_sync.py add-to-set <Regression P1 set key> <keys>` (find-set "GOS | Regression P1" if not in memory). A Test moved out of P1 → report it for manual removal from the set.
 Tests with the `automated` label: find their TC ID in cases/jira-map.json and edit the @pytest.mark.regression_p* decorator in tests/<module>/ to match. Interactive: show the diff and leave it uncommitted. Headless: commit on branch tiers/<scope> and open a PR (same Git steps as automation-script-generator).
 
