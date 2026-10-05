@@ -156,8 +156,8 @@
       "component": "Admin Users",
       "marker": "admin_users",
       "tc_prefix": "TC-ADMUSR",
-      "business_criticality": 20,
-      "integration_depth": 0,
+      "business_criticality": null,
+      "integration_depth": null,
       "app_paths": []
     }
   },
