@@ -141,7 +141,7 @@
       "marker": "login",
       "tc_prefix": "TC-LOGIN",
       "business_criticality": 25,
-      "integration_depth": null,
+      "integration_depth": 0,
       "app_paths": []
     },
     "verify_users": {
