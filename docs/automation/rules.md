@@ -90,7 +90,7 @@ Smart-value names follow Atlassian's documentation; check them in the rule edito
 
 | Rule | Product | Trigger | Condition | event_type | key |
 |---|---|---|---|---|---|
-| R1 | Confluence | Page updated, space GOS | page has label change-request | cr-page-updated | `{{page.id}}` |
+| R1 | Confluence | Page created or updated, space GOS | page is directly under Change Requests (parent 9338881) or has label change-request | cr-page-updated | `{{page.id}}` |
 | R2 | Jira | Work item created | type = Change Request | cr-created | `{{issue.key}}` |
 | R3 | Jira | Work item transitioned to Done | sub-task summary starts "Approve CR brief" | cr-brief-approved | `{{issue.parent.key}}` |
 | R4 | Jira | Work item transitioned to Done | sub-task summary starts "Approve stories" | stories-approved | `{{issue.parent.key}}` |

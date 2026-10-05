@@ -79,6 +79,8 @@
   "confluence": {
     "space_key": "GOS",
     "cr_parent_title": "Change Requests",
+    "cr_parent_id": "9338881",
+    "_cr_pages": "A CR page is any page directly under cr_parent_id (except the title CR Template). The label is optional (still accepted).",
     "cr_page_label": "change-request",
     "reports_parent_title": "QA Reports",
     "results_parent_title": "Test Results",

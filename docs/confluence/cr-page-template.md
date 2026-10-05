@@ -4,17 +4,16 @@ Create these once in Confluence (no agent creates them). cr-intake and results-r
 details table, so keep the field names exactly as written.
 
 ## 1. Parent pages
-- "Change Requests" - parent of every CR page. Add a **Page Properties Report** macro filtered on label `change-request`,
-  and `title != "CR Template"`, showing columns: CR ID, Client, Summary, Priority, Status, Jira key, Last sync. This is the PM's overview table.
+- "Change Requests" (page 9338881) - parent of every CR page. Every page directly under it is a CR page; no label is needed.
+  Its **Page Properties Report** macro uses CQL `parent = 9338881 and title != "CR Template"`, showing columns: CR ID, Client, Summary, Priority, Status, Jira key, Last sync. This is the PM's overview table.
 - "QA Reports" - parent of defect summaries (bug-summary-creator).
 
 ## 2. Page "CR Template" (child of "Change Requests", page 14057474)
-A normal page that everyone copies (... > Copy, parent = Change Requests, "Include labels" ticked); not a space template.
-It carries the label `change-request` so every copy inherits it; cr-intake and the overview report exclude it by
-title (`title != "CR Template"`). Its Status cell shows "New" plus an italic hint to change it to
+A normal page that everyone copies (... > Copy, parent = Change Requests); not a space template. No label is needed:
+cr-intake and the overview report find CR pages by location and exclude the template by title (`title != "CR Template"`). Its Status cell shows "New" plus an italic hint to change it to
 **Ready for Jira** when the CR is complete (cr-intake reads only the first line and overwrites the cell with "In Jira").
 Title pattern: `CR-<NNN> <short summary>` (leave CR ID empty if unsure; cr-intake assigns the next number).
-Page label: `change-request` (inherited from the template; check it is on the copy).
+Page label: none needed (the label `change-request` is still accepted, e.g. for a CR page kept elsewhere).
 
 ### Details table - inside a Page Properties macro
 | Field | Filled by | Allowed values / notes |
@@ -39,6 +38,6 @@ One dated entry per later call: `2026-10-02 - Client: partial match should work 
 |---|---|---|---|---|---|---|---|
 
 ## 3. What the PM does
-1. After a call: copy "CR Template" (labels included), fill the details, set Status = **Ready for Jira**.
+1. After a call: copy "CR Template" under Change Requests, fill the details, set Status = **Ready for Jira**.
 2. After a later call that changes the request: add a Change history entry, set Status = **Changed**.
 3. Approve the CR brief and the stories by closing the two Jira sub-tasks Claude creates.
