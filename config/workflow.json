@@ -3,7 +3,7 @@
   "app": {
     "_note": "App is being built, not live. Flip console_usable to true only when the PM releases a build for testing.",
     "status": "in-build",
-    "console_usable": false,
+    "console_usable": true,
     "prototype_dir": "docs/prototype_images",
     "prototype_pattern": "CR_{nnn}_image_{n}.png"
   },
