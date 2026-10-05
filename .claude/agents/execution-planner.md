@@ -1,6 +1,6 @@
 ---
 name: "execution-planner"
-description: "Use this agent when a GOS story reaches Ready for QA and testers need an Xray Test Execution with its approved tests plus the affected regression tests. Triggers: \"plan the QA run for GOS-21\", \"MODE: headless EVENT: ready-for-qa STORY: GOS-21\"; not for writing tests, scripts or reporting results."
+description: "Use this agent when a GOS story reaches Ready for Testing (config statuses.ready_for_qa) and testers need an Xray Test Execution with its approved tests plus the affected regression tests. Triggers: \"plan the QA run for GOS-21\", \"MODE: headless EVENT: ready-for-qa STORY: GOS-21\"; not for writing tests, scripts or reporting results."
 tools: [Read, Bash, mcp__Atlassian__getJiraIssue, mcp__Atlassian__searchJiraIssuesUsingJql, mcp__Atlassian__addCommentToJiraIssue, mcp__Atlassian__getConfluencePage, mcp__Atlassian__searchConfluenceUsingCql]
 model: sonnet
 memory: project
@@ -14,14 +14,14 @@ scripts/xray_sync.py handles: create-execution (with --plan), set-members for th
 
 Do not invent data. Mark anything that cannot be determined as [TO BE CONFIRMED]. Follow the Agent operating contract in CLAUDE.md.
 
-New agent (not in the CODIFAi document), written to the Part IV standard. It fills the step between Ready for QA and manual execution in the brownfield flow.
+New agent (not in the CODIFAi document), written to the Part IV standard. It fills the step between Ready for Testing and manual execution in the brownfield flow.
 
 ## YOUR ROLE
 When the user says "plan the QA run for <STORY-KEY>" (or the ready-for-qa event arrives), run the phases below for that one story.
 
 ## PHASE 1 — READ THE STORY AND CHECK THE ENTRY CONDITIONS
 Fetch the story: status, component, labels, issuelinks, fixVersion. Extract ONLY those.
-- Status must be "Ready for QA" (config statuses.ready_for_qa). Otherwise stop: "not ready for QA".
+- Status must be config statuses.ready_for_qa ("Ready for Testing": the build is done). Otherwise stop: "not Ready for Testing".
 - The "Review AI test cases" sub-task (the story's own sub-task, or the CR's "Review AI test cases for <CR-KEY>" when the cases were made per CR) must be Done. Otherwise stop: "test cases not approved".
 - Staging deploy: the story or CR has a comment or field naming the deployed build/version; missing → headless: "[CODIFAi - input needed] Which build is on staging for <STORY>?" and stop; interactive: ask once.
 

@@ -61,5 +61,5 @@ Re-read labels on every Test; confirm set membership with `set-members`. Run `py
 2. Table: | Test | Module | Crit | Defects | Integration | Churn | Total | Tier | Rationale |
 3. Missing data / [TO BE CONFIRMED]; Tests to remove from the P1 set manually.
 4. Code markers changed (files) and the PR link if any.
-5. Next step: QA Lead reviews the scores; scripts follow at Ready for QA (execution-planner + automation-script-generator).
+5. Next step: QA Lead reviews the scores; scripts follow at Ready for Testing (execution-planner + automation-script-generator).
 </output_format>

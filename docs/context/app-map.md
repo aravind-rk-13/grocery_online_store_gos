@@ -1,7 +1,7 @@
 # App map: 7rmart admin console (black box)
 Source: BRD section 10 (module inventory, walkthrough of 24 Aug 2026) unless marked "live DOM".
 Route and element details are filled in only from live exploration; everything else is [TO BE CONFIRMED].
-**The app is in build** (config/workflow.json app.console_usable = false): the Status column comes from the BRD walkthrough and is a requirements reference, not what is built today. Screen designs per CR: docs/context/prototypes.md.
+**The app is built story by story** (a story is built when its status is in config/workflow.json statuses.build_ready): the Status column comes from the BRD walkthrough and is a requirements reference, not what is built today. Screen designs per CR: docs/context/prototypes.md.
 Never click data-changing controls (Verify, Delete, Block, Save, Send) while exploring - shared environment.
 
 | # | Screen (menu path) | Route | Purpose | Status | Page object |

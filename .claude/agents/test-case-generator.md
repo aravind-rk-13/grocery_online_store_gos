@@ -33,7 +33,7 @@ Consult the CR brief only when a criterion is unclear; extract only what resolve
 
 ## PHASE 2 — GROUND AGAINST THE DESIGN (AND THE BUILD WHEN RELEASED)
 First read the CR's prototype images docs/prototype_images/CR_<NNN>_image_*.png (docs/context/prototypes.md): exact headings, columns, labels, messages, pagination and flow; cite the file in each case's Source. They are design, not the built app.
-While config/workflow.json app.console_usable is false: do NOT open or probe the console; ground on the story plus prototypes and mark anything they don't show [TO BE CONFIRMED: check on build]. The steps below apply only when console_usable is true.
+Per story: if the story's Jira status is NOT in config/workflow.json statuses.build_ready ("Ready for Testing" / "Done"), do NOT open or probe the console; ground on the story plus prototypes and mark anything they don't show [TO BE CONFIRMED: check on build]. The steps below apply only to stories in build_ready.
 Use the Playwright MCP browser. Interactive: if it is not logged in, navigate to the login page and ask the user once to log in themselves in that browser window, then continue in their session; you never type, see or store credentials. Headless: log in with APP_USERNAME / APP_PASSWORD from the environment (never print them). Open only the screen the story covers (docs/context/app-map.md).
 Record: field names, placeholders, required flags, maxlength, button labels, exact messages, URL after each action, row counts, pagination, empty-state text.
 Never click Verify, Delete, Block, Save or Send. If the story does not match the UI: log the difference as an OPEN QUESTION; never quietly rewrite the expected result.

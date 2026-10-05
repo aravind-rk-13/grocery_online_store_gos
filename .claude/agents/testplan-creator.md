@@ -41,7 +41,7 @@ Found → update it (add missing Tests only; never remove). More than one → st
 ## PHASE 4 — CREATE OR UPDATE THE PLAN
 New: `python scripts/xray_sync.py create-plan "CR-<NNN> | Test Plan" <test keys>`.
 Existing: `python scripts/xray_sync.py add-to-plan <PLAN> <missing keys>`.
-Comment on the plan (plain text): CR and summary, stories in scope, new Tests per story, regression Tests per module, uncovered stories, known constraints (app.console_usable false → "execution waits for a released build"; [TO BE CONFIRMED] items), open items.
+Comment on the plan (plain text): CR and summary, stories in scope, new Tests per story, regression Tests per module, uncovered stories, known constraints (stories not yet Ready for Testing → "execution waits until the story is Ready for Testing"; [TO BE CONFIRMED] items), open items.
 Comment on the CR issue: "[CODIFAi] Test Plan <KEY>: <a> new + <b> regression Tests (modules: …)."
 <example>
 GOOD: "CR-002 | Test Plan: stories GOS-51/52/53 · new 36 · regression 0 (scope: verify_users, no older Tests) · uncovered: none"
@@ -64,5 +64,5 @@ Read the plan back (issue exists, test count matches Phase 3). Mismatch → add 
 2. Table: | Story | Tests linked | Status (Covered / UNCOVERED / In review) |
 3. Regression: | Module | Tests | Keys |
 4. Uncovered stories (action before execution).
-5. Next step: uncovered → test-case-generator; story at Ready for QA (build released) → execution-planner creates the QA cycle executions inside this plan.
+5. Next step: uncovered → test-case-generator; story at Ready for Testing (build done) → execution-planner creates the QA cycle executions inside this plan.
 </output_format>

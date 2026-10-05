@@ -1,9 +1,8 @@
 {
   "_note": "Single source of names for every CODIFAi agent. Rename here, never inside an agent file. Values marked TO BE CONFIRMED must be checked on the live site once.",
   "app": {
-    "_note": "App is being built, not live. Flip console_usable to true only when the PM releases a build for testing.",
+    "_note": "App is being built story by story. Build readiness is per story: a story is built (its screens may be opened and tested) when its Jira status is in statuses.build_ready. There is no global switch.",
     "status": "in-build",
-    "console_usable": true,
     "prototype_dir": "docs/prototype_images",
     "prototype_pattern": "CR_{nnn}_image_{n}.png"
   },
@@ -22,7 +21,8 @@
     "statuses": {
       "todo": "To Do",
       "in_progress": "In Progress",
-      "ready_for_qa": "Ready for QA",
+      "ready_for_qa": "Ready for Testing",
+      "build_ready": ["Ready for Testing", "Done"],
       "done": "Done"
     },
     "link_types": {

@@ -11,7 +11,7 @@ Sources: BRD section 8 (walkthrough 24 Aug 2026) and Jira bug history. Update wh
 | /admin/list-feedback | Feedbacks | Same |
 
 ## Data and environment risks
-- The app is in build and the console is not usable yet (app.console_usable = false): no live grounding, probes or test runs until the PM releases a build. The hosting bot check also blocks automated browsers after repeated hits (2026-09-30): before step 8, ask for a test environment or an allow-listed IP.
+- The app is built story by story: no live grounding, probes or test runs for a story until its status is Ready for Testing (statuses.build_ready). The hosting bot check also blocks automated browsers after repeated hits (2026-09-30): before step 8, ask for a test environment or an allow-listed IP.
 - Prototype images (docs/prototype_images) are design only; never treat them as proof that a feature exists.
 - Shared environment with test/placeholder data (categories like "Test123", duplicate locations): never depend on exact counts; never create, edit or delete data in automated tests without an agreed cleanup.
 - 1,146 admin users, many auto-generated: permission tests must use the dedicated test account only.

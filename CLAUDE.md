@@ -2,8 +2,8 @@
 
 ## What this is
 Python + Playwright (pytest-playwright) automation and the CODIFAi AI QA pipeline for the 7rmart
-Supermarket admin console (CodeIgniter/AdminLTE; no source code). **The app is being built, not live:** the console is
-not usable until the PM releases a build (`app.console_usable` in config/workflow.json). Until then the sources are the
+Supermarket admin console (CodeIgniter/AdminLTE; no source code). **The app is being built, not live:** a story's screens are
+built only when its Jira status is in config/workflow.json statuses.build_ready ("Ready for Testing" or "Done"). Until then the sources for that story are the
 CR page, CR brief, stories and the PM's **prototype images** (design only, not the real workflow): docs/context/prototypes.md.
 Jira project **GOS** with Xray; Confluence space **GOS**. All names (statuses, labels, Test Sets, modules) live in
 `config/workflow.json`; read it instead of guessing. Reference standard: "AI QA Programme - CODIFAI".
@@ -31,7 +31,7 @@ QA Reports > Test Results (one page per run, scripts/results_page.py).
 | 4 | Xray Test cases for all stories of the CR in one step (while devs build) | test-case-generator | Tester closes "Review AI test cases for <CR>" sub-task |
 | 5 | Regression tiers (regression-p1/p2/p3) | regression-marker | QA Lead reviews scores |
 | 6 | Test Plan for the CR (its Tests + the brief's regression scope) | testplan-creator | QA Lead signs off |
-| 7 | Ready for QA -> manual Test Execution (+ affected regression) | execution-planner | Testers execute |
+| 7 | Story Ready for Testing (build done) -> manual Test Execution (+ affected regression) | execution-planner | Testers execute |
 | 8 | Scripts for approved automation candidates -> PR | automation-script-generator | QA reviews PR; P1 + lint pass locally |
 | 9 | Manual + automated results -> bugs, CR page status | results-reporter | QA Lead reads result |
 | 10 | Release readiness Go / Conditional Go / No Go | bug-summary-creator | QA Lead + PO decide |
@@ -40,7 +40,7 @@ step, and the one-time set-up: docs/automation/rules.md. The headless pipeline (
 
 ## Answering "what is the next step (in CR-NNN)?"
 Read the live state first (never from memory): the CR's sub-tasks (Approve CR brief / Approve stories / Review AI test
-cases), story statuses, Test count and tier labels, `app.console_usable`. One CR; none named and several open -> one line
+cases), story statuses (Ready for Testing = built), Test count and tier labels. One CR; none named and several open -> one line
 each. Max ~10 lines, every item with an owner and a Jira key, the next command verbatim:
 ```
 CR-002 (GOS-49): step 5 of 10, <what is done>
@@ -56,7 +56,7 @@ Repo: <PRs to merge / files to commit>           (only if any)
   named Jira issue starting with `[CODIFAi - input needed]`, write nothing else, and stop.
 - **Prototypes first.** For every CR, read `docs/prototype_images/CR_<NNN>_image_*.png` (if any) to answer layout, label
   and flow doubts; they are design, never proof that something exists. No image or no answer -> open question.
-- **Connectors.** Interactive: Atlassian MCP for Jira/Confluence; Playwright MCP for the app only when `app.console_usable` is true.
+- **Connectors.** Interactive: Atlassian MCP for Jira/Confluence; Playwright MCP for the app only for a story whose status is in statuses.build_ready.
   Headless or MCP unavailable: `python scripts/atlassian_rest.py ...` (Jira/Confluence) with the bot token.
   Xray always through `python scripts/xray_sync.py ...` (there is no Xray MCP); it needs only XRAY_* in .env.
   Live console: the user logs in in the Playwright MCP browser when asked; agents never type or see credentials.
@@ -81,7 +81,7 @@ docs/7rmart_supermarket_brd.md: read only the section a task names (4.x, 5.2, 8)
 
 ## Hard rules
 - Never write credentials, tokens or real personal data into any file, log, Jira issue, page or prompt. Placeholder tokens only: [VALID_ADMIN_USERNAME], [EXISTING_PENDING_USER_NAME].
-- Never open or probe the console while `app.console_usable` is false. Once it is usable: never click Verify / Delete / Block / Save / Send / toggle while exploring; it's a shared environment.
+- Never open or probe the console for a story that is not in statuses.build_ready (Ready for Testing / Done). When it is: never click Verify / Delete / Block / Save / Send / toggle while exploring; it's a shared environment.
 - Never commit or push to main. Every change (scripts, agents, docs, config) goes on a branch -> pull request -> a person approves and merges. Scripts get a PR only after lint + tests pass locally.
 - Locator order: data-testid -> static id -> role/name -> stable CSS/attribute -> relative XPath. Never absolute XPath.
 - No fixed waits (time.sleep, wait_for_timeout); use expect().

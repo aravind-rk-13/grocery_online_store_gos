@@ -31,7 +31,7 @@ Every locator is a class constant in the Object file with `# src: live DOM · <s
 ## PHASE 1 — FETCH THE APPROVED CASES
 Scope = a TC ID, a story key, or the P1 cases of a story. For a story: Tests linked "is tested by".
 Gate: the "Review AI test cases" sub-task (the story's own sub-task, or the CR's "Review AI test cases for <CR-KEY>" when the cases were made per CR) is Done. Not Done → stop.
-Gate: config/workflow.json app.console_usable is true (the PM has released a build for testing). False → stop: "build not released for testing; locators need the built app" (prototype images are design and give no locators).
+Gate: the story's Jira status is in config/workflow.json statuses.build_ready ("Ready for Testing" / "Done": its build is done). Otherwise stop: "story not Ready for Testing; locators need the built screen" (prototype images are design and give no locators).
 Keep only Tests whose NOTES say "Automate: yes" (or cases/<STORY>.json "automate": true) and that do not already carry the `automated` label.
 Extract ONLY: TC ID (cases/jira-map.json), summary, steps (Action/Data/Expected), preconditions, regression-p* label, coverage label, component, story key.
 More than 25 cases → interactive: confirm scope; headless: script the P1 and P2 cases first and list the rest.

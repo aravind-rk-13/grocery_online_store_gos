@@ -1,12 +1,11 @@
 # App status and prototype images
 
 ## The app is in build (not live)
-- The 7rmart admin console is being built. It is not a live product, and the console URL is **not usable yet**
-  (`config/workflow.json` app.console_usable = false).
-- While console_usable is false: never open, probe or log in to the console (no Playwright MCP, no probe scripts, no pytest
-  runs against it). The sources are the CR page, the CR brief, the stories and the prototype images.
-- The PM sets console_usable to true when a build is released for testing. Only then do agents check the real screens,
-  record locators and run tests.
+- The 7rmart admin console is being built story by story. It is not a live product.
+- A story is built when its Jira status is in `config/workflow.json` statuses.build_ready ("Ready for Testing" or
+  "Done"). Only then do agents open its screens, record locators and run tests for it.
+- For a story that is not built yet: never open, probe or log in to the console for it (no Playwright MCP, no probe
+  scripts, no pytest runs). The sources are the CR page, the CR brief, the story and the prototype images.
 - The BRD (docs/7rmart_supermarket_brd.md) is a requirements reference. It does not describe what is built today.
 
 ## Prototype images are design, not the real workflow
