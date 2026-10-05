@@ -53,6 +53,15 @@ class LoginPage(BasePage):
         expect(self.alert).to_contain_text(self.INVALID_MESSAGE)
         expect(self.page).to_have_url(re.compile(r"/admin/login/?$"))
 
+    def expect_shown_empty(self) -> None:
+        """Assert the login page is shown (URL + form) with empty Username and Password."""
+        expect(self.page).to_have_url(re.compile(r"/admin/login/?$"))
+        expect(self.username).to_be_visible()
+        expect(self.password).to_be_visible()
+        expect(self.sign_in).to_be_visible()
+        expect(self.username).to_have_value("")
+        expect(self.password).to_have_value("")
+
     def validation_message(self, which: str) -> str:
         """Return the browser's HTML5 validation message for 'username' or 'password'."""
         field = self.username if which == "username" else self.password

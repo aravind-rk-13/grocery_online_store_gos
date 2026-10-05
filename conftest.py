@@ -110,6 +110,19 @@ def admin_page(browser: Browser, browser_context_args, admin_storage_state) -> P
 
 
 @pytest.fixture
+def own_session_page(page: Page) -> Page:
+    """A page logged in through its OWN login in its own context (function-scoped `page`).
+
+    For tests that end the session (Logout): they must never use admin_storage_state / admin_page,
+    because logout would invalidate the shared session for later tests (GAP-CR003-04)."""
+    login = LoginPage(page).load()
+    username, password = credentials()
+    login.login(username, password)
+    DashboardPage(page).expect_loaded()
+    return page
+
+
+@pytest.fixture
 def login_page(page: Page) -> LoginPage:
     """A fresh, unauthenticated login page.
 
