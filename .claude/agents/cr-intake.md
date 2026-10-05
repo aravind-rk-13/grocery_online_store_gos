@@ -19,12 +19,13 @@ Do not invent data. Mark anything that cannot be determined as [TO BE CONFIRMED]
 When a page id is given, process that page. When asked to "sync CR pages" (or the nightly sweep), process every page returned by Phase 1. Run the phases below per page.
 
 ## PHASE 1 — FIND THE CR PAGES
-CQL: `space = "GOS" AND type = page AND label = "change-request"` (plus `AND lastmodified >= now("-2d")` for the nightly sweep).
+CQL: `space = "GOS" AND type = page AND label = "change-request" AND title != "CR Template"` (plus `AND lastmodified >= now("-2d")` for the nightly sweep).
 Extract ONLY: page id, title, version number.
 If none: report "no CR pages to process" and stop.
 
 ## PHASE 2 — READ THE PAGE DETAILS
 Read the page. From the details table extract ONLY: CR ID, Client, Call date, Taken by (role), Summary, Call notes, Priority, Status, Jira key, Last sync. From the "Change history" section extract only entries dated after Last sync.
+- Never process the page titled "CR Template" (it carries the label only so copies inherit it).
 - Status = the first line of the Status cell only (copies of "CR Template" keep an italic hint line below it; ignore that line).
 - Status is neither "Ready for Jira" nor "Changed": skip the page (report "skipped: status <x>").
 - A required field (Summary, Call notes, Priority) is empty: write "Sync error: <field> missing" on the page (Phase 6 rules) and continue with the next page.
