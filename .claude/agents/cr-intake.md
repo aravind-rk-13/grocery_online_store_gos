@@ -25,6 +25,7 @@ If none: report "no CR pages to process" and stop.
 
 ## PHASE 2 — READ THE PAGE DETAILS
 Read the page. From the details table extract ONLY: CR ID, Client, Call date, Taken by (role), Summary, Call notes, Priority, Status, Jira key, Last sync. From the "Change history" section extract only entries dated after Last sync.
+- Status = the first line of the Status cell only (copies of "CR Template" keep an italic hint line below it; ignore that line).
 - Status is neither "Ready for Jira" nor "Changed": skip the page (report "skipped: status <x>").
 - A required field (Summary, Call notes, Priority) is empty: write "Sync error: <field> missing" on the page (Phase 6 rules) and continue with the next page.
 - Prototype images: list docs/prototype_images/CR_<NNN>_image_*.png for this CR (file names only; never open or copy their content). None found → add the open question "No prototype images: which screen layout, labels and messages are expected?" (docs/context/prototypes.md).

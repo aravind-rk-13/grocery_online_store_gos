@@ -55,7 +55,7 @@ Report and traces: one folder per run, `test-results/<YYYY-MM-DD_HH-MM-SS>/` (`r
 2. **Claude Code connectors:** Atlassian MCP (Jira + Confluence) and Playwright MCP (`.mcp.json`).
 3. **Jira (GOS):** issue type "Change Request" (done), sub-task type "Sub-task" (name in config/workflow.json),
    status "Ready for QA", Components "Login" and "Verify Users" (plus one per new module).
-4. **Confluence:** docs/confluence/cr-page-template.md (done: "Change Requests", "QA Reports", "Template - Change Request").
+4. **Confluence:** docs/confluence/cr-page-template.md (done: "Change Requests", "QA Reports" with "Test Results", and the page "CR Template" that everyone copies).
 5. **GitHub:** repo aravind-rk-13/grocery_online_store_gos; protect `main` (Settings > Branches: require a pull request and 1 approval). Every change, scripts and project files alike, goes branch -> PR -> approval -> merge; nobody pushes to main directly.
    No secrets are needed in GitHub for manual mode.
 
