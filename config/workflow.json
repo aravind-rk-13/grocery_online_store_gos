@@ -104,6 +104,7 @@
       "regression_p1": "GOS | Regression P1",
       "backlog": "GOS | Backlog"
     },
+    "test_plan_summary": "{cr} | Test Plan",
     "execution_summary": {
       "manual": "{story} | QA cycle {n}",
       "automated": "{cr} | automated | {datetime} | local"

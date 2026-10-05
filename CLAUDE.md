@@ -30,7 +30,7 @@ QA Reports > Test Results (one page per run, scripts/results_page.py).
 | 3 | Stories under the CR | user-story-creator | PM closes "Approve stories" sub-task |
 | 4 | Xray Test cases for all stories of the CR in one step (while devs build) | test-case-generator | Tester closes "Review AI test cases for <CR>" sub-task |
 | 5 | Regression tiers (regression-p1/p2/p3) | regression-marker | QA Lead reviews scores |
-| 6 | Sprint Test Plan | testplan-creator | QA Lead signs off |
+| 6 | Test Plan for the CR (its Tests + the brief's regression scope) | testplan-creator | QA Lead signs off |
 | 7 | Ready for QA -> manual Test Execution (+ affected regression) | execution-planner | Testers execute |
 | 8 | Scripts for approved automation candidates -> PR | automation-script-generator | QA reviews PR; P1 + lint pass locally |
 | 9 | Manual + automated results -> bugs, CR page status | results-reporter | QA Lead reads result |

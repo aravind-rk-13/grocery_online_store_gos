@@ -12,12 +12,12 @@ The headless pipeline (`.github/workflows/ai-pipeline.yml`) is kept dormant for 
 | 3 | "Approve CR brief" sub-task Done | `create stories for GOS-15` | user-story-creator | Stories linked to the CR, sub-task "Approve stories" | PM closes the sub-task |
 | 4 | "Approve stories" sub-task Done | `create test cases for CR-002` (all approved stories of the CR in one step, one review sub-task "Review AI test cases for CR-002" on the CR; `create test cases for GOS-21` only for a story added later) | test-case-generator | Xray Tests, Test Sets, sub-task "Review AI test cases" | Tester fixes/deletes cases, closes the sub-task |
 | 5 | "Review AI test cases for CR-002" sub-task Done | `mark regression for CR-002` | regression-marker | regression-p1/p2/p3 labels + scoring comments | QA Lead reviews |
-| 6 | Story -> Ready for QA (after the staging deploy) | `plan the QA run for GOS-21`, then `automate GOS-21` | execution-planner, automation-script-generator | Manual Test Execution "QA cycle n"; scripts on a branch + PR (after local tests pass) | Testers execute; QA reviews, approves and merges the PR |
-| 7 | Scripts PR approved and merged, QA cycle running | run locally (see "Automated test runs") | - | Automated Test Execution "<CR> \| automated \| ... \| local" | QA Lead chooses when |
-| 8 | Manual Test Execution -> Done | `report results for GOS-21` | results-reporter | Bugs, story comment, CR page Results + Status | QA Lead reads |
-| 9 | Before release | `release readiness for <version>` | bug-summary-creator | "Defect Summary" page, Go / Conditional Go / No Go | QA Lead + PO decide |
+| 6 | Regression tiers set | `create test plan for CR-002` | testplan-creator | Xray Test Plan "CR-002 \| Test Plan": the CR's Tests + regression Tests of the brief's REGRESSION_SCOPE | QA Lead signs off |
+| 7 | Story -> Ready for QA (after the staging deploy) | `plan the QA run for GOS-21`, then `automate GOS-21` | execution-planner, automation-script-generator | Manual Test Execution "QA cycle n"; scripts on a branch + PR (after local tests pass) | Testers execute; QA reviews, approves and merges the PR |
+| 8 | Scripts PR approved and merged, QA cycle running | run locally (see "Automated test runs") | - | Automated Test Execution "<CR> \| automated \| ... \| local" | QA Lead chooses when |
+| 9 | Manual Test Execution -> Done | `report results for GOS-21` | results-reporter | Bugs, story comment, CR page Results + Status | QA Lead reads |
+| 10 | Before release | `release readiness for <version>` | bug-summary-creator | "Defect Summary" page, Go / Conditional Go / No Go | QA Lead + PO decide |
 | - | CR page Status = Changed | `sync CR pages` | cr-intake | Comment on the CR + "input needed" listing stale stories/tests | PM confirms what to regenerate |
-| - | Sprint start | `create test plan for the current sprint` | testplan-creator | Sprint Test Plan | QA Lead signs off |
 
 Keys above are examples (GOS-15 = the CR issue, GOS-21 = a story). Check a gate is closed before starting the next step;
 the agents also check and stop if it is not.
@@ -30,7 +30,7 @@ Ask "what is the next step in CR-002?" at any point. Claude reads the live Jira 
 CR-002 (GOS-49): step 5 of 10, regression tiers done
 Do now in Jira: QA Lead: review the tiers on the 36 Tests (P1 set GOS-93)
 Pending / blocked: execution and automation wait for a released build (console_usable = false)
-Then: say `create test plan for the current sprint` -> testplan-creator builds the sprint plan
+Then: say `create test plan for CR-002` -> testplan-creator builds "CR-002 | Test Plan"
 Repo: merge the open PRs; commit cases/jira-map.json and cases/GOS-51..53.json
 ```
 

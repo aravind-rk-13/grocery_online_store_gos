@@ -35,7 +35,7 @@ No REGRESSION_SCOPE line → use the story's own component and note it.
 JQL: `project = GOS AND issuetype = "Test Execution" AND summary ~ "\"<STORY> | QA cycle\""`. Next cycle number = highest + 1. A cycle still open (status not Done) with the same Tests → do not create; report it.
 
 ## PHASE 4 — CREATE THE EXECUTION
-`python scripts/xray_sync.py create-execution "<STORY> | QA cycle <n>" <keys> --plan <sprint Test Plan key if one exists>`.
+`python scripts/xray_sync.py create-execution "<STORY> | QA cycle <n>" <keys> --plan <the CR's Test Plan key>` (JQL summary "CR-<NNN> | Test Plan", config xray.test_plan_summary; none yet → create the execution without --plan and say "run create test plan for CR-<NNN>").
 Comment on the story: "[CODIFAi] QA cycle <n>: <EXEC-KEY> with <a> new + <b> regression tests (modules: …). Build: <build>. Run manual tests in Xray; automation runs separately."
 <example>
 GOOD: "GOS-21 | QA cycle 1" with 14 new + 6 regression (verify_users) Tests, build 2.4.1 noted
