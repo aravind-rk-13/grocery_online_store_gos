@@ -7,22 +7,23 @@ The headless pipeline (`.github/workflows/ai-pipeline.yml`) is kept dormant for 
 ## The flow (one Change Request)
 | # | Start it when | Say in Claude Code | Agent | Output | Human gate |
 |---|---|---|---|---|---|
-| 1 | CR page Status = Ready for Jira | `send CR-001 to Jira` (or `sync CR pages`) | cr-intake | Jira Change Request, key written on the page | - |
-| 2 | CR issue exists | `analyse CR GOS-15` | requirement-analyst (CR mode) | "CR brief" page, size label, sub-task "Approve CR brief" | PM closes the sub-task |
-| 3 | "Approve CR brief" sub-task Done | `create stories for GOS-15` | user-story-creator | Stories linked to the CR, sub-task "Approve stories" | PM closes the sub-task |
-| 4 | "Approve stories" sub-task Done | `create test cases for CR-002` (all approved stories of the CR in one step, one review sub-task "Review AI test cases for CR-002" on the CR; `create test cases for GOS-21` only for a story added later) | test-case-generator | Xray Tests, Test Sets, sub-task "Review AI test cases" | Tester fixes/deletes cases, closes the sub-task |
-| 5 | "Review AI test cases for CR-002" sub-task Done | `mark regression for CR-002` | regression-marker | regression-p1/p2/p3 labels + scoring comments | QA Lead reviews |
-| 6 | Regression tiers set | `create test plan for CR-002` | testplan-creator | Xray Test Plan "CR-002 \| Test Plan": the CR's Tests + regression Tests of the brief's REGRESSION_SCOPE | QA Lead signs off |
-| 7 | Story -> Ready for Testing (build done, staging deploy) | `plan the QA run for GOS-21`, then `automate GOS-21` | execution-planner, automation-script-generator | Manual Test Execution "QA cycle n"; scripts on a branch + PR (after local tests pass) | Testers execute; QA reviews, approves and merges the PR |
+| 1 | PM created a Jira "Change Request" (status To Do, description fields filled) | `analyse new CRs` | cr-intake (Mode A), then requirement-analyst (brief v1) | CR page "<Jira key> <short heading>" under Change Requests with the original request, "CONFLUENCE PAGE" block appended, brief v1 on the page, sub-task "Approve CR brief v1 for GOS-120" | PM reviews the page, closes the sub-task |
+| 3 | "Approve CR brief v1" sub-task Done | `create stories for GOS-120` | user-story-creator | "APPROVED CR BRIEF v1" block appended to the CR, CR -> In Progress, stories linked to the CR, sub-task "Approve stories" | PM closes the sub-task |
+| 4 | "Approve stories" sub-task Done | `create test cases for GOS-120` (all approved stories of the CR in one step, one review sub-task "Review AI test cases for GOS-120" on the CR; `create test cases for GOS-21` only for a story added later) | test-case-generator | Xray Tests, Test Sets, sub-task "Review AI test cases" | Tester fixes/deletes cases, closes the sub-task |
+| 5 | "Review AI test cases for GOS-120" sub-task Done | `mark regression for GOS-120` | regression-marker | regression-p1/p2/p3 labels + scoring comments | QA Lead reviews |
+| 6 | Regression tiers set | `create test plan for GOS-120` | testplan-creator | Xray Test Plan "GOS-120 \| Test Plan": the CR's Tests + regression Tests of the brief's REGRESSION_SCOPE | QA Lead signs off |
+| 7 | Story -> Ready for Testing (build done, staging deploy) | `plan the QA run for GOS-21`, then `automate GOS-21` | execution-planner, automation-script-generator | Manual Test Execution "QA cycle n" (first cycle moves the CR to Ready for Testing = "In QA"); scripts on a branch + PR (after local tests pass) | Testers execute; QA reviews, approves and merges the PR |
 | 8 | Scripts PR approved and merged, QA cycle running | run locally (see "Automated test runs") | - | Automated Test Execution "<CR> \| automated \| ... \| local" | QA Lead chooses when |
-| 9 | Manual Test Execution -> Done | `report results for GOS-21` | results-reporter | Bugs, story comment, CR page Results + Status | QA Lead reads |
-| 10 | Before release | `release readiness for <version>` | bug-summary-creator | "Defect Summary" page, Go / Conditional Go / No Go | QA Lead + PO decide |
-| - | CR page Status = Changed | `sync CR pages` | cr-intake | Comment on the CR + "input needed" listing stale stories/tests | PM confirms what to regenerate |
+| 9 | Manual Test Execution -> Done | `report results for GOS-21` | results-reporter | Bugs, story comment, CR page Results row, "Tested: Passed/Failed" comment + tested-passed/failed label on the Jira CR | QA Lead reads |
+| 10 | Before release | `release readiness for <version>` | bug-summary-creator | "Defect Summary" page, Go / Conditional Go / No Go | QA Lead + PO decide; a person moves released CRs to Done |
+| B1 | PM appended "CHANGE · YYYY-MM-DD" at the END of the CR description and set status Changed (CR was In Progress / Ready for Testing) | `process changed CRs` | cr-intake (Mode B), then requirement-analyst (brief v<n>) | Brief v<n> on the page (older versions kept), Change history row, affected stories/Tests on the page + comment, sub-task "Approve change v<n> for GOS-120" | PM closes the sub-task |
+| B2 | "Approve change v<n>" Done | any prompt for that CR (e.g. `create test cases for GOS-120`) | cr-intake (Mode F) runs first | "APPROVED CHANGE v<n>" block appended, CR -> In Progress, affected stories -> In Progress with a comment; then only the affected items are redone with the usual prompts | as for each step |
+| C | A change after the CR is Done | `process changed CRs` | cr-intake (Mode C) | Comment asking the PM for a NEW CR linked "relates to" the old one (never reopened); the new CR follows step 1 | PM creates the new CR |
 
-Keys above are examples (GOS-15 = the CR issue, GOS-21 = a story). Check a gate is closed before starting the next step;
+Keys above are examples (GOS-120 = a CR, whose Jira key is also its CR code; GOS-21 = a story; legacy CRs are named CR-001..CR-003). Step 2 (brief) is now part of step 1. The PM writes only in Jira; the Confluence CR page is created and maintained by Claude (docs/confluence/cr-page-template.md). The Jira description is append-only.
+CR statuses (config jira.cr_workflow): To Do (= "New") -> In Progress -> Ready for Testing (= "In QA") -> Done, plus Changed. Check a gate is closed before starting the next step;
 the agents also check and stop if it is not.
-Hotfix: create the Jira issue directly (skip the page), run the P1 suite locally on its branch, then create the CR page
-afterwards so the log stays complete.
+Hotfix: create the Jira CR as usual, say `analyse new CRs`, and run the P1 suite locally on its branch.
 
 Ask "what is the next step in CR-002?" at any point. Claude reads the live Jira state and answers in this short form
 (CLAUDE.md, "Answering what is the next step"):
@@ -61,7 +62,7 @@ Report and traces: one folder per run, `test-results/<YYYY-MM-DD_HH-MM-SS>/` (`r
 
 ## Claude scheduled task (optional)
 In the Claude app, a daily scheduled task with this prompt, using the Atlassian connector:
-"In the repo aravind-rk-13/grocery_online_store_gos, use the cr-intake agent to sync CR pages in Confluence space GOS (nightly sweep). Report created, updated and errored pages."
+"In the repo aravind-rk-13/grocery_online_store_gos, run 'analyse new CRs' and then 'process changed CRs' for Jira project GOS (cr-intake, then requirement-analyst per CR). Report new, changed, skipped (input needed) and errored CRs."
 
 ## Verify before relying on it (dry run checklist)
 - xray_sync.py GraphQL calls (steps, add-to-set, create-execution, get-execution) on one throwaway Test.
@@ -90,9 +91,10 @@ Smart-value names follow Atlassian's documentation; check them in the rule edito
 
 | Rule | Product | Trigger | Condition | event_type | key |
 |---|---|---|---|---|---|
-| R1 | Confluence | Page created or updated, space GOS | page is directly under Change Requests (parent 9338881) or has label change-request | cr-page-updated | `{{page.id}}` |
-| R2 | Jira | Work item created | type = Change Request | cr-created | `{{issue.key}}` |
+| R1 | Jira | Work item created | type = Change Request | cr-created | `{{issue.key}}` |
+| R2 | Jira | Work item transitioned to Changed | type = Change Request | cr-changed | `{{issue.key}}` |
 | R3 | Jira | Work item transitioned to Done | sub-task summary starts "Approve CR brief" | cr-brief-approved | `{{issue.parent.key}}` |
+| R3b | Jira | Work item transitioned to Done | sub-task summary starts "Approve change v" | change-approved | `{{issue.parent.key}}` |
 | R4 | Jira | Work item transitioned to Done | sub-task summary starts "Approve stories" | stories-approved | `{{issue.parent.key}}` |
 | R5 | Jira | Work item transitioned to Done | sub-task summary starts "Review AI test cases" | tests-approved | `{{issue.parent.key}}` (a story, or the CR for a per-CR review) |
 | R6 | Jira | Work item transitioned to Ready for Testing | type = Story | ready-for-qa | `{{issue.key}}` |

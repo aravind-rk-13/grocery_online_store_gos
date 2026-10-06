@@ -1,43 +1,80 @@
-# Confluence set-up: Change Request pages (space GOS)
+# Confluence: Change Request pages (space GOS) — Jira-first
 
-Create these once in Confluence (no agent creates them). cr-intake and results-reporter read and update the
-details table, so keep the field names exactly as written.
+Since 2026-10-06 the PM writes every Change Request **in Jira** (work type "Change Request", project GOS). The
+Confluence CR page is **created and maintained by Claude** (cr-intake + requirement-analyst). Nobody edits a CR page
+by hand. Status names come from config/workflow.json `jira.cr_workflow`.
 
 ## 1. Parent pages
-- "Change Requests" (page 9338881) - parent of every CR page. Every page directly under it is a CR page; no label is needed.
-  Its **Page Properties Report** macro uses CQL `parent = 9338881 and title != "CR Template"`, showing columns: CR ID, Client, Summary, Priority, Status, Jira key, Last sync. This is the PM's overview table.
-- "QA Reports" - parent of defect summaries (bug-summary-creator).
+- "Change Requests" (page 9338881) - parent of every CR page. Its **Page Properties Report** macro uses CQL
+  `parent = 9338881 and title != "CR Template"`, showing columns: CR ID, Client, Summary, Priority, Status, Jira key,
+  Last sync. This is the PM's overview table.
+- "QA Reports" - parent of defect summaries (bug-summary-creator) and "Test Results" (run pages, results-reporter).
+- "CR Template" (14057474) - the old copy-me page from the page-first flow. Kept for legacy CRs (CR-001..004);
+  no longer copied. Update or archive it during the dry run.
 
-## 2. Page "CR Template" (child of "Change Requests", page 14057474)
-A normal page that everyone copies (... > Copy, parent = Change Requests); not a space template. No label is needed:
-cr-intake and the overview report find CR pages by location and exclude the template by title (`title != "CR Template"`). Its Status cell shows "New" plus an italic hint to change it to
-**Ready for Jira** when the CR is complete (cr-intake reads only the first line and overwrites the cell with "In Jira").
-Title pattern: `CR-<NNN> <short summary>` (leave CR ID empty if unsure; cr-intake assigns the next number).
-Page label: none needed (the label `change-request` is still accepted, e.g. for a CR page kept elsewhere).
+## 2. The Jira CR (written by the PM)
+Description, plain text, these fields (config `jira.cr_workflow.required_fields`):
+Client · Call date (YYYY-MM-DD) · Taken by (role only, no names) · Summary (one line) · Call notes (as close to
+verbatim as possible; mask personal data as [CALLER_NAME], [PHONE_1], [EMAIL_1]) · Priority (or the Priority field).
+Status at creation: "To Do" (the GOS stand-in for "New").
 
-### Details table - inside a Page Properties macro
-| Field | Filled by | Allowed values / notes |
+Blocks are only ever **appended** to the end of the description (config `jira.cr_workflow.description_blocks`):
+| Block | Written by | When |
 |---|---|---|
-| CR ID | PM or cr-intake | CR-007 |
-| Client | PM | 7rmart |
-| Call date | PM | 2026-09-29 |
-| Taken by | PM | Role only (PM, Senior Dev) - no names or phone numbers |
-| Summary | PM | One line: what the client wants |
-| Call notes | PM | What was said, as close to verbatim as possible. Mask personal data: [CALLER_NAME], [PHONE_1] |
-| Priority | PM | High / Medium / Low |
-| Status | PM, then agents | New -> **Ready for Jira** (PM) -> In Jira -> In QA -> Tested: Passed / Tested: Failed -> Closed; **Changed** (PM, after a later call) |
-| Jira key | cr-intake | GOS-20 |
-| Last sync | cr-intake | ISO date-time |
-| Sync error | cr-intake | Empty when fine; says what the PM must fix |
+| `CONFLUENCE PAGE: <link>` | cr-intake | Intake (page created) |
+| `APPROVED CR BRIEF v1 (approved <date>, <link>)` + 3-5 summary lines | user-story-creator | First "create stories" after "Approve CR brief v1" is Done |
+| `CHANGE · <YYYY-MM-DD>` + the new request | **PM** | A change while the CR is In Progress / Ready for Testing; then status -> Changed |
+| `APPROVED CHANGE v<n> (approved <date>, <link>)` + 3-5 summary lines | cr-intake (Mode F) | First prompt for the CR after "Approve change v<n>" is Done |
+The PM's original text is never edited, reordered or removed.
 
-### Section "Change history"
-One dated entry per later call: `2026-10-02 - Client: partial match should work from 3 digits.` Then set Status to **Changed**.
+## 3. The CR page (created by Claude) - sections, in order (config `confluence.cr_page_sections`)
+Title: `<CR code> <short heading>` = the Jira key plus the CR's Jira summary, e.g. "GOS-120 Delete product from Manage Product". No CR-NNN number for new CRs. Parent: Change Requests.
 
-### Section "Results" (results-reporter adds rows; do not edit)
+### Details - inside a Page Properties macro (read by the overview report)
+| Field | Filled by | Notes |
+|---|---|---|
+| CR code | cr-intake | The Jira key, e.g. GOS-120 |
+| Client | cr-intake (from Jira) | |
+| Call date | cr-intake (from Jira) | |
+| Taken by | cr-intake (from Jira) | Role only |
+| Summary | cr-intake (from Jira) | |
+| Priority | cr-intake (from Jira) | |
+| Status | cr-intake / results-reporter | Mirrors the Jira CR status (To Do, In Progress, Changed, Ready for Testing, Done) |
+| Jira key | cr-intake | GOS-120 |
+| Last sync | the agent that last wrote the page | ISO date-time (real UTC) |
+
+### Original request
+The Jira description copied **verbatim** at intake, with "Copied from <CR key> on <date>; the Jira description is the
+source." Never edited afterwards. Prototype image file names (docs/prototype_images/<CR code>_image_*.png (legacy CRs: CR_<NNN>_image_*.png)) or
+"No prototype images".
+
+### Current brief
+"Brief v<n> – <date>" by requirement-analyst: summary panel, FR / NFR / Ambiguities / Gaps / Assumptions / Impact /
+Regression scope / Size, Next steps, and the **Machine Handoff** block (FR lines, `REGRESSION_SCOPE:`, `SIZE:`) that
+user-story-creator, testplan-creator and execution-planner read. v<n> starts with "What changed since v<n-1>".
+
+### Earlier versions
+Every previous brief, unchanged, newest first, each in a collapsible section "Brief v<k>".
+
+### Change history
+| Version | Date | Change (CHANGE blocks, verbatim) | Approval sub-task | Approved |
+|---|---|---|---|---|
+| v1 | intake date | Original request | Approve CR brief v1 for <CR code> | <date> |
+
+### Affected items
+Per version v<n> (n ≥ 2): affected and possibly-affected stories and Tests (from cr-intake Mode B).
+
+### Results (results-reporter adds rows; nobody edits by hand)
 | Date | Story | Executions | Passed | Failed | Not run | Bugs | Build |
 |---|---|---|---|---|---|---|---|
 
-## 3. What the PM does
-1. After a call: copy "CR Template" under Change Requests, fill the details, set Status = **Ready for Jira**.
-2. After a later call that changes the request: add a Change history entry, set Status = **Changed**.
-3. Approve the CR brief and the stories by closing the two Jira sub-tasks Claude creates.
+## 4. What the PM does
+1. After a call: create the Jira CR (section 2), status To Do. Then the tester says `analyse new CRs`.
+2. Review the CR page; close "Approve CR brief v1 for <CR code>".
+3. A change while work is in progress: append `CHANGE · <YYYY-MM-DD>` + the new request at the END of the
+   description, set status **Changed**. The tester says `process changed CRs`. Close "Approve change v<n>".
+4. A change after the CR is Done: create a **new** CR and link it "relates to" the old one.
+5. After the release decision: move released CRs to Done.
+
+Legacy CRs CR-001..003 were created page-first; they keep their pages and child brief pages and are never rewritten
+(legacy freeze). The page-only CR-004 (no Jira CR yet) keeps its number; a new Jira CR gets the next free number.

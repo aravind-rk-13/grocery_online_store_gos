@@ -1,10 +1,10 @@
 # Testing conventions
 
 ## IDs and names
-- Change Request: Confluence page "CR-<NNN> <summary>" in space GOS -> Jira issue type Change Request (GOS-n), label CR-<NNN>.
-- Story: GOS-n, linked to its CR ("relates to"), labels: CR-<NNN> (or FR-ID for BRD work) and the module component.
+- Change Request (Jira-first, since 2026-10-06): the PM creates Jira issue type Change Request (GOS-n, status To Do); its Jira key is the CR code (e.g. GOS-120); cr-intake creates the Confluence page "GOS-120 <short heading>" under Change Requests. The description is append-only. Legacy CR-001..003 were page-first.
+- Story: GOS-n, linked to its CR ("relates to"), labels: the CR code (e.g. GOS-120; legacy CRs: CR-<NNN>) or FR-ID for BRD work, and the module component.
 - Test case: TC-<MODULE>-<NN> (TC-LOGIN-01, TC-USRSRCH-01). Xray Test summary "<STORY> | <Module> | <coverage> | <scenario>".
-- Test labels (CODIFAi Phase 4): <STORY-KEY>, source ID (FR-xxx or CR-NNN), coverage type. Added later: regression-p1/p2/p3 (regression-marker only), automated (automation-script-generator only).
+- Test labels (CODIFAi Phase 4): <STORY-KEY>, source ID (FR-xxx or the CR code, e.g. GOS-120; legacy CR-NNN), coverage type. Added later: regression-p1/p2/p3 (regression-marker only), automated (automation-script-generator only).
 - Legacy freeze: issues created before the CODIFAi cutover (e.g. GOS-2..13, label test-for-GOS-1) are never relabelled or re-scored.
 
 ## Every test case
@@ -17,7 +17,8 @@ Coverage label values: functional-ui, negative, boundary, edge, security, sessio
 ## Approval gates (who approves what)
 | Gate | Artefact | How it is recorded |
 |---|---|---|
-| CR brief | Confluence "CR brief" page | PM closes sub-task "Approve CR brief for <CR>" |
+| CR brief | Brief v1 in the CR page's "Current brief" section (legacy: child page "CR brief") | PM closes sub-task "Approve CR brief v1 for <CR>" (legacy: "Approve CR brief for <CR>") |
+| CR change | Brief v<n> on the CR page + affected items | PM closes sub-task "Approve change v<n> for <CR>" |
 | Stories | Jira stories under the CR | PM closes sub-task "Approve stories for <CR>" |
 | Test cases | Xray Tests of all stories of a CR (made in one step, because the stories are approved together) | Tester closes sub-task "Review AI test cases for <CR>" on the CR issue; a story added after that review gets its own "Review AI test cases for <STORY>"; cases needing rework are fixed or deleted before closing |
 | Regression tiers | regression-p1/p2/p3 labels | QA Lead reviews the scoring comment; edits a label to override |

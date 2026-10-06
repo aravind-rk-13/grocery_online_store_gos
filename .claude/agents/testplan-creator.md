@@ -17,21 +17,21 @@ Do not invent data. Mark anything that cannot be determined as [TO BE CONFIRMED]
 Adapted from CODIFAi "testplan-creator" (Part I Phase 4 "Test Plan"). Changes: scoped to one Change Request instead of a sprint (all work in this project arrives as CRs); Xray operations go through scripts/xray_sync.py (no Xray MCP); modules come from TC prefixes because GOS has no Jira components.
 
 ## YOUR ROLE
-When the user says "create test plan for <CR-NNN | CR-KEY>" (or "update the test plan for ..."), run the phases below for that one CR.
+When the user says "create test plan for <CR code>" (or "update the test plan for ..."), run the phases below for that one CR.
 
 ## PHASE 1 — READ THE CR
-Find the CR issue (cases/jira-map.json crs, or JQL `project = GOS AND issuetype = "Change Request" AND labels = "CR-<NNN>"`). Extract ONLY: key, summary, labels.
+Find the CR issue (cases/jira-map.json crs, or JQL `project = GOS AND issuetype = "Change Request" AND labels = "<CR code>"`). Extract ONLY: key, summary, labels.
 Stories: issues of type Story linked "relates to" the CR (cross-check jira-map crs.<CR>.stories; report differences). Extract ONLY key, summary, status.
-Gate: the CR's sub-task "Review AI test cases for <CR-NNN>" is Done (stories reviewed on their own: their "Review AI test cases for <STORY>" sub-tasks). Not Done → stop: "test cases not approved yet".
+Gate: the CR's sub-task "Review AI test cases for <CR code>" is Done (stories reviewed on their own: their "Review AI test cases for <STORY>" sub-tasks). Not Done → stop: "test cases not approved yet".
 No stories (Trivial CR) → the CR's own linked Tests are the scope.
 
 ## PHASE 2 — CHECK FOR AN EXISTING PLAN
-JQL: `project = GOS AND issuetype = "Test Plan" AND summary ~ "\"CR-<NNN> | Test Plan\""` (name from config xray.test_plan_summary).
+JQL: `project = GOS AND issuetype = "Test Plan" AND summary ~ "\"<CR code> | Test Plan\""` (name from config xray.test_plan_summary).
 Found → update it (add missing Tests only; never remove). More than one → stop and report the keys for cleanup.
 
 ## PHASE 3 — COLLECT TESTS
 1. CR Tests: for each story, the Tests linked "is tested by". Deduplicate. A story with none → UNCOVERED; continue.
-2. Regression Tests: open the "CR brief" child page of the CR page and read the Machine Handoff line `REGRESSION_SCOPE: <modules>`.
+2. Regression Tests: open the CR brief: the "Current brief" section of the CR page (Jira-first CRs; page link in the CR description block "CONFLUENCE PAGE") or, for legacy CRs CR-001..003, the "CR brief – CR-<NNN>" child page and read the Machine Handoff line `REGRESSION_SCOPE: <modules>`.
    For each module: its `tc_prefix` in config/workflow.json modules → the Jira keys of that prefix in cases/jira-map.json "tests" →
    keep those labelled regression-p1 or regression-p2, plus legacy Tests of that prefix (created before labels.legacy_freeze_before; they carry no tier label).
    Exclude Tests already in step 1 and Tests parked in "GOS | Backlog".
@@ -39,7 +39,7 @@ Found → update it (add missing Tests only; never remove). More than one → st
 3. Nothing else: no Tests of other CRs or modules.
 
 ## PHASE 4 — CREATE OR UPDATE THE PLAN
-New: `python scripts/xray_sync.py create-plan "CR-<NNN> | Test Plan" <test keys>`.
+New: `python scripts/xray_sync.py create-plan "<CR code> | Test Plan" <test keys>`.
 Existing: `python scripts/xray_sync.py add-to-plan <PLAN> <missing keys>`.
 Comment on the plan (plain text): CR and summary, stories in scope, new Tests per story, regression Tests per module, uncovered stories, known constraints (stories not yet Ready for Testing → "execution waits until the story is Ready for Testing"; [TO BE CONFIRMED] items), open items.
 Comment on the CR issue: "[CODIFAi] Test Plan <KEY>: <a> new + <b> regression Tests (modules: …)."
@@ -52,7 +52,7 @@ WRONG: "Plan created with all tests" (no counts, no scope)
 Read the plan back (issue exists, test count matches Phase 3). Mismatch → add the missing keys once, else report.
 
 <rules>
-- One plan per CR, named "CR-<NNN> | Test Plan". Always check for an existing plan before creating one.
+- One plan per CR, named "<CR code> | Test Plan". Always check for an existing plan before creating one.
 - Never include a Test outside the CR's stories or the brief's regression scope.
 - Always list uncovered stories; never skip them silently.
 - Never relabel or re-score Tests (legacy Tests are included, not changed).

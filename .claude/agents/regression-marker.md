@@ -22,7 +22,7 @@ When the user says "mark regression for <STORY-KEY | CR-KEY | module>", run the 
 
 ## PHASE 1 — COLLECT THE TESTS
 Story: `issue in linkedIssues(<STORY>, "is tested by")`. CR: the same for each story linked to the CR. Module: `project = GOS AND issuetype = Test AND component = "<component>"`.
-Gate for a CR: its "Review AI test cases for <CR-NNN>" sub-task is Done (a story added later: its own sub-task). Gate for a story: its "Review AI test cases" sub-task (the story's own sub-task, or the CR's "Review AI test cases for <CR-KEY>" when the cases were made per CR) is Done. Not Done → stop.
+Gate for a CR: its "Review AI test cases for <CR code>" sub-task is Done (a story added later: its own sub-task). Gate for a story: its "Review AI test cases" sub-task (the story's own sub-task, or the CR's "Review AI test cases for <CR-KEY>" when the cases were made per CR) is Done. Not Done → stop.
 Extract ONLY: key, summary, component, labels, created date. Drop Tests created before the legacy-freeze date unless the user named them.
 
 ## PHASE 2 — GATHER THE DATA

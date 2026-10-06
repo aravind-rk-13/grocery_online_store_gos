@@ -4,7 +4,8 @@
     "_note": "App is being built story by story. Build readiness is per story: a story is built (its screens may be opened and tested) when its Jira status is in statuses.build_ready. There is no global switch.",
     "status": "in-build",
     "prototype_dir": "docs/prototype_images",
-    "prototype_pattern": "CR_{nnn}_image_{n}.png"
+    "prototype_pattern": "{cr}_image_{n}.png",
+    "_prototype_note": "{cr} = the CR code (Jira key, e.g. GOS-120_image_1.png). Legacy CRs: CR_{nnn}_image_{n}.png."
   },
   "jira": {
     "project_key": "GOS",
@@ -22,7 +23,10 @@
       "todo": "To Do",
       "in_progress": "In Progress",
       "ready_for_qa": "Ready for Testing",
-      "build_ready": ["Ready for Testing", "Done"],
+      "build_ready": [
+        "Ready for Testing",
+        "Done"
+      ],
       "done": "Done"
     },
     "link_types": {
@@ -35,12 +39,43 @@
       "cr_brief": "Approve CR brief for {cr}",
       "stories": "Approve stories for {cr}",
       "test_cases": "Review AI test cases for {story}",
-      "test_cases_cr": "Review AI test cases for {cr}"
+      "test_cases_cr": "Review AI test cases for {cr}",
+      "cr_brief_v": "Approve CR brief v{n} for {cr}",
+      "change_v": "Approve change v{n} for {cr}",
+      "_legacy": "cr_brief ('Approve CR brief for {cr}') is the pre-2026-10-06 title; gates accept it for legacy CRs (CR-001..003)."
     },
     "input_needed_prefix": "[CODIFAi - input needed]",
     "bot_comment_prefix": "[CODIFAi]",
     "severity_field": null,
-    "_severity_note": "If the site has a Severity custom field, put its field id in severity_field; agents then use it instead of the severity-sN labels."
+    "_severity_note": "If the site has a Severity custom field, put its field id in severity_field; agents then use it instead of the severity-sN labels.",
+    "cr_workflow": {
+      "_note": "Jira-first Change Requests (2026-10-06). GOS has no 'New' or 'In QA' status: mapped to existing ones (PM decision). Rename here only.",
+      "code": "The CR code is the Jira key of the Change Request (e.g. GOS-120). Used in page titles, sub-tasks, Test Plan names, labels on stories/Tests, FR IDs (FR-GOS120-01) and jira-map. Legacy CRs keep CR-NNN.",
+      "new": "To Do",
+      "in_progress": "In Progress",
+      "changed": "Changed",
+      "in_qa": "Ready for Testing",
+      "done": "Done",
+      "required_fields": [
+        "Client",
+        "Call date",
+        "Taken by",
+        "Summary",
+        "Call notes",
+        "Priority"
+      ],
+      "description_blocks": {
+        "_note": "Blocks are only ever APPENDED to the end of the CR description (Atlassian document format); the PM's original text is never rewritten.",
+        "page_link": "CONFLUENCE PAGE: {link}",
+        "approved_brief": "APPROVED CR BRIEF v1 (approved {date}, {link})",
+        "change": "CHANGE · {date}",
+        "approved_change": "APPROVED CHANGE v{n} (approved {date}, {link})"
+      },
+      "result_labels": {
+        "passed": "tested-passed",
+        "failed": "tested-failed"
+      }
+    }
   },
   "labels": {
     "cr_id_prefix": "CR-",
@@ -74,7 +109,8 @@
       "S2": "severity-s2",
       "S3": "severity-s3",
       "S4": "severity-s4"
-    }
+    },
+    "_cr_id_prefix": "Legacy only (CR-001..CR-004). New CRs use the Jira key as CR code; no CR-NNN label."
   },
   "confluence": {
     "space_key": "GOS",
@@ -94,7 +130,17 @@
       "Tested: Passed",
       "Tested: Failed",
       "Closed"
-    ]
+    ],
+    "cr_page_sections": [
+      "Details",
+      "Original request",
+      "Current brief",
+      "Earlier versions",
+      "Change history",
+      "Affected items",
+      "Results"
+    ],
+    "_cr_statuses": "Informational: the page Status cell mirrors the Jira CR status; nobody edits it by hand (Jira-first)."
   },
   "xray": {
     "test_sets": {

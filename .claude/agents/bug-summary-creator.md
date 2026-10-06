@@ -31,11 +31,12 @@ CQL: title "Defect Summary – <scope>" under "QA Reports". Found → update it 
 ## PHASE 3 — AGGREGATE AND DECIDE
 - By severity: total / open / resolved for S1–S4 (+ unclassified). By module: total, open, S1/S2 open.
 - Unresolved S1 and S2 by name. Recurring modules: 6+ bugs in each of the last 3 sprints.
-- Stories with no executed tests, and CR pages not "Tested: Passed".
+- Stories with no executed tests, and CRs without the label config jira.cr_workflow.result_labels.passed ("tested-passed") on the Jira CR (legacy CRs: their page Status).
 - Readiness (config release_readiness, applied strictly):
   No Go — any open S1; any open S2 without written PO acceptance on the bug; any in-scope story with no executed tests.
   Conditional Go — no open S1; every open S2 and every untested story has written PO acceptance.
   Go — no open S1/S2 and every in-scope story Tested: Passed.
+  After the decision a person moves each released CR to cr_workflow.done ("Done"); this agent never transitions a CR. Say so in the report.
   One-sentence rationale naming the deciding items.
 <example>
 GOOD: "No Go — GOS-35 (S2, Verify Users) open without PO acceptance; GOS-24 has no executed tests."

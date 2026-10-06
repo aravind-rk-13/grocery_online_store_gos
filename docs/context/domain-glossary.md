@@ -9,6 +9,7 @@
 | Verify | Admin approves a pending registration (data-changing; never click in tests) | Verify Users row action | - |
 | Search / Reset | Filter the list by criteria / clear the filter | Verify Users header | VerifyUsersPage.search / reset |
 | ci_session | Session cookie set after login | - | storage state |
-| Change Request (CR) | A client ask captured after a call; Confluence page + Jira issue | Confluence "Change Requests", Jira GOS | CR-<NNN> label |
-| CR brief | requirement-analyst's impact analysis of one CR, approved by the PM | Child page of the CR page | Machine Handoff block |
+| Change Request (CR) | A client ask captured after a call; written by the PM as a Jira issue, mirrored by Claude on a Confluence page | Jira GOS (type Change Request), Confluence "Change Requests" | CR code = the Jira key (GOS-120); legacy CR-<NNN> label |
+| CR brief | requirement-analyst's impact analysis of one CR, versioned v1, v2... and approved by the PM | "Current brief" section of the CR page (legacy: child page) | Machine Handoff block |
+| CR change | A later request for a CR in progress: a "CHANGE · <date>" block appended to the Jira description, status Changed | Jira CR description; page "Change history" | Approve change v<n> |
 | QA cycle | One manual Xray Test Execution for a story | Xray Test Execution "<STORY> \| QA cycle n" | execution-planner |

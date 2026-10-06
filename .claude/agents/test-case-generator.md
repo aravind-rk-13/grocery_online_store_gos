@@ -18,8 +18,8 @@ Do not invent data. Mark anything that cannot be determined as [TO BE CONFIRMED]
 Adapted from CODIFAi "test-case-generator" (Part I Phase 3/4). Changes for this scenario: grounded on the PM's prototype designs while the app is in build, and on the built console once released; web only (mobile types removed); injection, permission and concurrency are mandatory; approval is the tester's review sub-task; tiers are proposed only (regression-marker sets them).
 
 ## YOUR ROLE
-**CR mode (default).** "create test cases for <CR-NNN | CR-KEY>": the PM approves all stories of a CR in ONE "Approve stories" sub-task, so all of them get their test cases in ONE run and ONE review.
-1. Fetch the CR (key via cases/jira-map.json crs or the CR-<NNN> label). Check the gate once (Phase 1).
+**CR mode (default).** "create test cases for <CR code>": the PM approves all stories of a CR in ONE "Approve stories" sub-task, so all of them get their test cases in ONE run and ONE review.
+1. Fetch the CR (key via cases/jira-map.json crs or the <CR code> label). Check the gate once (Phase 1).
 2. Stories = the issues of type Story linked "relates to" the CR (cross-check cases/jira-map.json crs.<CR>.stories; report any difference). A story that already has linked Tests is listed as "already covered" and skipped unless the user says to redo it.
 3. Run Phases 1-5 story by story, in key order. Each Test is labelled and linked to its own story; cases/<STORY>.json per story; TC IDs continue across the stories; Phase 4 also checks duplicates against the other stories of the CR. A story that fails (e.g. fewer than 3 acceptance criteria) is reported and skipped; the others continue.
 4. Run Phase 6 ONCE for the CR, then Phase 7 for everything.
@@ -32,7 +32,7 @@ Fewer than 3 acceptance criteria → skip that story and ask for it to be comple
 Consult the CR brief only when a criterion is unclear; extract only what resolves it.
 
 ## PHASE 2 — GROUND AGAINST THE DESIGN (AND THE BUILD WHEN RELEASED)
-First read the CR's prototype images docs/prototype_images/CR_<NNN>_image_*.png (docs/context/prototypes.md): exact headings, columns, labels, messages, pagination and flow; cite the file in each case's Source. They are design, not the built app.
+First read the CR's prototype images docs/prototype_images/<CR code>_image_*.png (legacy CRs: CR_<NNN>_image_*.png) (docs/context/prototypes.md): exact headings, columns, labels, messages, pagination and flow; cite the file in each case's Source. They are design, not the built app.
 Per story: if the story's Jira status is NOT in config/workflow.json statuses.build_ready ("Ready for Testing" / "Done"), do NOT open or probe the console; ground on the story plus prototypes and mark anything they don't show [TO BE CONFIRMED: check on build]. The steps below apply only to stories in build_ready.
 Use the Playwright MCP browser. Interactive: if it is not logged in, navigate to the login page and ask the user once to log in themselves in that browser window, then continue in their session; you never type, see or store credentials. Headless: log in with APP_USERNAME / APP_PASSWORD from the environment (never print them). Open only the screen the story covers (docs/context/app-map.md).
 Record: field names, placeholders, required flags, maxlength, button labels, exact messages, URL after each action, row counts, pagination, empty-state text.
@@ -68,7 +68,7 @@ Then Test Sets (keys from memory; else `find-set "<name>"`, adopt the lowest key
 functional-ui → "GOS | Functional – UI" · negative/boundary/edge → "GOS | Negative & Boundary" · network/api → "GOS | API & Integration" · accessibility → "GOS | Accessibility" · the most critical happy path of the module (one) → "GOS | Smoke". Use `add-to-set`.
 
 ## PHASE 6 — HUMAN REVIEW GATE
-CR mode: create ONE sub-task "Review AI test cases for <CR-NNN>" on the CR issue (existence check first; config approval_subtasks.test_cases_cr) with one traceability table (with a Story column), one coverage self-check per story, and any skipped story with the reason. Comment on each story: "[CODIFAi] <n> test cases drafted; review in <SUB-TASK KEY>." Never create per-story review sub-tasks in CR mode.
+CR mode: create ONE sub-task "Review AI test cases for <CR code>" on the CR issue (existence check first; config approval_subtasks.test_cases_cr) with one traceability table (with a Story column), one coverage self-check per story, and any skipped story with the reason. Comment on each story: "[CODIFAi] <n> test cases drafted; review in <SUB-TASK KEY>." Never create per-story review sub-tasks in CR mode.
 Story mode: create sub-task "Review AI test cases for <STORY-KEY>" on the story. Either way the sub-task is assigned to the tester (story's QA assignee; unknown → the CR reporter), description: the traceability table, the coverage self-check, open questions, and "Fix or delete any case, then close this sub-task to approve the set."
 Story mode: comment on the story: "[CODIFAi] <n> test cases drafted; review sub-task <KEY>."
 

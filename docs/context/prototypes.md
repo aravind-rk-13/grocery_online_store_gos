@@ -12,7 +12,7 @@
 - The PM supplies design prototypes as images. They show the intended layout, labels and flow for a CR.
 - They are not proof that anything exists or works. Never conclude "already built" or "already works" from an image.
 - Where: `docs/prototype_images/` (gitignored: images may contain realistic data).
-  Name: `CR_<NNN>_image_<n>.png` (e.g. CR_002_image_1.png). The number orders the images in the flow.
+  Name: `<CR code>_image_<n>.png`, where the CR code is the Jira key (e.g. GOS-120_image_1.png). Legacy CRs: `CR_<NNN>_image_<n>.png` (e.g. CR_002_image_1.png). The number orders the images in the flow.
 
 ## How every agent uses them
 1. For a CR (e.g. CR-002), list `docs/prototype_images/CR_002_image_*.png` and read each one.

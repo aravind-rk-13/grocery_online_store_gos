@@ -25,20 +25,22 @@ QA Reports > Test Results (one page per run, scripts/results_page.py).
 ## Pipeline: from a phone call to a release decision
 | # | Step | Agent | Human gate after it |
 |---|---|---|---|
-| 1 | CR page (Confluence) -> Jira Change Request | cr-intake | - |
-| 2 | CR brief: impact, regression scope, questions (CR mode); PRD analysis (PRD mode) | requirement-analyst | PM closes "Approve CR brief" sub-task |
-| 3 | Stories under the CR | user-story-creator | PM closes "Approve stories" sub-task |
+| 1 | PM creates the Jira Change Request (status To Do) -> `analyse new CRs`: Confluence CR page "<Jira key> <short heading>" with the original request | cr-intake (Mode A) | - |
+| 2 | CR brief v1 on the CR page: impact, regression scope, questions (CR mode); PRD analysis (PRD mode) | requirement-analyst | PM closes "Approve CR brief v1 for <CR>" sub-task |
+| 3 | "APPROVED CR BRIEF v1" appended to the CR, CR -> In Progress; stories under the CR | user-story-creator | PM closes "Approve stories" sub-task |
 | 4 | Xray Test cases for all stories of the CR in one step (while devs build) | test-case-generator | Tester closes "Review AI test cases for <CR>" sub-task |
 | 5 | Regression tiers (regression-p1/p2/p3) | regression-marker | QA Lead reviews scores |
 | 6 | Test Plan for the CR (its Tests + the brief's regression scope) | testplan-creator | QA Lead signs off |
 | 7 | Story Ready for Testing (build done) -> manual Test Execution (+ affected regression) | execution-planner | Testers execute |
 | 8 | Scripts for approved automation candidates -> PR | automation-script-generator | QA reviews PR; P1 + lint pass locally |
-| 9 | Manual + automated results -> bugs, CR page status | results-reporter | QA Lead reads result |
-| 10 | Release readiness Go / Conditional Go / No Go | bug-summary-creator | QA Lead + PO decide |
+| 9 | Manual + automated results -> bugs, Tested: Passed/Failed on the Jira CR (comment + label) and the page Results | results-reporter | QA Lead reads result |
+| 10 | Release readiness Go / Conditional Go / No Go | bug-summary-creator | QA Lead + PO decide; a person moves the CR to Done |
+| Δ | Change while In Progress / Ready for Testing: PM appends "CHANGE · date", status Changed -> `process changed CRs`: brief v<n>, affected items | cr-intake (Mode B) + requirement-analyst | PM closes "Approve change v<n> for <CR>"; the next prompt for the CR appends "APPROVED CHANGE v<n>" and redoes only affected items |
+**CR code = the Jira key** of the Change Request (e.g. GOS-120): page title "GOS-120 <short heading>", sub-tasks "... for GOS-120", "GOS-120 | Test Plan", label GOS-120 on its stories and Tests, FR-GOS120-01, design images GOS-120_image_<n>.png. Legacy CRs keep CR-001..CR-003 (and CR-004). **Jira-first CRs (since 2026-10-06).** The PM writes only in Jira; Claude creates and maintains the Confluence CR page. CR statuses (config jira.cr_workflow): To Do (= New) -> In Progress -> Ready for Testing (= In QA) -> Done, plus Changed. A change after Done -> a new CR linked "relates to". Prompts that run two agents: `analyse new CRs` and `process changed CRs` = cr-intake, then requirement-analyst per CR.
 **Mode: manual.** A person starts every step in Claude Code, after the previous gate is closed. What to say for each
 step, and the one-time set-up: docs/automation/rules.md. The headless pipeline (.github/workflows/ai-pipeline.yml) is dormant.
 
-## Answering "what is the next step (in CR-NNN)?"
+## Answering "what is the next step (in <CR code>)?"
 Read the live state first (never from memory): the CR's sub-tasks (Approve CR brief / Approve stories / Review AI test
 cases), story statuses (Ready for Testing = built), Test count and tier labels. One CR; none named and several open -> one line
 each. Max ~10 lines, every item with an owner and a Jira key, the next command verbatim:
@@ -54,7 +56,9 @@ Repo: <PRs to merge / files to commit>           (only if any)
 - **Modes.** Interactive (a person in Claude Code; the normal mode): ask all questions in ONE message, then wait.
   Headless (dormant; only when the launch prompt contains `MODE: headless`): never ask in chat. Post the question(s) as ONE comment on the
   named Jira issue starting with `[CODIFAi - input needed]`, write nothing else, and stop.
-- **Prototypes first.** For every CR, read `docs/prototype_images/CR_<NNN>_image_*.png` (if any) to answer layout, label
+- **CR descriptions are append-only.** Never edit, reorder or remove the PM's text in a Jira CR description; only append the blocks in config jira.cr_workflow.description_blocks (Atlassian document format), and read back that the original text is unchanged.
+- **Approved changes first.** Before any agent works on a CR: if a sub-task "Approve change v<n> for <CR>" is Done and the description has no "APPROVED CHANGE v<n>" block, run cr-intake Mode F (finalize) first.
+- **Prototypes first.** For every CR, read `docs/prototype_images/<CR code>_image_*.png (legacy CRs: CR_<NNN>_image_*.png)` (if any) to answer layout, label
   and flow doubts; they are design, never proof that something exists. No image or no answer -> open question.
 - **Connectors.** Interactive: Atlassian MCP for Jira/Confluence; Playwright MCP for the app only for a story whose status is in statuses.build_ready.
   Headless or MCP unavailable: `python scripts/atlassian_rest.py ...` (Jira/Confluence) with the bot token.
