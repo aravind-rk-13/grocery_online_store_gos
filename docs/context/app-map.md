@@ -17,7 +17,7 @@ Never click data-changing controls (Verify, Delete, Block, Save, Send) while exp
 | 8 | Report > Consolidated Report | /admin/list-report | Reporting | Server error (BRD s.8) | - |
 | 9 | Report > Order Report | /admin/list-order-report | Order reporting | Server error (BRD s.8) | - |
 | 10-13 | Manage Content > Pages / Footer Text / Contact / News | [TO BE CONFIRMED] | CMS content | Working (BRD) | - |
-| 14 | Manage Product | [TO BE CONFIRMED] | Product catalogue CRUD | Working (BRD) | - |
+| 14 | Manage Product | [TO BE CONFIRMED] | Product catalogue CRUD; delete from the list (GOS-137) | Working (BRD) | pages/manage_product_page.py (to be created) |
 | 15 | Manage Users | [TO BE CONFIRMED] | Verified customers, Block/Unblock, Delete | Working (BRD) | - |
 | 16 | Manage Location | [TO BE CONFIRMED] | Delivery locations + charges | Working (BRD) | - |
 | 17 | Push Notifications | [TO BE CONFIRMED] | Send app notifications (never send in tests) | Working (BRD) | - |
@@ -38,4 +38,5 @@ Never click data-changing controls (Verify, Delete, Block, Save, Send) while exp
 | Login | Login | login | 25 [TO BE CONFIRMED] |
 | Verify Users | Verify Users | verify_users | 20 [TO BE CONFIRMED] |
 | Admin Users (incl. its sidebar entry) | Admin Users | admin_users | [TO BE CONFIRMED] (CR-001 / GOS-15) |
+| Manage Product (incl. its sidebar entry) | Manage Product | manage_product | [TO BE CONFIRMED] (GOS-137) |
 Add a row (and register the marker in pytest.ini) before the first story for a new module.

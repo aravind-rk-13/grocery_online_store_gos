@@ -207,6 +207,14 @@
       "business_criticality": null,
       "integration_depth": null,
       "app_paths": []
+    },
+    "manage_product": {
+      "component": "Manage Product",
+      "marker": "manage_product",
+      "tc_prefix": "TC-PRODUCT",
+      "business_criticality": null,
+      "integration_depth": null,
+      "app_paths": []
     }
   },
   "github": {
