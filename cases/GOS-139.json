@@ -1,0 +1,570 @@
+[
+  {
+    "tc_id": "TC-PRODUCT-01",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | functional-ui | Sidebar Manage Product opens the product list with the total count",
+    "coverage": "functional-ui",
+    "title": "Sidebar Manage Product opens the product list with the total count",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Dashboard (/admin) is open"
+    ],
+    "steps": [
+      {
+        "action": "Locate 'Manage Product' in the side navigation bar (data-testid nav-manage-product)",
+        "data": "none",
+        "expected": "Entry 'Manage Product' is visible"
+      },
+      {
+        "action": "Click 'Manage Product'",
+        "data": "none",
+        "expected": "The product list opens [TO BE CONFIRMED: route]; the sidebar entry is highlighted (prototype GOS-137_image_2)"
+      },
+      {
+        "action": "Read the list card heading (data-testid list-products-heading)",
+        "data": "none",
+        "expected": "Heading reads List Products (N) [TO BE CONFIRMED: space before the bracket, AMB-GOS137-01; prototype GOS-137_image_2 shows 'List Products(N)']; N is a whole number"
+      },
+      {
+        "action": "Compare N with the number of products across all pages",
+        "data": "[PRODUCT_COUNT_BEFORE]",
+        "expected": "N is the total over all pages, not the rows shown on the page [TO BE CONFIRMED: check on build]"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Entry point to the whole feature; read-only",
+    "automate": true,
+    "automation_rationale": "Read-only; no data change",
+    "source": "Scenario 1; FR-GOS137-01, -02; prototype GOS-137_image_1, GOS-137_image_2",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-PRODUCT-02",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | functional-ui | Delete icon opens the native confirm dialog and nothing is deleted yet",
+    "coverage": "functional-ui",
+    "title": "Delete icon opens the native confirm dialog and nothing is deleted yet",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Product list (Manage Product) is open [TO BE CONFIRMED: route]",
+      "[QA_PRODUCT_NAME] is in the list and N ([PRODUCT_COUNT_BEFORE]) is read from the list heading"
+    ],
+    "steps": [
+      {
+        "action": "Locate the row of [QA_PRODUCT_NAME] and its red delete icon (data-testid product-delete)",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "Red delete icon is visible in the Action column of that row"
+      },
+      {
+        "action": "Click the delete icon",
+        "data": "none",
+        "expected": "A native browser confirm dialog appears with the text 'Do you want to delete this product?' and buttons OK and Cancel (CR test ids delete-confirm-dialog / confirm-ok / confirm-cancel do not apply to a native dialog: AMB-GOS137-03 [TO BE CONFIRMED])"
+      },
+      {
+        "action": "Check the list behind the dialog before answering it",
+        "data": "none",
+        "expected": "Row of [QA_PRODUCT_NAME] is still in the list"
+      },
+      {
+        "action": "Dismiss the dialog with Cancel",
+        "data": "none",
+        "expected": "Heading still reads N = [PRODUCT_COUNT_BEFORE]"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Gate that protects against accidental delete",
+    "automate": true,
+    "automation_rationale": "Dialog is dismissed so no data changes",
+    "source": "Scenario 2; FR-GOS137-03, -04",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-PRODUCT-03",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | functional-ui | OK in the confirm dialog deletes the product and N drops by 1",
+    "coverage": "functional-ui",
+    "title": "OK in the confirm dialog deletes the product and N drops by 1",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Product list (Manage Product) is open [TO BE CONFIRMED: route]",
+      "[QA_PRODUCT_NAME] is in the list and N ([PRODUCT_COUNT_BEFORE]) is read from the list heading"
+    ],
+    "steps": [
+      {
+        "action": "Click the red delete icon in the row of [QA_PRODUCT_NAME]",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "Native confirm dialog 'Do you want to delete this product?' appears"
+      },
+      {
+        "action": "Click OK",
+        "data": "none",
+        "expected": "Dialog closes"
+      },
+      {
+        "action": "Look for the row of [QA_PRODUCT_NAME]",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "The row is no longer in the list"
+      },
+      {
+        "action": "Read the list card heading",
+        "data": "[PRODUCT_COUNT_BEFORE]",
+        "expected": "Heading shows N = [PRODUCT_COUNT_BEFORE] minus 1"
+      },
+      {
+        "action": "Check that no success message is required",
+        "data": "none",
+        "expected": "No assertion on a message; a success alert may or may not show (PM, AMB-GOS137-02)"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Core purpose of the CR; permanent delete",
+    "automate": false,
+    "automation_rationale": "Permanent delete on the shared console; no agreed cleanup or data reload (GAP-GOS137-03, AMB-GOS137-10)",
+    "source": "Scenario 3; FR-GOS137-05, NFR-GOS137-02",
+    "notes": "Run manually on one of QA Product 01..10 only. Permanent database delete (AMB-GOS137-04)."
+  },
+  {
+    "tc_id": "TC-PRODUCT-04",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | negative | Cancel in the confirm dialog keeps the product and the count",
+    "coverage": "negative",
+    "title": "Cancel in the confirm dialog keeps the product and the count",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Product list (Manage Product) is open [TO BE CONFIRMED: route]",
+      "[QA_PRODUCT_NAME] is in the list and N ([PRODUCT_COUNT_BEFORE]) is read from the list heading"
+    ],
+    "steps": [
+      {
+        "action": "Click the red delete icon in the row of [QA_PRODUCT_NAME]",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "Native confirm dialog 'Do you want to delete this product?' appears"
+      },
+      {
+        "action": "Click Cancel",
+        "data": "none",
+        "expected": "Dialog closes"
+      },
+      {
+        "action": "Look for the row of [QA_PRODUCT_NAME]",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "The row is still in the list"
+      },
+      {
+        "action": "Read the list card heading",
+        "data": "[PRODUCT_COUNT_BEFORE]",
+        "expected": "Heading still reads N = [PRODUCT_COUNT_BEFORE]"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Proves the confirm step protects data; safe to run in P1",
+    "automate": true,
+    "automation_rationale": "Dismissing the dialog changes no data",
+    "source": "Scenario 4; FR-GOS137-06",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-PRODUCT-05",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | boundary | Count is the grand total over all pages and the Dashboard tile drops by 1",
+    "coverage": "boundary",
+    "title": "Count is the grand total over all pages and the Dashboard tile drops by 1",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Dashboard (/admin) is open; the Manage Product tile count is read and noted as T",
+      "The list holds more products than one page shows [TO BE CONFIRMED: page size]",
+      "[QA_PRODUCT_NAME] is in the list and N ([PRODUCT_COUNT_BEFORE]) is read from the list heading"
+    ],
+    "steps": [
+      {
+        "action": "Click 'Manage Product' in the sidebar",
+        "data": "none",
+        "expected": "Product list opens; heading shows N = [PRODUCT_COUNT_BEFORE]"
+      },
+      {
+        "action": "Confirm the list has more than one page",
+        "data": "none",
+        "expected": "Pagination shows more than one page"
+      },
+      {
+        "action": "Click the delete icon in the row of [QA_PRODUCT_NAME] and click OK in the confirm dialog",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "Product is removed"
+      },
+      {
+        "action": "Read the list card heading",
+        "data": "[PRODUCT_COUNT_BEFORE]",
+        "expected": "N is exactly [PRODUCT_COUNT_BEFORE] minus 1 (total over all pages, not rows shown)"
+      },
+      {
+        "action": "Click 'Dashboard' in the sidebar and read the Manage Product tile",
+        "data": "T",
+        "expected": "Tile count is exactly T minus 1"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Count correctness across pages and Dashboard is the CR's key risk",
+    "automate": false,
+    "automation_rationale": "Permanent delete on the shared console; no cleanup plan (GAP-GOS137-03)",
+    "source": "Scenario 5; AMB-GOS137-05, -06; prototype GOS-137_image_1",
+    "notes": "Prototype shows tile and heading counts differing by 1 after a delete (design only)."
+  },
+  {
+    "tc_id": "TC-PRODUCT-06",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | security | Product list URL without a session redirects to login and deletes nothing",
+    "coverage": "security",
+    "title": "Product list URL without a session redirects to login and deletes nothing",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "User is not logged in (no ci_session cookie)"
+    ],
+    "steps": [
+      {
+        "action": "Open the Manage Product URL directly",
+        "data": "[TO BE CONFIRMED: route]",
+        "expected": "Browser is redirected to /admin/login"
+      },
+      {
+        "action": "Read the page",
+        "data": "none",
+        "expected": "Login form is shown; no product list, delete icons or heading are visible"
+      },
+      {
+        "action": "Log in as [VALID_ADMIN_USERNAME] and open Manage Product from the sidebar",
+        "data": "[VALID_ADMIN_USERNAME]",
+        "expected": "Heading N equals the value known before the test: no product was deleted"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Security case kept even for a read-only screen; raised because it guards a permanent delete",
+    "automate": true,
+    "automation_rationale": "Read-only; needs the route confirmed first",
+    "source": "Scenario 6; NFR-GOS137-01; BR-001",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-PRODUCT-07",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | data-persistence | Product stays gone and N stays at N minus 1 after a page reload",
+    "coverage": "data-persistence",
+    "title": "Product stays gone and N stays at N minus 1 after a page reload",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Product list is open; [QA_PRODUCT_NAME] was just deleted with OK in the confirm dialog",
+      "N is [PRODUCT_COUNT_BEFORE] minus 1 in the heading"
+    ],
+    "steps": [
+      {
+        "action": "Reload the page (F5)",
+        "data": "none",
+        "expected": "Product list reloads"
+      },
+      {
+        "action": "Look for the row of [QA_PRODUCT_NAME]",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "The row is not in the list"
+      },
+      {
+        "action": "Read the list card heading",
+        "data": "[PRODUCT_COUNT_BEFORE]",
+        "expected": "N is still [PRODUCT_COUNT_BEFORE] minus 1"
+      },
+      {
+        "action": "Open the Dashboard and read the Manage Product tile",
+        "data": "none",
+        "expected": "Tile matches the new total [TO BE CONFIRMED: check on build]"
+      }
+    ],
+    "priority": "High",
+    "tier": "P2",
+    "tier_reason": "Verifies the delete is stored, not just hidden",
+    "automate": false,
+    "automation_rationale": "Follows a data-changing delete; no cleanup plan",
+    "source": "Scenario 3 (reload clause); FR-GOS137-05",
+    "notes": "Manual follow-on step of TC-PRODUCT-03."
+  },
+  {
+    "tc_id": "TC-PRODUCT-08",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | data-persistence | Cancelled delete is not stored: product and N are unchanged after reload",
+    "coverage": "data-persistence",
+    "title": "Cancelled delete is not stored: product and N are unchanged after reload",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Product list (Manage Product) is open [TO BE CONFIRMED: route]",
+      "[QA_PRODUCT_NAME] is in the list and N ([PRODUCT_COUNT_BEFORE]) is read from the list heading"
+    ],
+    "steps": [
+      {
+        "action": "Click the delete icon in the row of [QA_PRODUCT_NAME] and click Cancel",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "Dialog closes; row still in the list"
+      },
+      {
+        "action": "Reload the page (F5)",
+        "data": "none",
+        "expected": "Product list reloads"
+      },
+      {
+        "action": "Look for the row of [QA_PRODUCT_NAME]",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "The row is still in the list"
+      },
+      {
+        "action": "Read the list card heading",
+        "data": "[PRODUCT_COUNT_BEFORE]",
+        "expected": "N is still [PRODUCT_COUNT_BEFORE]"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "tier_reason": "Nothing stored that should not be",
+    "automate": true,
+    "automation_rationale": "Cancel changes no data",
+    "source": "Scenario 4; FR-GOS137-06",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-PRODUCT-09",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | session-state | Browser Back after logout does not show the product list",
+    "coverage": "session-state",
+    "title": "Browser Back after logout does not show the product list",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Product list is open"
+    ],
+    "steps": [
+      {
+        "action": "Open the profile menu and click Logout",
+        "data": "none",
+        "expected": "Login page is shown at /admin/login"
+      },
+      {
+        "action": "Click the browser Back button",
+        "data": "none",
+        "expected": "Login page is shown or redirect to /admin/login; the product list and delete icons are not usable [TO BE CONFIRMED: cached page behaviour]"
+      },
+      {
+        "action": "Reload the page",
+        "data": "none",
+        "expected": "Redirect to /admin/login; login form is shown"
+      },
+      {
+        "action": "Log in again and open Manage Product",
+        "data": "[VALID_ADMIN_USERNAME]",
+        "expected": "Heading N is unchanged from before the test"
+      }
+    ],
+    "priority": "High",
+    "tier": "P2",
+    "tier_reason": "Session security around a delete screen; raised for security",
+    "automate": true,
+    "automation_rationale": "Read-only",
+    "source": "NFR-GOS137-01; BR-001; coverage type 6 (back after logout)",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-PRODUCT-10",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | functional-ui | Manage Product entry, heading and red delete icon match the prototype",
+    "coverage": "functional-ui",
+    "title": "Manage Product entry, heading and red delete icon match the prototype",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Dashboard (/admin) is open"
+    ],
+    "steps": [
+      {
+        "action": "Read the sidebar",
+        "data": "none",
+        "expected": "'Manage Product' sits between 'Manage Content' and 'Manage Users' (prototype GOS-137_image_1) [TO BE CONFIRMED: AMB-GOS137-09]"
+      },
+      {
+        "action": "Click 'Manage Product'",
+        "data": "none",
+        "expected": "Screen title 'List Products' is shown with breadcrumb Home / List Products (prototype GOS-137_image_2)"
+      },
+      {
+        "action": "Look at the Action column",
+        "data": "none",
+        "expected": "Every row has a red delete icon (data-testid product-delete)"
+      },
+      {
+        "action": "Check the sidebar highlight",
+        "data": "none",
+        "expected": "'Manage Product' is highlighted as the active entry (prototype GOS-137_image_2)"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P3",
+    "tier_reason": "Visual match to design; low risk",
+    "automate": true,
+    "automation_rationale": "Read-only visibility checks",
+    "source": "Prototype GOS-137_image_1, GOS-137_image_2; AMB-GOS137-09",
+    "notes": "Edit/New/Search/Reset buttons and extra columns are out of scope; not asserted."
+  },
+  {
+    "tc_id": "TC-PRODUCT-11",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | accessibility | Sidebar Manage Product entry is reachable and named with the keyboard",
+    "coverage": "accessibility",
+    "title": "Sidebar Manage Product entry is reachable and named with the keyboard",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Dashboard (/admin) is open"
+    ],
+    "steps": [
+      {
+        "action": "Press Tab until focus is on the 'Manage Product' sidebar link",
+        "data": "none",
+        "expected": "Link receives visible focus and its accessible name is 'Manage Product'"
+      },
+      {
+        "action": "Press Enter",
+        "data": "none",
+        "expected": "Product list opens [TO BE CONFIRMED: route]"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P3",
+    "tier_reason": "Basic accessibility of the new entry; icon and dialog keyboard behaviour is out of scope (NFR-GOS137-04)",
+    "automate": true,
+    "automation_rationale": "Read-only",
+    "source": "Scenario 1; accessibility basics",
+    "notes": "Keyboard and screen-reader behaviour of the delete icon and dialog is out of scope in the story: no case."
+  },
+  {
+    "tc_id": "TC-PRODUCT-12",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | functional-ui | Dashboard Manage Product tile equals the list heading N before any delete",
+    "coverage": "functional-ui",
+    "title": "Dashboard Manage Product tile equals the list heading N before any delete",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Dashboard (/admin) is open"
+    ],
+    "steps": [
+      {
+        "action": "Read the count on the Manage Product tile",
+        "data": "none",
+        "expected": "A whole number T is shown"
+      },
+      {
+        "action": "Click 'Manage Product' in the sidebar and read the list card heading",
+        "data": "none",
+        "expected": "Heading N is shown"
+      },
+      {
+        "action": "Compare T and N",
+        "data": "none",
+        "expected": "T equals N [TO BE CONFIRMED: assumed same measure; prototype shows tile 676 and heading 675 after one delete]"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "tier_reason": "Display consistency feeding the Dashboard-drops-by-1 rule",
+    "automate": true,
+    "automation_rationale": "Read-only",
+    "source": "Scenario 5 (tile); AMB-GOS137-06; prototype GOS-137_image_1, GOS-137_image_2",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-PRODUCT-13",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | edge | Only the chosen row is deleted when several products are listed",
+    "coverage": "edge",
+    "title": "Only the chosen row is deleted when several products are listed",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Product list (Manage Product) is open [TO BE CONFIRMED: route]",
+      "[QA_PRODUCT_NAME] is in the list and N ([PRODUCT_COUNT_BEFORE]) is read from the list heading",
+      "A second test product [QA_PRODUCT_NAME_2] is also in the list"
+    ],
+    "steps": [
+      {
+        "action": "Click the delete icon in the row of [QA_PRODUCT_NAME] (not the first row)",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "Native confirm dialog appears"
+      },
+      {
+        "action": "Click OK",
+        "data": "none",
+        "expected": "Dialog closes"
+      },
+      {
+        "action": "Look for the rows of [QA_PRODUCT_NAME] and [QA_PRODUCT_NAME_2]",
+        "data": "[QA_PRODUCT_NAME], [QA_PRODUCT_NAME_2]",
+        "expected": "[QA_PRODUCT_NAME] is gone; [QA_PRODUCT_NAME_2] is still in the list"
+      },
+      {
+        "action": "Read the list card heading",
+        "data": "[PRODUCT_COUNT_BEFORE]",
+        "expected": "N is exactly [PRODUCT_COUNT_BEFORE] minus 1"
+      }
+    ],
+    "priority": "High",
+    "tier": "P2",
+    "tier_reason": "Wrong-row delete would be data loss",
+    "automate": false,
+    "automation_rationale": "Permanent delete on the shared console; no cleanup plan",
+    "source": "Scenario 3; FR-GOS137-05",
+    "notes": "Uses two of QA Product 01..10 only."
+  },
+  {
+    "tc_id": "TC-PRODUCT-14",
+    "story": "GOS-139",
+    "summary": "GOS-139 | Manage Product | edge | Pressing Escape on the confirm dialog behaves like Cancel",
+    "coverage": "edge",
+    "title": "Pressing Escape on the confirm dialog behaves like Cancel",
+    "preconditions": [
+      "Console reachable at [APP_URL]",
+      "Logged in as [VALID_ADMIN_USERNAME] (dedicated test account only)",
+      "Product list (Manage Product) is open [TO BE CONFIRMED: route]",
+      "[QA_PRODUCT_NAME] is in the list and N ([PRODUCT_COUNT_BEFORE]) is read from the list heading"
+    ],
+    "steps": [
+      {
+        "action": "Click the delete icon in the row of [QA_PRODUCT_NAME]",
+        "data": "[QA_PRODUCT_NAME]",
+        "expected": "Native confirm dialog appears"
+      },
+      {
+        "action": "Press Escape",
+        "data": "none",
+        "expected": "Dialog closes without deleting [TO BE CONFIRMED: native browser behaviour, not stated in the story]"
+      },
+      {
+        "action": "Read the list",
+        "data": "none",
+        "expected": "Row of [QA_PRODUCT_NAME] is still in the list; N is [PRODUCT_COUNT_BEFORE]"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P3",
+    "tier_reason": "Native dialog dismissal path",
+    "automate": false,
+    "automation_rationale": "Playwright cannot press keys on a native dialog; manual only",
+    "source": "Scenario 4 (dismiss path)",
+    "notes": ""
+  }
+]
