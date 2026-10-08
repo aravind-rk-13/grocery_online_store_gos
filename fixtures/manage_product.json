@@ -1,0 +1,7 @@
+{
+  "_note": "Non-sensitive UI text observed on the live console (staging 2026-10-08). No product data: the product under test is read from the list at run time.",
+  "page_title": "List Products",
+  "breadcrumb": ["Home", "List Products"],
+  "sidebar_neighbours": ["Manage Content", "Manage Product", "Manage Users"],
+  "delete_confirm_message": "Do you want to delete this Product?"
+}
