@@ -1,0 +1,1 @@
+- [Atlassian ids](reference_atlassian_ids.md) — cloudId, GOS space id, CR parent page, Sub-task type, Machine Handoff paragraph tip

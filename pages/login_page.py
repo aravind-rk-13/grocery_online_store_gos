@@ -10,6 +10,7 @@ from playwright.sync_api import Page, expect
 
 from config.settings import LOGIN_URL
 from pages.base_page import BasePage
+from pages.waits import timed_step
 
 
 class LoginPage(BasePage):
@@ -27,6 +28,7 @@ class LoginPage(BasePage):
     FORM = "#login-form"
 
     INVALID_MESSAGE = "Invalid Username/Password"
+    LOGIN_URL_PATTERN = re.compile(r"/admin/login/?$")
 
     def __init__(self, page: Page):
         super().__init__(page)
@@ -39,19 +41,39 @@ class LoginPage(BasePage):
     def load(self) -> "LoginPage":
         """Open the login page and wait until the form is usable."""
         self.open(LOGIN_URL)
-        expect(self.username).to_be_visible()
+        self.expect_visible(self.username, "Username field")
         return self
 
     def login(self, username: str, password: str) -> None:
         """Fill both fields and submit the form."""
-        self.username.fill(username)
-        self.password.fill(password)
-        self.sign_in.click()
+        with timed_step(self.page, "log in"):
+            self.fill(self.username, username, "Username")
+            self.fill(self.password, password, "Password")
+            self.submit()
+
+    def fill_username(self, username: str) -> None:
+        """Fill only the Username field."""
+        self.fill(self.username, username, "Username")
+
+    def submit(self) -> None:
+        """Click Sign In."""
+        self.click(self.sign_in, "Sign In")
+
+    def login_with_keyboard(self, username: str, password: str) -> None:
+        """Log in with the keyboard alone: focus Username, type, Tab to Password, type, Enter."""
+        with timed_step(self.page, "log in with the keyboard"):
+            self.username.focus()
+            self.page.keyboard.type(username)
+            self.page.keyboard.press("Tab")
+            expect(self.password).to_be_focused()
+            self.page.keyboard.type(password)
+            self.page.keyboard.press("Enter")
 
     def expect_rejected(self) -> None:
         """Assert the generic invalid-credentials alert and that we are still on the login page."""
-        expect(self.alert).to_contain_text(self.INVALID_MESSAGE)
-        expect(self.page).to_have_url(re.compile(r"/admin/login/?$"))
+        with timed_step(self.page, "invalid-credentials alert"):
+            expect(self.alert).to_contain_text(self.INVALID_MESSAGE)
+            expect(self.page).to_have_url(self.LOGIN_URL_PATTERN)
 
     def validation_message(self, which: str) -> str:
         """Return the browser's HTML5 validation message for 'username' or 'password'."""

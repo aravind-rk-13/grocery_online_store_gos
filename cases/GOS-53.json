@@ -1,0 +1,148 @@
+[
+  {
+    "tc_id": "TC-USRSRCH-31",
+    "story": "GOS-53",
+    "summary": "GOS-53 | Verify Users | functional-ui | A confirmed delete creates exactly one audit entry",
+    "coverage": "functional-ui",
+    "title": "A confirmed delete creates exactly one audit entry",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED]) and holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]",
+      "The tester can read the audit log [TO BE CONFIRMED: how testers view the entry]"
+    ],
+    "steps": [
+      {"action": "Read the audit log and note the number of entries", "data": "none", "expected": "The entry count E is noted [TO BE CONFIRMED: view method]"},
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The user is deleted and the success alert is shown"},
+      {"action": "Read the audit log again", "data": "none", "expected": "Exactly E+1 entries exist; one new entry is for this deletion"},
+      {"action": "Read the new entry", "data": "none", "expected": "It identifies the acting account [VALID_ADMIN_USERNAME], the date/time and the deleted record [EXISTING_PENDING_USER_ID] [exact fields TO BE CONFIRMED]"}
+    ],
+    "priority": "Medium",
+    "tier": "P1 - the only positive outcome of FR-CR002-07",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists, and a way to read the audit log is defined",
+    "source": "GOS-53 AC1; FR-CR002-07 (no prototype covers the audit log)",
+    "notes": "Entry fields and view method [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-32",
+    "story": "GOS-53",
+    "summary": "GOS-53 | Verify Users | negative | Cancel in the popup creates no audit entry",
+    "coverage": "negative",
+    "title": "Cancel in the popup creates no audit entry",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED]) and holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]",
+      "The tester can read the audit log [TO BE CONFIRMED: how testers view the entry]"
+    ],
+    "steps": [
+      {"action": "Read the audit log and note the number of entries", "data": "none", "expected": "The entry count E is noted [TO BE CONFIRMED: view method]"},
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click Cancel in the popup", "data": "none", "expected": "The popup closes and [EXISTING_PENDING_USER_NAME] is still listed"},
+      {"action": "Read the audit log again", "data": "none", "expected": "Still E entries; no entry exists for [EXISTING_PENDING_USER_ID]"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - no false entry on Cancel",
+    "automate": false,
+    "automation_rationale": "no until a way to read the audit log is defined; Cancel changes no data, so it can be automated once the log is readable",
+    "source": "GOS-53 AC2; FR-CR002-07",
+    "notes": "Not a duplicate of the GOS-51 Cancel cases (for example TC-USRSRCH-03): those check the list, this checks the audit log. View method [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-33",
+    "story": "GOS-53",
+    "summary": "GOS-53 | Verify Users | negative | A failed delete leaves no audit entry saying the user was deleted",
+    "coverage": "negative",
+    "title": "A failed delete leaves no audit entry saying the user was deleted",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED]) and holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]",
+      "The tester can read the audit log [TO BE CONFIRMED: how testers view the entry]",
+      "The network can be switched offline in the browser to make the delete fail"
+    ],
+    "steps": [
+      {"action": "Read the audit log and note the number of entries", "data": "none", "expected": "The entry count E is noted [TO BE CONFIRMED: view method]"},
+      {"action": "Switch the browser to offline", "data": "none", "expected": "Network is offline"},
+      {"action": "Click Delete in the row of [EXISTING_PENDING_USER_NAME] and click OK", "data": "none", "expected": "The request fails; no success alert is shown [failure message TO BE CONFIRMED]"},
+      {"action": "Switch the network back on and reload the list", "data": "none", "expected": "[EXISTING_PENDING_USER_NAME] is still listed"},
+      {"action": "Read the audit log again", "data": "none", "expected": "Still E entries; none claims [EXISTING_PENDING_USER_ID] was deleted"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - integrity of the log",
+    "automate": false,
+    "automation_rationale": "no until a test environment exists and a way to read the audit log is defined",
+    "source": "GOS-53 AC3; FR-CR002-07",
+    "notes": "A client-side offline failure is the simplest reading of 'the delete fails'; a server-side failure needs a test environment [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-34",
+    "story": "GOS-53",
+    "summary": "GOS-53 | Verify Users | boundary | Three deletes in a row create exactly three audit entries in order",
+    "coverage": "boundary",
+    "title": "Three deletes in a row create exactly three audit entries in order",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED]) and holds three synthetic deletable pending users [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]",
+      "The tester can read the audit log [TO BE CONFIRMED: how testers view the entry]"
+    ],
+    "steps": [
+      {"action": "Read the audit log and note the number of entries", "data": "none", "expected": "The entry count E is noted [TO BE CONFIRMED: view method]"},
+      {"action": "Delete the first of the three users with Delete and OK", "data": "[EXISTING_PENDING_USER_ID] (user 1)", "expected": "The user is gone; success alert shown"},
+      {"action": "Delete the second user with Delete and OK", "data": "[EXISTING_PENDING_USER_ID] (user 2)", "expected": "The user is gone; success alert shown"},
+      {"action": "Delete the third user with Delete and OK", "data": "[EXISTING_PENDING_USER_ID] (user 3)", "expected": "The user is gone; success alert shown"},
+      {"action": "Read the audit log again", "data": "none", "expected": "Exactly E+3 entries exist, one per deleted user, in the order of the deletes"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - multiple deletes",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists, and a way to read the audit log is defined",
+    "source": "GOS-53 AC4; FR-CR002-07",
+    "notes": "View method [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-35",
+    "story": "GOS-53",
+    "summary": "GOS-53 | Verify Users | edge | An audit entry holds only the agreed fields",
+    "coverage": "edge",
+    "title": "An audit entry holds only the agreed fields",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "A deletion has just been recorded for [EXISTING_PENDING_USER_ID] (see TC-USRSRCH-31)",
+      "The tester is authorised to read the audit log [TO BE CONFIRMED: access and method]"
+    ],
+    "steps": [
+      {"action": "Open the audit entry of the deletion", "data": "none", "expected": "The entry is shown [TO BE CONFIRMED: view method]"},
+      {"action": "List the fields in the entry (use placeholders in any record)", "data": "none", "expected": "Only the fields approved by the PM/legal are present [approved list TO BE CONFIRMED]"},
+      {"action": "Check for phone, e-mail and password of the deleted user", "data": "none", "expected": "None of them is stored in the entry unless the approved list allows it [TO BE CONFIRMED]"}
+    ],
+    "priority": "Medium",
+    "tier": "P3 - compliance check, depends on the approved field list",
+    "automate": false,
+    "automation_rationale": "no until the approved field list and a way to read the log exist",
+    "source": "GOS-53 AC5; FR-CR002-07",
+    "notes": "Approved fields and access [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-36",
+    "story": "GOS-53",
+    "summary": "GOS-53 | Verify Users | security | A delete request without a session creates no audit entry",
+    "coverage": "security",
+    "title": "A delete request without a session creates no audit entry",
+    "preconditions": [
+      "The tester has no logged-in session (new browser context)",
+      "The delete link of the design (GET /admin/Users/Unverify_delete with id and page parameters) is known for [EXISTING_PENDING_USER_ID] [TO BE CONFIRMED: final request form]",
+      "The tester can read the audit log in a separate logged-in session [TO BE CONFIRMED: how testers view the entry]"
+    ],
+    "steps": [
+      {"action": "In the logged-in session, read the audit log and note the number of entries", "data": "none", "expected": "The entry count E is noted [TO BE CONFIRMED: view method]"},
+      {"action": "In the session-less context, open the delete link for the user", "data": "[EXISTING_PENDING_USER_ID]", "expected": "The browser is redirected to /admin/login"},
+      {"action": "In the logged-in session, read the audit log again", "data": "none", "expected": "Still E entries; nothing is recorded for [EXISTING_PENDING_USER_ID] and the user is still listed"}
+    ],
+    "priority": "High",
+    "tier": "P1 - unauthenticated request must leave no trace (priority raised: security, BR-001)",
+    "automate": false,
+    "automation_rationale": "no until a way to read the audit log and a test environment exist",
+    "source": "FR-CR002-07; BR-001; NFR-CR002-02",
+    "notes": "Companion of TC-USRSRCH-23 (GOS-52), which checks the list; this checks the log. View method and request form [TO BE CONFIRMED]"
+  }
+]

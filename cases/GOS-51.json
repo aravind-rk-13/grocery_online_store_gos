@@ -1,0 +1,501 @@
+[
+  {
+    "tc_id": "TC-USRSRCH-01",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | functional-ui | Every pending user row shows one Delete button",
+    "coverage": "functional-ui",
+    "title": "Every pending user row shows one Delete button",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Note the panel title count N and the number of data rows",
+        "data": "none",
+        "expected": "Title reads 'List Users(N)'; at least 2 data rows are shown"
+      },
+      {
+        "action": "Look at the Action column of each data row",
+        "data": "none",
+        "expected": "Each row shows exactly one Delete button (red icon)"
+      },
+      {
+        "action": "Scroll to the last row on the page",
+        "data": "none",
+        "expected": "The last row also shows exactly one Delete button; no row lacks one"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1 - core control of the story",
+    "automate": true,
+    "automation_rationale": "Cancel-only, no data changed; native dialog dismissed via the page dialog handler. Needs agreed test data",
+    "source": "AC1; prototype CR_002_image_1.png (design)",
+    "notes": "Rows per page and paging [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-02",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | functional-ui | Delete opens the confirmation popup and the list stays unchanged",
+    "coverage": "functional-ui",
+    "title": "Delete opens the confirmation popup and the list stays unchanged",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Note the panel title count N",
+        "data": "none",
+        "expected": "Title reads 'List Users(N)'"
+      },
+      {
+        "action": "Click Delete on the row of [EXISTING_PENDING_USER_NAME]",
+        "data": "none",
+        "expected": "Popup text 'Do you want to delete this User Details?' with buttons 'OK' and 'Cancel' opens"
+      },
+      {
+        "action": "Compare the popup wording with the design",
+        "data": "none",
+        "expected": "Wording matches exactly, including capitalisation and the question mark; prototype CR_002_image_2.png"
+      },
+      {
+        "action": "Look at the list behind the popup",
+        "data": "none",
+        "expected": "The row of [EXISTING_PENDING_USER_NAME] is still listed and the title still reads 'List Users(N)'"
+      },
+      {
+        "action": "Click Cancel to leave the screen as found",
+        "data": "none",
+        "expected": "Popup closes"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1 - the confirmation is the safety net for irreversible deletes",
+    "automate": true,
+    "automation_rationale": "Cancel-only, no data changed; native dialog dismissed via the page dialog handler. Needs agreed test data",
+    "source": "AC2; prototype CR_002_image_2.png (design)",
+    "notes": "Native browser confirm per the story; the site host line in the popup header is not tested"
+  },
+  {
+    "tc_id": "TC-USRSRCH-03",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | negative | Cancel closes the popup and leaves the list unchanged",
+    "coverage": "negative",
+    "title": "Cancel closes the popup and leaves the list unchanged",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Note the panel title count N and the row of [EXISTING_PENDING_USER_NAME]",
+        "data": "none",
+        "expected": "Title reads 'List Users(N)'; row is listed"
+      },
+      {
+        "action": "Click Delete on that row",
+        "data": "none",
+        "expected": "Popup text 'Do you want to delete this User Details?' with buttons 'OK' and 'Cancel' opens"
+      },
+      {
+        "action": "Click Cancel",
+        "data": "none",
+        "expected": "Popup closes; the same 'List Users' list is shown"
+      },
+      {
+        "action": "Check the row and the count",
+        "data": "none",
+        "expected": "Row of [EXISTING_PENDING_USER_NAME] is still listed; title still reads 'List Users(N)'"
+      },
+      {
+        "action": "Check the page for alerts",
+        "data": "none",
+        "expected": "No alert 'User Informations Deleted Successfully' is shown"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1 - abort path that protects data",
+    "automate": true,
+    "automation_rationale": "Cancel-only, no data changed; native dialog dismissed via the page dialog handler. Needs agreed test data",
+    "source": "AC3; prototypes CR_002_image_2.png and CR_002_image_3.png (design)",
+    "notes": "Whether an active Search filter is kept after Cancel [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-04",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | boundary | Only one pending user: Delete then Cancel keeps the row and count 1",
+    "coverage": "boundary",
+    "title": "Only one pending user: Delete then Cancel keeps the row and count 1",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds exactly 1 synthetic pending user, so the title reads 'List Users(1)' [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Check the panel title",
+        "data": "none",
+        "expected": "Title reads 'List Users(1)' and one row is shown"
+      },
+      {
+        "action": "Click Delete on that row",
+        "data": "none",
+        "expected": "Popup text 'Do you want to delete this User Details?' with buttons 'OK' and 'Cancel' opens"
+      },
+      {
+        "action": "Click Cancel",
+        "data": "none",
+        "expected": "Popup closes"
+      },
+      {
+        "action": "Check the row and the count",
+        "data": "none",
+        "expected": "The row is still listed and the title still reads 'List Users(1)'; no empty-state text is shown"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2 - boundary of the list size",
+    "automate": true,
+    "automation_rationale": "Cancel-only, no data changed; native dialog dismissed via the page dialog handler. Needs agreed test data; a list with exactly one user is hard to arrange on the shared console",
+    "source": "AC4",
+    "notes": "Empty-state text is out of scope"
+  },
+  {
+    "tc_id": "TC-USRSRCH-05",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | edge | Double-clicking Delete opens a single popup and Cancel leaves the list unchanged",
+    "coverage": "edge",
+    "title": "Double-clicking Delete opens a single popup and Cancel leaves the list unchanged",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Note the panel title count N",
+        "data": "none",
+        "expected": "Title reads 'List Users(N)'"
+      },
+      {
+        "action": "Double-click Delete on the row of [EXISTING_PENDING_USER_NAME]",
+        "data": "none",
+        "expected": "One confirmation popup is shown (not stacked or repeated)"
+      },
+      {
+        "action": "Click Cancel",
+        "data": "none",
+        "expected": "Popup closes; no second popup appears"
+      },
+      {
+        "action": "Check the list",
+        "data": "none",
+        "expected": "Row still listed and title still reads 'List Users(N)'; no success alert"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P3 - double-activation guard on an irreversible action",
+    "automate": false,
+    "automation_rationale": "Native dialog handling of a double click is unreliable in automation; run manually",
+    "source": "Concurrency/state; simplest reading of AC2/AC3",
+    "notes": "Expected number of popups on double click [TO BE CONFIRMED: check on build]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-06",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | accessibility | Delete and Cancel are operable with the keyboard only",
+    "coverage": "accessibility",
+    "title": "Delete and Cancel are operable with the keyboard only",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Press Tab until focus reaches the Delete button of the first row",
+        "data": "none",
+        "expected": "Delete button shows a visible focus indicator"
+      },
+      {
+        "action": "Press Enter",
+        "data": "none",
+        "expected": "Popup text 'Do you want to delete this User Details?' with buttons 'OK' and 'Cancel' opens"
+      },
+      {
+        "action": "Move to Cancel using the keyboard and activate it",
+        "data": "none",
+        "expected": "Cancel can be chosen by keyboard; popup closes"
+      },
+      {
+        "action": "Check the list",
+        "data": "none",
+        "expected": "Rows unchanged and title count unchanged; no success alert"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P2 - keyboard access is an explicit AC",
+    "automate": true,
+    "automation_rationale": "Cancel-only, no data changed; native dialog dismissed via the page dialog handler. Needs agreed test data",
+    "source": "AC5",
+    "notes": "Tab order and default focused button in the popup [TO BE CONFIRMED: NFR-CR002-05]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-07",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | accessibility | Delete button has the accessible name Delete",
+    "coverage": "accessibility",
+    "title": "Delete button has the accessible name Delete",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Inspect the accessibility tree for the Delete button of the first row",
+        "data": "none",
+        "expected": "The button has the accessible name 'Delete'"
+      },
+      {
+        "action": "Repeat for the last row on the page",
+        "data": "none",
+        "expected": "The button has the accessible name 'Delete'"
+      },
+      {
+        "action": "Check that it can take keyboard focus",
+        "data": "none",
+        "expected": "It is focusable and announced as an actionable control"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P3 - icon-only control needs a name",
+    "automate": true,
+    "automation_rationale": "Read-only role/name check",
+    "source": "AC1 (accessible name)",
+    "notes": "Accessible name [TO BE CONFIRMED: NFR-CR002-05]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-08",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | security | Unauthenticated direct access to the Verify Users list is refused",
+    "coverage": "security",
+    "title": "Unauthenticated direct access to the Verify Users list is refused",
+    "preconditions": [
+      "The tester has no logged-in session (new browser context)",
+      "The Verify Users list URL is known (route [TO BE CONFIRMED])"
+    ],
+    "steps": [
+      {
+        "action": "Open the Verify Users list URL directly",
+        "data": "none",
+        "expected": "The browser is redirected to /admin/login; no list and no Delete buttons are shown"
+      },
+      {
+        "action": "Check the page content",
+        "data": "none",
+        "expected": "Only the login form is shown; no user names or contacts are visible"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1 - raised to High: access control on a screen with a destructive action (BR-001)",
+    "automate": true,
+    "automation_rationale": "Read-only, no data changed",
+    "source": "Permission gate; BR-001 (docs/context/business-rules.md)",
+    "notes": "Redirect target [TO BE CONFIRMED: check on build]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-09",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | session-state | Back button after logout does not show the list with Delete buttons",
+    "coverage": "session-state",
+    "title": "Back button after logout does not show the list with Delete buttons",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Log out of the console",
+        "data": "none",
+        "expected": "Login page is shown"
+      },
+      {
+        "action": "Press the browser Back button",
+        "data": "none",
+        "expected": "The Verify Users list is not usable: the login page is shown or the session is refused"
+      },
+      {
+        "action": "Try to click any Delete button if one is visible",
+        "data": "none",
+        "expected": "No confirmation popup opens for an unauthenticated user"
+      }
+    ],
+    "priority": "High",
+    "tier": "P2 - raised to High: a stale page must not expose a destructive control",
+    "automate": true,
+    "automation_rationale": "Read-only, no data changed",
+    "source": "Permission and session gate; BR-001",
+    "notes": "Behaviour of a cached page [TO BE CONFIRMED: check on build]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-10",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | functional-ui | List layout around the Delete button matches the design",
+    "coverage": "functional-ui",
+    "title": "List layout around the Delete button matches the design",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Open the list and read the heading and breadcrumb",
+        "data": "none",
+        "expected": "Heading 'List Users'; breadcrumb 'Home / List Users'"
+      },
+      {
+        "action": "Read the column headers",
+        "data": "none",
+        "expected": "Columns: Name, Contact, Password, Date, Status, Action"
+      },
+      {
+        "action": "Read the panel title",
+        "data": "none",
+        "expected": "Format 'List Users(N)' with N as a number"
+      },
+      {
+        "action": "Look at the Delete control in the Action column",
+        "data": "none",
+        "expected": "Red icon button, one per row"
+      }
+    ],
+    "priority": "Low",
+    "tier": "P3 - layout check only; wording taken from the design",
+    "automate": true,
+    "automation_rationale": "Read-only label check",
+    "source": "Prototype CR_002_image_1.png (design)",
+    "notes": "Any difference from the built app is logged as an open question, not rewritten"
+  },
+  {
+    "tc_id": "TC-USRSRCH-11",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | data-persistence | After Cancel and a page reload the count and rows are unchanged",
+    "coverage": "data-persistence",
+    "title": "After Cancel and a page reload the count and rows are unchanged",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Note the panel title count N and the row of [EXISTING_PENDING_USER_NAME]",
+        "data": "none",
+        "expected": "Title reads 'List Users(N)'"
+      },
+      {
+        "action": "Click Delete on that row, then Cancel",
+        "data": "none",
+        "expected": "Popup closes"
+      },
+      {
+        "action": "Reload the page",
+        "data": "none",
+        "expected": "Title still reads 'List Users(N)'; the row of [EXISTING_PENDING_USER_NAME] is still listed"
+      },
+      {
+        "action": "Open the list in a second tab",
+        "data": "none",
+        "expected": "Same count N and same row; nothing was removed"
+      }
+    ],
+    "priority": "High",
+    "tier": "P1 - proves that opening and cancelling stores nothing",
+    "automate": true,
+    "automation_rationale": "Cancel-only, no data changed; native dialog dismissed via the page dialog handler. Needs agreed test data",
+    "source": "AC3 (count still N); persistence",
+    "notes": "Second-tab step is manual only"
+  },
+  {
+    "tc_id": "TC-USRSRCH-12",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | network | Opening and cancelling the popup sends no delete request",
+    "coverage": "network",
+    "title": "Opening and cancelling the popup sends no delete request",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Start recording network requests in the browser",
+        "data": "none",
+        "expected": "Recording is active"
+      },
+      {
+        "action": "Click Delete on the row of [EXISTING_PENDING_USER_NAME]",
+        "data": "none",
+        "expected": "Popup text 'Do you want to delete this User Details?' with buttons 'OK' and 'Cancel' opens; no delete request is sent"
+      },
+      {
+        "action": "Click Cancel",
+        "data": "none",
+        "expected": "Popup closes; still no delete request and no navigation to a delete address"
+      },
+      {
+        "action": "Check the recorded requests",
+        "data": "none",
+        "expected": "No request to any delete address; list still shows the row and count N"
+      }
+    ],
+    "priority": "High",
+    "tier": "P2 - raised to High: a delete request here would destroy data",
+    "automate": true,
+    "automation_rationale": "Cancel-only, no data changed; native dialog dismissed via the page dialog handler. Needs agreed test data",
+    "source": "AC2, AC3; prototype CR_002_image_2.png shows a delete address in the status bar (design)",
+    "notes": "Delete address form [TO BE CONFIRMED: check on build]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-13",
+    "story": "GOS-51",
+    "summary": "GOS-51 | Verify Users | functional-ui | Row data and masked password are unchanged after Cancel",
+    "coverage": "functional-ui",
+    "title": "Row data and masked password are unchanged after Cancel",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The list holds 2 or more synthetic pending users, including [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {
+        "action": "Note the Name, Contact, Date and Status of the row of [EXISTING_PENDING_USER_NAME]",
+        "data": "none",
+        "expected": "Values noted using placeholders in the record; Password column shows a reveal control, not clear text"
+      },
+      {
+        "action": "Click Delete, then Cancel",
+        "data": "none",
+        "expected": "Popup closes"
+      },
+      {
+        "action": "Compare the row with the noted values",
+        "data": "none",
+        "expected": "Name, Contact, Date and Status are identical; Password is still masked; Status is still 'Unverified'"
+      }
+    ],
+    "priority": "Medium",
+    "tier": "P3 - data display and masking (BR-007)",
+    "automate": true,
+    "automation_rationale": "Cancel-only, no data changed; native dialog dismissed via the page dialog handler. Needs agreed test data",
+    "source": "AC3; BR-007; prototype CR_002_image_1.png (design)",
+    "notes": "Masking behaviour [TO BE CONFIRMED: check on build]"
+  }
+]

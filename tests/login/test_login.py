@@ -2,7 +2,8 @@
 
 Changes vs the TypeScript version:
 - Page Object (pages/login_page.py); no selectors inline in tests.
-- No fixed waits (waitForTimeout). Playwright's auto-waiting expect() is used instead.
+- No fixed waits (waitForTimeout). Playwright's auto-waiting expect(), capped at 4000 ms; each step logs its latency
+  (pages/waits.py).
 - Credentials only from .env; non-sensitive data from fixtures/login.json.
 - Tier + coverage markers so the P1 smoke set can be selected (-m regression_p1).
 """
@@ -50,7 +51,7 @@ def test_tc_login_03_unknown_username_rejected(login_page: LoginPage, test_data)
 @pytest.mark.boundary
 def test_tc_login_04_both_fields_empty_blocked_client_side(login_page: LoginPage):
     """TC-LOGIN-04: empty submit is blocked by HTML5 'required' - no request, no alert."""
-    login_page.sign_in.click()
+    login_page.submit()
     assert login_page.validation_message("username"), "expected a required-field message on Username"
     expect(login_page.alert).to_have_count(0)
     expect(login_page.page).to_have_url(re.compile(r"/admin/login/?$"))
@@ -61,8 +62,8 @@ def test_tc_login_04_both_fields_empty_blocked_client_side(login_page: LoginPage
 def test_tc_login_05_password_empty_blocked_client_side(login_page: LoginPage):
     """TC-LOGIN-05: username only -> required-field message on Password."""
     username, _ = credentials()
-    login_page.username.fill(username)
-    login_page.sign_in.click()
+    login_page.fill_username(username)
+    login_page.submit()
     assert login_page.validation_message("password"), "expected a required-field message on Password"
     expect(login_page.page).to_have_url(re.compile(r"/admin/login/?$"))
 
@@ -111,7 +112,7 @@ def test_tc_login_09_injection_input_rejected_safely(login_page: LoginPage, test
 def test_tc_login_10_protected_url_redirects_when_unauthenticated(page: Page):
     """TC-LOGIN-10: a fresh context (no cookies) opening /admin lands on /admin/login.
     Uses the per-test `page` fixture so the window is closed even when an assertion fails."""
-    page.goto(APP_URL)
+    DashboardPage(page).open(APP_URL)
     expect(page).to_have_url(re.compile(r"/admin/login/?$"))
     expect(LoginPage(page).username).to_be_visible()
 
@@ -121,11 +122,7 @@ def test_tc_login_10_protected_url_redirects_when_unauthenticated(page: Page):
 def test_tc_login_11_keyboard_only_login(login_page: LoginPage):
     """TC-LOGIN-11 (new): login is possible with the keyboard alone (Tab order Username -> Password, Enter submits)."""
     username, password = credentials()
-    login_page.username.focus()
-    login_page.page.keyboard.type(username)
-    login_page.page.keyboard.press("Tab")
-    login_page.page.keyboard.type(password)
-    login_page.page.keyboard.press("Enter")
+    login_page.login_with_keyboard(username, password)
     DashboardPage(login_page.page).expect_loaded()
 
 

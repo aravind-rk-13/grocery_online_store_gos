@@ -46,7 +46,7 @@
     "tier": "P1",
     "automate": true,
     "automation_rationale": "Read-only, stable, core screen check",
-    "source": "AC1; prototype admin_users_list.png, side_navigation_bar.png",
+    "source": "AC1; prototype CR_001_image_2.png, CR_001_image_1.png",
     "notes": "Smoke candidate. The list URL is captured at run time (PM answer 2026-09-30). Tier proposed: P1, core screen of the CR."
   },
   {
@@ -91,7 +91,7 @@
     "tier": "P2",
     "automate": true,
     "automation_rationale": "Read-only navigation, stable",
-    "source": "AC1; prototype side_navigation_bar.png",
+    "source": "AC1; prototype CR_001_image_1.png",
     "notes": "Card display itself is GOS-20 (out of scope here). The list URL is captured at run time (PM answer 2026-09-30)."
   },
   {
@@ -125,7 +125,7 @@
     "tier": "P2",
     "automate": true,
     "automation_rationale": "Read-only assertion over rows",
-    "source": "AC1; prototype admin_users_list.png",
+    "source": "AC1; prototype CR_001_image_2.png",
     "notes": "Inactive accounts are listed (PM answer 2026-09-30). Badge colours not asserted."
   },
   {
@@ -205,7 +205,7 @@
     "tier": "P1",
     "automate": true,
     "automation_rationale": "Read-only pagination, stable",
-    "source": "AC2; prototype pagination_1.png",
+    "source": "AC2; prototype CR_001_image_3.png",
     "notes": "The list sort order is random (PM answer 2026-09-30): page change is verified by the highlighted page number, never by row content. Row counts per page are valid."
   },
   {
@@ -245,7 +245,7 @@
     "tier": "P2",
     "automate": true,
     "automation_rationale": "Read-only pagination, stable",
-    "source": "AC2; prototype admin_users_list.png",
+    "source": "AC2; prototype CR_001_image_2.png",
     "notes": "Middle page chosen at run time from the last page number. Sort order is random (PM answer 2026-09-30): verify by the highlighted page number, never by row content."
   },
   {
@@ -285,7 +285,7 @@
     "tier": "P2",
     "automate": true,
     "automation_rationale": "Read-only pagination, stable",
-    "source": "AC2; prototype admin_users_list.png",
+    "source": "AC2; prototype CR_001_image_2.png",
     "notes": "Sort order is random (PM answer 2026-09-30): verify by the highlighted page number, never by row content."
   },
   {
@@ -325,7 +325,7 @@
     "tier": "P2",
     "automate": true,
     "automation_rationale": "Read-only pagination, stable",
-    "source": "AC2; prototype pagination_2.png",
+    "source": "AC2; prototype CR_001_image_4.png",
     "notes": "Sort order is random (PM answer 2026-09-30): verify by the highlighted page number, never by row content."
   },
   {
@@ -365,7 +365,7 @@
     "tier": "P2",
     "automate": true,
     "automation_rationale": "Read-only pagination, stable",
-    "source": "AC2; prototype pagination_2.png",
+    "source": "AC2; prototype CR_001_image_4.png",
     "notes": "Sort order is random (PM answer 2026-09-30): verify by the highlighted page number, never by row content."
   },
   {
@@ -410,7 +410,7 @@
     "tier": "P1",
     "automate": true,
     "automation_rationale": "Read-only; N read at run time. Depends on GOS-20 card total",
-    "source": "AC3; prototype side_navigation_bar.png, pagination_2.png",
+    "source": "AC3; prototype CR_001_image_1.png, CR_001_image_4.png",
     "notes": "Open question 4: prototype card and list totals differ; built app must match at the same moment. Never hard-code N."
   },
   {
@@ -495,7 +495,7 @@
     "tier": "P1",
     "automate": true,
     "automation_rationale": "Read-only, stable",
-    "source": "AC4; prototype pagination_1.png",
+    "source": "AC4; prototype CR_001_image_3.png",
     "notes": ""
   },
   {
@@ -535,7 +535,7 @@
     "tier": "P2",
     "automate": true,
     "automation_rationale": "Read-only, stable",
-    "source": "AC4; prototype admin_users_list.png",
+    "source": "AC4; prototype CR_001_image_2.png",
     "notes": ""
   },
   {
@@ -575,7 +575,7 @@
     "tier": "P1",
     "automate": true,
     "automation_rationale": "Read-only, stable",
-    "source": "AC4; prototype pagination_2.png",
+    "source": "AC4; prototype CR_001_image_4.png",
     "notes": "Exact last-page row count is never asserted (read at run time)."
   }
 ]

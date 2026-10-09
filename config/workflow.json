@@ -1,5 +1,12 @@
 {
   "_note": "Single source of names for every CODIFAi agent. Rename here, never inside an agent file. Values marked TO BE CONFIRMED must be checked on the live site once.",
+  "app": {
+    "_note": "App is being built story by story. Build readiness is per story: a story is built (its screens may be opened and tested) when its Jira status is in statuses.build_ready. There is no global switch.",
+    "status": "in-build",
+    "prototype_dir": "docs/prototype_images",
+    "prototype_pattern": "{cr}_image_{n}.png",
+    "_prototype_note": "{cr} = the CR code (Jira key, e.g. GOS-120_image_1.png). Legacy CRs: CR_{nnn}_image_{n}.png."
+  },
   "jira": {
     "project_key": "GOS",
     "issue_types": {
@@ -15,7 +22,11 @@
     "statuses": {
       "todo": "To Do",
       "in_progress": "In Progress",
-      "ready_for_qa": "Ready for QA",
+      "ready_for_qa": "Ready for Testing",
+      "build_ready": [
+        "Ready for Testing",
+        "Done"
+      ],
       "done": "Done"
     },
     "link_types": {
@@ -27,12 +38,44 @@
     "approval_subtasks": {
       "cr_brief": "Approve CR brief for {cr}",
       "stories": "Approve stories for {cr}",
-      "test_cases": "Review AI test cases for {story}"
+      "test_cases": "Review AI test cases for {story}",
+      "test_cases_cr": "Review AI test cases for {cr}",
+      "cr_brief_v": "Approve CR brief v{n} for {cr}",
+      "change_v": "Approve change v{n} for {cr}",
+      "_legacy": "cr_brief ('Approve CR brief for {cr}') is the pre-2026-10-06 title; gates accept it for legacy CRs (CR-001..003)."
     },
     "input_needed_prefix": "[CODIFAi - input needed]",
     "bot_comment_prefix": "[CODIFAi]",
     "severity_field": null,
-    "_severity_note": "If the site has a Severity custom field, put its field id in severity_field; agents then use it instead of the severity-sN labels."
+    "_severity_note": "If the site has a Severity custom field, put its field id in severity_field; agents then use it instead of the severity-sN labels.",
+    "cr_workflow": {
+      "_note": "Jira-first Change Requests (2026-10-06). GOS has no 'New' or 'In QA' status: mapped to existing ones (PM decision). Rename here only.",
+      "code": "The CR code is the Jira key of the Change Request (e.g. GOS-120). Used in page titles, sub-tasks, Test Plan names, labels on stories/Tests, FR IDs (FR-GOS120-01) and jira-map. Legacy CRs keep CR-NNN.",
+      "new": "To Do",
+      "in_progress": "In Progress",
+      "changed": "Changed",
+      "in_qa": "Ready for Testing",
+      "done": "Done",
+      "required_fields": [
+        "Client",
+        "Call date",
+        "Taken by",
+        "Summary",
+        "Call notes",
+        "Priority"
+      ],
+      "description_blocks": {
+        "_note": "Blocks are only ever APPENDED to the end of the CR description (Atlassian document format); the PM's original text is never rewritten.",
+        "page_link": "CONFLUENCE PAGE: {link}",
+        "approved_brief": "APPROVED CR BRIEF v1 (approved {date}, {link})",
+        "change": "CHANGE · {date}",
+        "approved_change": "APPROVED CHANGE v{n} (approved {date}, {link})"
+      },
+      "result_labels": {
+        "passed": "tested-passed",
+        "failed": "tested-failed"
+      }
+    }
   },
   "labels": {
     "cr_id_prefix": "CR-",
@@ -66,13 +109,18 @@
       "S2": "severity-s2",
       "S3": "severity-s3",
       "S4": "severity-s4"
-    }
+    },
+    "_cr_id_prefix": "Legacy only (CR-001..CR-004). New CRs use the Jira key as CR code; no CR-NNN label."
   },
   "confluence": {
     "space_key": "GOS",
     "cr_parent_title": "Change Requests",
+    "cr_parent_id": "9338881",
+    "_cr_pages": "A CR page is any page directly under cr_parent_id (except the title CR Template). The label is optional (still accepted).",
     "cr_page_label": "change-request",
     "reports_parent_title": "QA Reports",
+    "results_parent_title": "Test Results",
+    "results_page_title": "{scope} | {kind} | {date} | {env}",
     "cr_statuses": [
       "New",
       "Ready for Jira",
@@ -82,7 +130,17 @@
       "Tested: Passed",
       "Tested: Failed",
       "Closed"
-    ]
+    ],
+    "cr_page_sections": [
+      "Details",
+      "Original request",
+      "Current brief",
+      "Earlier versions",
+      "Change history",
+      "Affected items",
+      "Results"
+    ],
+    "_cr_statuses": "Informational: the page Status cell mirrors the Jira CR status; nobody edits it by hand (Jira-first)."
   },
   "xray": {
     "test_sets": {
@@ -94,6 +152,7 @@
       "regression_p1": "GOS | Regression P1",
       "backlog": "GOS | Backlog"
     },
+    "test_plan_summary": "{cr} | Test Plan",
     "execution_summary": {
       "manual": "{story} | QA cycle {n}",
       "automated": "{cr} | automated | {datetime} | local"
@@ -130,7 +189,7 @@
       "marker": "login",
       "tc_prefix": "TC-LOGIN",
       "business_criticality": 25,
-      "integration_depth": null,
+      "integration_depth": 0,
       "app_paths": []
     },
     "verify_users": {
@@ -138,13 +197,21 @@
       "marker": "verify_users",
       "tc_prefix": "TC-USRSRCH",
       "business_criticality": 20,
-      "integration_depth": null,
+      "integration_depth": 0,
       "app_paths": []
     },
     "admin_users": {
       "component": "Admin Users",
       "marker": "admin_users",
       "tc_prefix": "TC-ADMUSR",
+      "business_criticality": null,
+      "integration_depth": null,
+      "app_paths": []
+    },
+    "manage_product": {
+      "component": "Manage Product",
+      "marker": "manage_product",
+      "tc_prefix": "TC-PRODUCT",
       "business_criticality": null,
       "integration_depth": null,
       "app_paths": []

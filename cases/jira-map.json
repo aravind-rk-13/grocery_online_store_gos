@@ -11,11 +11,39 @@
         "GOS-18",
         "GOS-20"
       ]
+    },
+    "CR-002": {
+      "jira": "GOS-49",
+      "page_id": "11501569",
+      "stories": [
+        "GOS-51",
+        "GOS-52",
+        "GOS-53"
+      ]
+    },
+    "CR-003": {
+      "jira": "GOS-95",
+      "page_id": "14254081",
+      "stories": [
+        "GOS-98"
+      ]
+    },
+    "GOS-137": {
+      "jira": "GOS-137",
+      "page_id": "15826950",
+      "stories": [
+        "GOS-139"
+      ]
     }
   },
   "stories": {
     "GOS-1": "Sign in to the admin console",
-    "GOS-18": ""
+    "GOS-18": "",
+    "GOS-51": "",
+    "GOS-52": "",
+    "GOS-53": "",
+    "GOS-98": "",
+    "GOS-139": ""
   },
   "tests": {
     "TC-LOGIN-01": "GOS-2",
@@ -43,7 +71,66 @@
     "TC-ADMUSR-11": "GOS-31",
     "TC-ADMUSR-12": "GOS-32",
     "TC-ADMUSR-13": "GOS-33",
-    "TC-ADMUSR-14": "GOS-34"
+    "TC-ADMUSR-14": "GOS-34",
+    "TC-USRSRCH-01": "GOS-55",
+    "TC-USRSRCH-02": "GOS-56",
+    "TC-USRSRCH-03": "GOS-57",
+    "TC-USRSRCH-04": "GOS-58",
+    "TC-USRSRCH-05": "GOS-59",
+    "TC-USRSRCH-06": "GOS-60",
+    "TC-USRSRCH-07": "GOS-61",
+    "TC-USRSRCH-08": "GOS-62",
+    "TC-USRSRCH-09": "GOS-63",
+    "TC-USRSRCH-10": "GOS-64",
+    "TC-USRSRCH-11": "GOS-65",
+    "TC-USRSRCH-12": "GOS-66",
+    "TC-USRSRCH-13": "GOS-67",
+    "TC-USRSRCH-14": "GOS-69",
+    "TC-USRSRCH-15": "GOS-70",
+    "TC-USRSRCH-16": "GOS-71",
+    "TC-USRSRCH-17": "GOS-72",
+    "TC-USRSRCH-18": "GOS-73",
+    "TC-USRSRCH-19": "GOS-74",
+    "TC-USRSRCH-20": "GOS-75",
+    "TC-USRSRCH-21": "GOS-76",
+    "TC-USRSRCH-22": "GOS-77",
+    "TC-USRSRCH-23": "GOS-78",
+    "TC-USRSRCH-24": "GOS-79",
+    "TC-USRSRCH-25": "GOS-80",
+    "TC-USRSRCH-26": "GOS-81",
+    "TC-USRSRCH-27": "GOS-82",
+    "TC-USRSRCH-28": "GOS-83",
+    "TC-USRSRCH-29": "GOS-84",
+    "TC-USRSRCH-30": "GOS-85",
+    "TC-USRSRCH-31": "GOS-86",
+    "TC-USRSRCH-32": "GOS-87",
+    "TC-USRSRCH-33": "GOS-88",
+    "TC-USRSRCH-34": "GOS-89",
+    "TC-USRSRCH-35": "GOS-90",
+    "TC-USRSRCH-36": "GOS-91",
+    "TC-LOGIN-13": "GOS-100",
+    "TC-LOGIN-14": "GOS-101",
+    "TC-LOGIN-15": "GOS-102",
+    "TC-LOGIN-16": "GOS-103",
+    "TC-LOGIN-17": "GOS-104",
+    "TC-LOGIN-18": "GOS-105",
+    "TC-LOGIN-19": "GOS-106",
+    "TC-LOGIN-20": "GOS-107",
+    "TC-LOGIN-21": "GOS-108",
+    "TC-PRODUCT-01": "GOS-141",
+    "TC-PRODUCT-02": "GOS-142",
+    "TC-PRODUCT-03": "GOS-143",
+    "TC-PRODUCT-04": "GOS-144",
+    "TC-PRODUCT-05": "GOS-145",
+    "TC-PRODUCT-06": "GOS-146",
+    "TC-PRODUCT-07": "GOS-147",
+    "TC-PRODUCT-08": "GOS-148",
+    "TC-PRODUCT-09": "GOS-149",
+    "TC-PRODUCT-10": "GOS-150",
+    "TC-PRODUCT-11": "GOS-151",
+    "TC-PRODUCT-12": "GOS-152",
+    "TC-PRODUCT-13": "GOS-153",
+    "TC-PRODUCT-14": "GOS-154"
   },
   "bugs": {}
 }

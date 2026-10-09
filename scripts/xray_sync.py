@@ -17,7 +17,7 @@ Commands (all print JSON or one result line; secrets are never printed):
   create-execution "SUMMARY" TEST-KEY [...] [--plan PLAN-KEY]
                                               create a Test Execution (manual testing) with these Tests
   get-execution EXEC-KEY                      status of every test run in an execution
-  import-junit test-results/junit.xml ["SUMMARY"]
+  import-junit latest|test-results/<run>/junit_<run>.xml ["SUMMARY"]
                                               pytest results (local run) -> a new Xray Test Execution
 
 Needs only XRAY_CLIENT_ID / XRAY_CLIENT_SECRET in .env (issue ids and Test Sets are looked up through Xray itself).
@@ -270,8 +270,19 @@ def default_summary(path: str) -> str:
     return f"{', '.join(modules) or 'Automated'} regression | {datetime.now():%Y-%m-%d %H:%M} | {where}"
 
 
+def _latest_junit() -> str:
+    """The junit file of the newest run (conftest writes test-results/latest.txt; one folder per run)."""
+    root = Path(__file__).resolve().parent.parent
+    run_dir = root / (root / "test-results" / "latest.txt").read_text(encoding="utf-8").strip()
+    return str(next(run_dir.glob("junit_*.xml")))
+
+
 def import_junit(path: str, summary: str = "") -> None:
-    """Create an Xray Test Execution from pytest's JUnit XML, with a readable summary (multipart endpoint)."""
+    """Create an Xray Test Execution from pytest's JUnit XML, with a readable summary (multipart endpoint).
+    PATH "latest" = the newest run's junit file."""
+    if path == "latest":
+        path = _latest_junit()
+        print(f"Using {path}")
     info = {"fields": {
         "project": {"key": _project_key()},
         "summary": summary or default_summary(path),

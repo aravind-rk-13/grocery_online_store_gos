@@ -1,10 +1,10 @@
 # Testing conventions
 
 ## IDs and names
-- Change Request: Confluence page "CR-<NNN> <summary>" in space GOS -> Jira issue type Change Request (GOS-n), label CR-<NNN>.
-- Story: GOS-n, linked to its CR ("relates to"), labels: CR-<NNN> (or FR-ID for BRD work) and the module component.
+- Change Request (Jira-first, since 2026-10-06): the PM creates Jira issue type Change Request (GOS-n, status To Do); its Jira key is the CR code (e.g. GOS-120); cr-intake creates the Confluence page "GOS-120 <short heading>" under Change Requests. The description is append-only. Legacy CR-001..003 were page-first.
+- Story: GOS-n, linked to its CR ("relates to"), labels: the CR code (e.g. GOS-120; legacy CRs: CR-<NNN>) or FR-ID for BRD work, and the module component.
 - Test case: TC-<MODULE>-<NN> (TC-LOGIN-01, TC-USRSRCH-01). Xray Test summary "<STORY> | <Module> | <coverage> | <scenario>".
-- Test labels (CODIFAi Phase 4): <STORY-KEY>, source ID (FR-xxx or CR-NNN), coverage type. Added later: regression-p1/p2/p3 (regression-marker only), automated (automation-script-generator only).
+- Test labels (CODIFAi Phase 4): <STORY-KEY>, source ID (FR-xxx or the CR code, e.g. GOS-120; legacy CR-NNN), coverage type. Added later: regression-p1/p2/p3 (regression-marker only), automated (automation-script-generator only).
 - Legacy freeze: issues created before the CODIFAi cutover (e.g. GOS-2..13, label test-for-GOS-1) are never relabelled or re-scored.
 
 ## Every test case
@@ -17,15 +17,16 @@ Coverage label values: functional-ui, negative, boundary, edge, security, sessio
 ## Approval gates (who approves what)
 | Gate | Artefact | How it is recorded |
 |---|---|---|
-| CR brief | Confluence "CR brief" page | PM closes sub-task "Approve CR brief for <CR>" |
+| CR brief | Brief v1 in the CR page's "Current brief" section (legacy: child page "CR brief") | PM closes sub-task "Approve CR brief v1 for <CR>" (legacy: "Approve CR brief for <CR>") |
+| CR change | Brief v<n> on the CR page + affected items | PM closes sub-task "Approve change v<n> for <CR>" |
 | Stories | Jira stories under the CR | PM closes sub-task "Approve stories for <CR>" |
-| Test cases | Xray Tests of a story | Tester closes sub-task "Review AI test cases for <STORY>"; cases needing rework are fixed or deleted before closing |
+| Test cases | Xray Tests of all stories of a CR (made in one step, because the stories are approved together) | Tester closes sub-task "Review AI test cases for <CR>" on the CR issue; a story added after that review gets its own "Review AI test cases for <STORY>"; cases needing rework are fixed or deleted before closing |
 | Regression tiers | regression-p1/p2/p3 labels | QA Lead reviews the scoring comment; edits a label to override |
-| Scripts | Pull request | QA review + P1 suite and locator lint pass locally before merge (summary in the PR) |
+| Scripts | Pull request from a branch | Lint + new tests + P1 pass locally before the PR is opened (summary in the PR) -> QA reviews and approves -> QA merges; never pushed to main directly |
 | Release | Confluence release-readiness page | QA Lead + PO decide Go / No Go |
 
 ## Tiers (CODIFAi Phase 5)
-- Proposed by test-case-generator as a note only; SET by regression-marker (score out of 100: P1 >= 75, P2 50-74, P3 < 50) and reviewed by the QA Lead.
+- Proposed by test-case-generator per case; SET by regression-marker, which applies the proposed tier (standing rule, PM 2026-10-05) and records the module score (out of 100: P1 >= 75, P2 50-74, P3 < 50) for information only; reviewed by the QA Lead, who overrides by editing the label.
 - Code markers mirror the labels: @pytest.mark.regression_p1 / regression_p2 / regression_p3. No other tier marker names.
 - All runs are local (no CI). P1 = before every PR merge and after every staging deploy (target < 5 min for this suite; framework ceiling 30 min) · P2 = before release · P3 = on demand.
 
@@ -34,7 +35,7 @@ Coverage label values: functional-ui, negative, boundary, edge, security, sessio
 - Every bug links to the failed Test ("is tested by" chain) and to its story; summary "<STORY> | <Module> | <what is wrong>".
 
 ## Automation
-- Definition of Done: passes locally (lint + the new tests + P1), no inline selectors, no fixed waits, module + coverage markers applied, PR reviewed, Test labelled automated.
+- Definition of Done: passes locally (lint + the new tests + P1), no inline selectors, no fixed waits, module + coverage markers applied, PR approved and merged by QA, then Test labelled automated.
 - Flaky policy: passes only on rerun -> quarantine (remove the regression_p1 marker) within 24 h, fix within a week.
 
 ## Test isolation and start screens (agreed 2026-09-30)

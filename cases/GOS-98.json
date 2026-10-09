@@ -1,0 +1,249 @@
+[
+  {
+    "tc_id": "TC-LOGIN-13",
+    "story": "GOS-98",
+    "summary": "GOS-98 | Login | functional-ui | Admin image is visible in the top-right of the header after login",
+    "coverage": "functional-ui",
+    "frs": ["FR-CR003-01"],
+    "title": "Admin image is visible in the top-right of the header after login",
+    "preconditions": [
+      "The build with the profile menu is deployed [TO BE CONFIRMED: check on build]",
+      "A dedicated test admin account exists ([VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD])",
+      "The admin is logged in and the Dashboard is open"
+    ],
+    "steps": [
+      {"action": "Look at the top-right corner of the header", "data": "none", "expected": "The admin image (data-testid admin-avatar) is visible in the top-right corner of the header"},
+      {"action": "Check the image is not covered or cut off by other header elements", "data": "none", "expected": "The image is fully visible; nothing overlaps it [TO BE CONFIRMED: check on build]"},
+      {"action": "Check the popup is not open yet", "data": "none", "expected": "The popup (data-testid admin-menu) is not visible before any click"}
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Entry point of the whole feature on the shared header",
+    "automate": true,
+    "automation_rationale": "Read-only check; can use the shared admin_storage_state because nothing is logged out",
+    "source": "Scenario 1 (FR-CR003-01); prototype CR_003_image_1 (image and name at the top right)",
+    "notes": "What the image shows when the admin has no photo: [TO BE CONFIRMED: AMB-CR003-04]. Name text next to the image: [TO BE CONFIRMED: AMB-CR003-06]."
+  },
+  {
+    "tc_id": "TC-LOGIN-14",
+    "story": "GOS-98",
+    "summary": "GOS-98 | Login | functional-ui | Clicking the admin image opens a popup with exactly Settings and Logout",
+    "coverage": "functional-ui",
+    "frs": ["FR-CR003-02", "FR-CR003-05"],
+    "title": "Clicking the admin image opens a popup with exactly Settings and Logout",
+    "preconditions": [
+      "The build with the profile menu is deployed [TO BE CONFIRMED: check on build]",
+      "A dedicated test admin account exists ([VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD])",
+      "The admin is logged in and the Dashboard is open"
+    ],
+    "steps": [
+      {"action": "Click the admin image (admin-avatar)", "data": "none", "expected": "A popup (admin-menu) opens below the image"},
+      {"action": "Count the options in the popup", "data": "none", "expected": "Exactly two options are listed"},
+      {"action": "Read the first option", "data": "none", "expected": "\"Settings\" (menu-settings) is shown"},
+      {"action": "Read the second option", "data": "none", "expected": "\"Logout\" (menu-logout) is shown"},
+      {"action": "Check the page behind the popup", "data": "none", "expected": "Still on the Dashboard; the session is unchanged (no navigation, no logout)"}
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Defines the exact menu contract (two options)",
+    "automate": true,
+    "automation_rationale": "Read-only; opening the menu does not end the session, so the shared admin_storage_state is fine",
+    "source": "Scenario 2 (FR-CR003-02, FR-CR003-05); prototype CR_003_image_1 (popup with Settings and Logout)",
+    "notes": "Clicking Settings is out of scope (AMB-CR003-02). How the popup closes is not tested here [TO BE CONFIRMED: AMB-CR003-03]."
+  },
+  {
+    "tc_id": "TC-LOGIN-15",
+    "story": "GOS-98",
+    "summary": "GOS-98 | Login | functional-ui | Logout shows the login page with empty fields and no confirmation dialog",
+    "coverage": "functional-ui",
+    "frs": ["FR-CR003-03", "FR-CR003-04"],
+    "title": "Logout shows the login page with empty fields and no confirmation dialog",
+    "preconditions": [
+      "The build with the profile menu is deployed [TO BE CONFIRMED: check on build]",
+      "A dedicated test admin account exists ([VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD])",
+      "The admin logged in without Remember Me and the Dashboard is open",
+      "This case uses its own login session, not the shared admin_storage_state"
+    ],
+    "steps": [
+      {"action": "Click the admin image (admin-avatar)", "data": "none", "expected": "The popup (admin-menu) opens"},
+      {"action": "Click \"Logout\" (menu-logout)", "data": "none", "expected": "No confirmation dialog appears at any point"},
+      {"action": "Look at the screen after the click", "data": "none", "expected": "The login page is shown"},
+      {"action": "Read the Username field", "data": "none", "expected": "Username is empty"},
+      {"action": "Read the Password field", "data": "none", "expected": "Password is empty"},
+      {"action": "Read the URL", "data": "none", "expected": "URL is the login page [TO BE CONFIRMED: check on build, expected /admin/login per AMB-CR003-10]"}
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Core purpose of the CR and the single critical path of the feature",
+    "automate": true,
+    "automation_rationale": "Logout ends the session, so it needs its own login and must not use the shared admin_storage_state (GAP-CR003-04); needs a test environment or allow-listed IP",
+    "source": "Scenario 3 (FR-CR003-03, FR-CR003-04); prototype CR_003_image_1 (Logout option)",
+    "notes": "Smoke candidate. Whether the server session is also ended is [TO BE CONFIRMED: AMB-CR003-08], not checked here (direct URL is out of scope)."
+  },
+  {
+    "tc_id": "TC-LOGIN-16",
+    "story": "GOS-98",
+    "summary": "GOS-98 | Login | session-state | After Logout no admin heading or admin image is visible and the login form is shown",
+    "coverage": "session-state",
+    "frs": ["FR-CR003-03"],
+    "title": "After Logout no admin heading or admin image is visible and the login form is shown",
+    "preconditions": [
+      "The build with the profile menu is deployed [TO BE CONFIRMED: check on build]",
+      "A dedicated test admin account exists ([VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD])",
+      "The admin logged in without Remember Me and the Dashboard is open",
+      "This case uses its own login session, not the shared admin_storage_state"
+    ],
+    "steps": [
+      {"action": "Note that the heading \"Dashboard\" and the admin image are visible", "data": "none", "expected": "Both are visible before Logout"},
+      {"action": "Click the admin image (admin-avatar), then \"Logout\" (menu-logout)", "data": "none", "expected": "The login page loads"},
+      {"action": "Look for an admin screen heading such as \"Dashboard\"", "data": "none", "expected": "No admin screen heading is visible"},
+      {"action": "Look for the admin image (admin-avatar) and the popup (admin-menu)", "data": "none", "expected": "Neither is visible"},
+      {"action": "Check the login form", "data": "none", "expected": "Username field, Password field and the Login button are visible"}
+    ],
+    "priority": "High",
+    "tier": "P1",
+    "tier_reason": "Security-relevant: the previous admin's screens must not stay visible; raised priority kept at High",
+    "automate": true,
+    "automation_rationale": "Logout ends the session, so it needs its own login and must not use the shared admin_storage_state (GAP-CR003-04)",
+    "source": "Scenario 4 (NFR-CR003-01, FR-CR003-03); prototype CR_003_image_1",
+    "notes": "Button label may read \"Login\" or \"Sign In\" [TO BE CONFIRMED: check on build]. Back-button, session expiry and direct URL are out of scope per GOS-98."
+  },
+  {
+    "tc_id": "TC-LOGIN-17",
+    "story": "GOS-98",
+    "summary": "GOS-98 | Login | boundary | Admin Users screen shows the same popup and Logout returns to an empty login page",
+    "coverage": "boundary",
+    "frs": ["FR-CR003-02", "FR-CR003-03"],
+    "title": "Admin Users screen shows the same popup and Logout returns to an empty login page",
+    "preconditions": [
+      "The build with the profile menu is deployed [TO BE CONFIRMED: check on build]",
+      "A dedicated test admin account exists ([VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD])",
+      "The admin logged in without Remember Me and the Admin Users screen is open (opened from the sidebar)",
+      "This case uses its own login session, not the shared admin_storage_state"
+    ],
+    "steps": [
+      {"action": "Check the admin image on the Admin Users screen", "data": "none", "expected": "The admin image (admin-avatar) is visible in the top-right corner"},
+      {"action": "Click the admin image", "data": "none", "expected": "The popup (admin-menu) opens"},
+      {"action": "Read the options", "data": "none", "expected": "Exactly \"Settings\" (menu-settings) and \"Logout\" (menu-logout), same as on the Dashboard"},
+      {"action": "Click \"Logout\"", "data": "none", "expected": "No confirmation dialog; the login page is shown"},
+      {"action": "Read the Username and Password fields", "data": "none", "expected": "Both fields are empty"}
+    ],
+    "priority": "High",
+    "tier": "P2",
+    "tier_reason": "Same behaviour as the Dashboard on a second screen; regression scope names admin_users",
+    "automate": true,
+    "automation_rationale": "Logout ends the session, so it needs its own login and must not use the shared admin_storage_state (GAP-CR003-04)",
+    "source": "Scenario 5 (boundary); prototype CR_003_image_1; app-map module Admin Users",
+    "notes": "Whether the five server-error routes also show the image is [TO BE CONFIRMED: AMB-CR003-07] and not covered."
+  },
+  {
+    "tc_id": "TC-LOGIN-18",
+    "story": "GOS-98",
+    "summary": "GOS-98 | Login | boundary | Verify Users screen shows the same popup and Logout returns to an empty login page",
+    "coverage": "boundary",
+    "frs": ["FR-CR003-02", "FR-CR003-03"],
+    "title": "Verify Users screen shows the same popup and Logout returns to an empty login page",
+    "preconditions": [
+      "The build with the profile menu is deployed [TO BE CONFIRMED: check on build]",
+      "A dedicated test admin account exists ([VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD])",
+      "The admin logged in without Remember Me and the Verify Users screen is open (opened from the sidebar)",
+      "This case uses its own login session, not the shared admin_storage_state"
+    ],
+    "steps": [
+      {"action": "Check the admin image on the Verify Users screen", "data": "none", "expected": "The admin image (admin-avatar) is visible in the top-right corner"},
+      {"action": "Click the admin image", "data": "none", "expected": "The popup (admin-menu) opens and is fully visible, not hidden behind other page elements [TO BE CONFIRMED: popup layering next to the Delete popup]"},
+      {"action": "Read the options", "data": "none", "expected": "Exactly \"Settings\" (menu-settings) and \"Logout\" (menu-logout)"},
+      {"action": "Click \"Logout\" without touching any row action (Verify, Delete)", "data": "none", "expected": "No confirmation dialog; the login page is shown"},
+      {"action": "Read the Username and Password fields", "data": "none", "expected": "Both fields are empty"}
+    ],
+    "priority": "High",
+    "tier": "P2",
+    "tier_reason": "Same behaviour on a second screen; regression scope names verify_users",
+    "automate": true,
+    "automation_rationale": "Logout ends the session, so it needs its own login and must not use the shared admin_storage_state (GAP-CR003-04); never click Verify or Delete",
+    "source": "Scenario 5 (boundary); prototype CR_003_image_1; app-map module Verify Users",
+    "notes": "Impact section of GOS-98: popup layering next to the Delete popup is [TO BE CONFIRMED]."
+  },
+  {
+    "tc_id": "TC-LOGIN-19",
+    "story": "GOS-98",
+    "summary": "GOS-98 | Login | edge | Logout after logging in with Remember Me shows the login page",
+    "coverage": "edge",
+    "frs": ["FR-CR003-03", "FR-CR003-04"],
+    "title": "Logout after logging in with Remember Me shows the login page",
+    "preconditions": [
+      "The build with the profile menu is deployed [TO BE CONFIRMED: check on build]",
+      "A dedicated test admin account exists ([VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD])",
+      "The admin logged in with \"Remember Me\" ticked and the Dashboard is open",
+      "This case uses its own login session, not the shared admin_storage_state"
+    ],
+    "steps": [
+      {"action": "Click the admin image (admin-avatar)", "data": "none", "expected": "The popup (admin-menu) opens"},
+      {"action": "Click \"Logout\" (menu-logout)", "data": "none", "expected": "No confirmation dialog; the login page is shown"},
+      {"action": "Check that no admin screen heading and no admin image are visible", "data": "none", "expected": "None visible; the login form is shown"},
+      {"action": "Read the Username field", "data": "none", "expected": "[TO BE CONFIRMED: AMB-CR003-09] empty or pre-filled with [VALID_ADMIN_USERNAME]; record what is observed"},
+      {"action": "Read the Password field", "data": "none", "expected": "Password is empty"}
+    ],
+    "priority": "Medium",
+    "tier": "P3",
+    "tier_reason": "Edge combination; expected Username value is not defined by the CR",
+    "automate": false,
+    "automation_rationale": "Expected Username state is undecided (AMB-CR003-09); logout ends the session so a separate login is also needed (GAP-CR003-04)",
+    "source": "Scenario 6 (edge, AMB-CR003-09); prototype CR_003_image_1",
+    "notes": "Priority Medium because the story marks this scenario [TO BE CONFIRMED]. Story priority is High; lowered here with that reason."
+  },
+  {
+    "tc_id": "TC-LOGIN-20",
+    "story": "GOS-98",
+    "summary": "GOS-98 | Login | functional-ui | Popup labels, icons and position match the prototype",
+    "coverage": "functional-ui",
+    "frs": ["FR-CR003-02", "FR-CR003-05"],
+    "title": "Popup labels, icons and position match the prototype",
+    "preconditions": [
+      "The build with the profile menu is deployed [TO BE CONFIRMED: check on build]",
+      "A dedicated test admin account exists ([VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD])",
+      "The admin is logged in and the Dashboard is open"
+    ],
+    "steps": [
+      {"action": "Click the admin image (admin-avatar)", "data": "none", "expected": "The popup opens just below the header, aligned to the top-right, as in the prototype"},
+      {"action": "Read the first option text and icon", "data": "none", "expected": "Text \"Settings\" with a gear icon [TO BE CONFIRMED: AMB-CR003-05, prototype may not be final]"},
+      {"action": "Read the second option text and icon", "data": "none", "expected": "Text \"Logout\" with a power icon [TO BE CONFIRMED: AMB-CR003-05]"},
+      {"action": "Check the two options are separated and each is clickable as a whole row", "data": "none", "expected": "Options appear as two separate rows [TO BE CONFIRMED: check on build]"},
+      {"action": "Check the exact capitalisation of both labels", "data": "none", "expected": "\"Settings\" and \"Logout\" (capital first letter, no extra text)"}
+    ],
+    "priority": "Medium",
+    "tier": "P3",
+    "tier_reason": "Visual detail from a prototype that may not be final",
+    "automate": false,
+    "automation_rationale": "Icon and layout comparison is a visual judgement and the design is not confirmed final",
+    "source": "Prototype CR_003_image_1; Scenario 2",
+    "notes": "Do not copy the name or photo shown in the prototype."
+  },
+  {
+    "tc_id": "TC-LOGIN-21",
+    "story": "GOS-98",
+    "summary": "GOS-98 | Login | data-persistence | A fresh login after Logout starts clean and shows the Dashboard with the admin image",
+    "coverage": "data-persistence",
+    "frs": ["FR-CR003-03", "FR-CR003-04"],
+    "title": "A fresh login after Logout starts clean and shows the Dashboard with the admin image",
+    "preconditions": [
+      "The build with the profile menu is deployed [TO BE CONFIRMED: check on build]",
+      "A dedicated test admin account exists ([VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD])",
+      "The admin logged in without Remember Me and the Dashboard is open",
+      "This case uses its own login session, not the shared admin_storage_state"
+    ],
+    "steps": [
+      {"action": "Click the admin image (admin-avatar), then \"Logout\" (menu-logout)", "data": "none", "expected": "The login page is shown with empty Username and Password"},
+      {"action": "Reload the login page", "data": "none", "expected": "The login page is still shown; both fields are still empty; no username or password is stored in the form"},
+      {"action": "Log in again with the same account", "data": "[VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD]", "expected": "The Dashboard opens"},
+      {"action": "Check the header", "data": "none", "expected": "The admin image (admin-avatar) is visible and the popup (admin-menu) is closed"}
+    ],
+    "priority": "Medium",
+    "tier": "P2",
+    "tier_reason": "Confirms Logout leaves nothing behind and a new session works",
+    "automate": true,
+    "automation_rationale": "Needs its own login (GAP-CR003-04) and a second login, which adds site hits; run only on an agreed test environment",
+    "source": "Scenario 3 and 4 (FR-CR003-03, FR-CR003-04, NFR-CR003-01)",
+    "notes": "Does not check the server session via old cookie or direct URL (out of scope; AMB-CR003-08)."
+  }
+]

@@ -30,7 +30,8 @@ Every locator is a class constant in the Object file with `# src: live DOM · <s
 
 ## PHASE 1 — FETCH THE APPROVED CASES
 Scope = a TC ID, a story key, or the P1 cases of a story. For a story: Tests linked "is tested by".
-Gate: the story's "Review AI test cases" sub-task is Done. Not Done → stop.
+Gate: the "Review AI test cases" sub-task (the story's own sub-task, or the CR's "Review AI test cases for <CR-KEY>" when the cases were made per CR) is Done. Not Done → stop.
+Gate: the story's Jira status is in config/workflow.json statuses.build_ready ("Ready for Testing" / "Done": its build is done). Otherwise stop: "story not Ready for Testing; locators need the built screen" (prototype images are design and give no locators).
 Keep only Tests whose NOTES say "Automate: yes" (or cases/<STORY>.json "automate": true) and that do not already carry the `automated` label.
 Extract ONLY: TC ID (cases/jira-map.json), summary, steps (Action/Data/Expected), preconditions, regression-p* label, coverage label, component, story key.
 More than 25 cases → interactive: confirm scope; headless: script the P1 and P2 cases first and list the rest.
@@ -61,9 +62,9 @@ Fix root causes. Skip only a confirmed app defect with @pytest.mark.xfail(reason
 
 ## PHASE 5 — REPORT, GIT, LABEL
 Report: files (new/extended), locator counts (live DOM / [LOCATOR_NEEDED]), tiers, validation result, confidence (locator / flow / assertion: HIGH/MED/LOW), spec divergences.
-Git — interactive: ask once: 1) branch automation/<STORY>-<short> + PR, 2) keep local, 3) no Git. Headless: always option 1.
+Git (always, both modes): only after Phase 4 passes (lint + the new tests + P1 locally), create branch automation/<STORY>-<short> from an up-to-date main, commit there, push the branch and open a pull request. Never commit to main, never merge; merging is the QA reviewer's approval.
 Commit: "feat(automation): <TC IDs> <short description>" with Story, Tier and Locator-source lines. PR body: TC IDs, story link, validation result (lint + pytest summary from Phase 4), open [LOCATOR_NEEDED] items. Push and `gh pr create --base main`; if `gh` is not installed, push the branch and give the user the compare link `https://github.com/<config github.repo>/compare/main...<branch>` plus the PR body to paste.
-After the PR exists: add the `automated` label to each scripted Test and comment "[CODIFAi] Automated in PR <link> (test_<tc_id>_…)".
+After the PR exists: comment on each scripted Test "[CODIFAi] Automation in review: PR <link> (test_<tc_id>_…)". Add the `automated` label only after the PR is merged (a later run, or when the user says it is merged).
 
 ## LOAD TEST TRACK (Locust, only when asked for a load/performance test)
 Ask once (interactive) or read from the story's NFRs: target journey/endpoints, users and spawn rate, duration, thresholds (p95, error rate). Unknown thresholds → [USER_MUST_SET]; never assume a pass/fail gate.
@@ -74,7 +75,7 @@ Discover real requests from the live app (browser_network_requests); unknown →
 - Never use absolute XPath or selectors in spec files.
 - Never script a case whose review sub-task is open or that is not marked for automation.
 - Always tag each test with its module marker and a coverage marker.
-- Always open a pull request in headless mode; never push to main.
+- Always deliver scripts as a pull request from a branch, after local lint + tests pass; never commit or push to main and never merge.
 - If a tool call fails: retry once, then stop and report.
 </rules>
 
@@ -83,5 +84,5 @@ Discover real requests from the live app (browser_network_requests); unknown →
 2. Table: | TC ID | Jira Key | Test function | File | Tier | Coverage | Status |
 3. [LOCATOR_NEEDED] and [TO BE CONFIRMED] items; cases not automated and why.
 4. Spec divergences.
-5. Next step: QA reviews the PR and runs `python scripts/lint_locators.py` + `python -m pytest -m regression_p1` locally before merging; for the automated QA run the QA Lead runs the tests locally and imports them with `python scripts/xray_sync.py import-junit test-results/junit.xml "<CR-KEY> | automated | <YYYY-MM-DD HH:MM> | local"` (docs/automation/rules.md).
+5. Next step: QA reviews and approves the PR, then merges it (then the Tests get the `automated` label). Before approving, QA runs `python scripts/lint_locators.py` + `python -m pytest -m regression_p1` locally before merging; for the automated QA run the QA Lead runs the tests locally and imports them with `python scripts/xray_sync.py import-junit test-results/junit.xml "<CR-KEY> | automated | <YYYY-MM-DD HH:MM> | local"` (docs/automation/rules.md).
 </output_format>

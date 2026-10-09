@@ -59,3 +59,37 @@ tests/login/test_login.py, pages/*, conftest.py, config/settings.py, fixtures/lo
 - The two `locator("body")` whole-page checks in tests/login/test_login.py are allowed by the lint; consider moving them into a BasePage method later.
 - docs/7rmart_supermarket_brd.md s.7.2 names the credentials the review used. Treat them as compromised demo credentials; consider redacting that line.
 - Existing Tests GOS-2..13 have no Jira component; execution-planner also matches regression Tests by the "Regression P1" Test Set, so add the login P1 Tests to that set once (manually or with regression-marker named explicitly).
+
+## Jira-first Change Requests and versioned changes (2026-10-06)
+Branch flow/jira-first-cr. Before: the PM wrote a Confluence CR page and cr-intake created the Jira CR from it.
+Now the PM writes the CR in Jira; Claude creates and maintains the Confluence page, and changes are versioned.
+
+| File | Change |
+|---|---|
+| config/workflow.json | `jira.cr_workflow`: statuses (To Do = "New", In Progress, Changed, Ready for Testing = "In QA", Done; GOS has no "New"/"In QA", mapped by PM decision), required description fields, append-only description block headings, tested-passed/tested-failed labels; versioned sub-tasks "Approve CR brief v{n}" / "Approve change v{n}" (legacy title kept); `confluence.cr_page_sections` |
+| .claude/agents/cr-intake.md | Rewritten: Mode A new CR (label, page, original request, page link block), Mode B changed CR (CHANGE blocks since the last approval, folded into one version, affected items), Mode C change after Done (ask for a new linked CR), Mode F finalize an approved change |
+| .claude/agents/requirement-analyst.md | Brief written into the CR page ("Current brief"), versioned v1, v<n>; earlier versions kept; change history row; versioned approval sub-tasks |
+| .claude/agents/user-story-creator.md | Gate on "Approve CR brief v1"; appends "APPROVED CR BRIEF v1" and moves the CR to In Progress before creating stories; reads the brief from the page section (legacy: child page) |
+| .claude/agents/execution-planner.md | First QA cycle moves the CR to Ready for Testing ("In QA"); brief source updated |
+| .claude/agents/testplan-creator.md | Brief source updated |
+| .claude/agents/results-reporter.md | Tested: Passed/Failed as comment + label on the Jira CR; page Results row; never moves the CR to Done |
+| .claude/agents/bug-summary-creator.md | Readiness reads the tested-* label; a person moves CRs to Done |
+| docs/confluence/cr-page-template.md | Page now created by Claude: Details, Original request, Current brief, Earlier versions, Change history, Affected items, Results |
+| docs/automation/rules.md | Runbook rows for flows A, B, C; dormant Jira rules: CR created, CR -> Changed, change approved (page rule removed) |
+| CLAUDE.md | Pipeline table, Jira-first note, append-only and finalize-first rules in the operating contract |
+| .github/workflows/ai-pipeline.yml | Events cr-created, cr-changed, change-approved; cr-page-updated removed |
+| scripts/atlassian_rest.py | New: append-description (ADF append, checks the original is unchanged), changelog, label-remove |
+| docs/context/testing-conventions.md, domain-glossary.md | CR naming and approval gates |
+
+Migration: CR-001..003 stay as they were (labelled, page-first, child brief pages; never picked by "analyse new CRs").
+CR-004 exists only as a Confluence page; a Jira CR for it gets the next free number unless the PM decides otherwise.
+The live "CR Template" page in Confluence was not changed (update or archive it during the dry run).
+
+### CR code = the Jira key (2026-10-06, same branch)
+New Change Requests are no longer numbered CR-NNN: the Jira key (e.g. GOS-120) is the CR code everywhere —
+Confluence page "GOS-120 <short heading>", sub-tasks "Approve CR brief v1 for GOS-120", "GOS-120 | Test Plan",
+label GOS-120 on stories and Tests, FR IDs FR-GOS120-01, design images GOS-120_image_<n>.png, jira-map key GOS-120.
+cr-intake no longer assigns a number; "new" = To Do without a "CONFLUENCE PAGE" block and without a legacy CR- label.
+Legacy CRs keep CR-001..CR-003 (and the page-only CR-004). Files: config/workflow.json (jira.cr_workflow.code,
+app.prototype_pattern), the 7 CR-handling agents, CLAUDE.md, rules.md, cr-page-template.md, prototypes.md,
+testing-conventions.md, domain-glossary.md.

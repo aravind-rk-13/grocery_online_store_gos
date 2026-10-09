@@ -7,18 +7,18 @@ name: ai-pipeline
 # In CI the Atlassian MCP (OAuth) is not available, so agents use scripts/atlassian_rest.py with the bot token.
 on:
   repository_dispatch:
-    types: [cr-page-updated, cr-created, cr-brief-approved, stories-approved, tests-approved, ready-for-qa, execution-done, pre-release]
+    types: [cr-created, cr-changed, change-approved, cr-brief-approved, stories-approved, tests-approved, tests-tiered, ready-for-qa, execution-done, pre-release]
   workflow_dispatch:
     inputs:
       event:
         description: "Event to simulate"
         type: choice
-        options: [cr-page-updated, cr-created, cr-brief-approved, stories-approved, tests-approved, ready-for-qa, execution-done, pre-release, nightly-sweep]
+        options: [cr-created, cr-changed, change-approved, cr-brief-approved, stories-approved, tests-approved, tests-tiered, ready-for-qa, execution-done, pre-release, nightly-sweep]
       key:
-        description: "Page id, CR key, story key, execution key or version (depends on the event)"
+        description: "CR key, story key, execution key or version (depends on the event)"
         required: false
   # schedule:               # dormant: re-enable together with CODIFAI_PIPELINE_ENABLED
-  #   - cron: "0 19 * * *"   # 00:30 IST safety net: re-check CR pages the triggers may have missed
+  #   - cron: "0 19 * * *"   # 00:30 IST safety net: new and changed Jira CRs the triggers may have missed
 
 permissions:
   contents: write        # automation-script-generator / regression-marker push a branch
@@ -68,12 +68,14 @@ jobs:
         id: route
         run: |
           case "$EVENT" in
-            cr-page-updated)   P="Use the cr-intake agent for Confluence page $KEY." ;;
-            nightly-sweep)     P="Use the cr-intake agent to sync CR pages (nightly sweep)." ;;
-            cr-created)        P="Use the requirement-analyst agent in CR mode for $KEY." ;;
+            nightly-sweep)     P="Run 'analyse new CRs' then 'process changed CRs' for project GOS: the cr-intake agent, then the requirement-analyst agent for each CR it hands over." ;;
+            cr-created)        P="Run 'analyse new CRs' for $KEY: the cr-intake agent (Mode A), then the requirement-analyst agent in CR mode for brief v1." ;;
+            cr-changed)        P="Run 'process changed CRs' for $KEY: the cr-intake agent (Mode B, or Mode C if Done), then the requirement-analyst agent for brief v<n>." ;;
+            change-approved)   P="Use the cr-intake agent, Mode F (finalize the approved change), for CR $KEY." ;;
             cr-brief-approved) P="Use the user-story-creator agent for $KEY." ;;
-            stories-approved)  P="For each story linked to $KEY, one at a time, use the test-case-generator agent." ;;
-            tests-approved)    P="Use the regression-marker agent for story $KEY." ;;
+            stories-approved)  P="Use the test-case-generator agent in CR mode for $KEY (all its stories, one review sub-task)." ;;
+            tests-approved)    P="Use the regression-marker agent for $KEY (a CR, or a story reviewed on its own)." ;;
+            tests-tiered)      P="Use the testplan-creator agent for CR $KEY." ;;
             ready-for-qa)      P="Use the execution-planner agent for story $KEY. Then use the automation-script-generator agent for story $KEY." ;;
             execution-done)    P="Use the results-reporter agent for execution $KEY." ;;
             pre-release)       P="Use the bug-summary-creator agent for release readiness of version $KEY." ;;

@@ -9,6 +9,10 @@ Jira:
   create payload.json                   create an issue from a {"fields": {...}} file; prints the key
   comment KEY "text"                    add a plain-text comment
   label-add KEY LABEL [LABEL ...]       add labels (never removes existing labels)
+  label-remove KEY LABEL [LABEL ...]    remove the named labels only (e.g. the opposite tested-* label)
+  append-description KEY block.txt      APPEND plain-text paragraphs to the end of the description; existing
+                                        content is kept node for node (CR descriptions are append-only)
+  changelog KEY [field]                 the issue change history, optionally only one field (e.g. description)
   transition KEY "Status name"          move an issue to a status (by name)
   link-issues TYPE INWARD-KEY OUTWARD-KEY
 Confluence:
@@ -98,6 +102,39 @@ def label_add(key: str, *labels: str) -> None:
     print(f"{key}: labels added {list(labels)}")
 
 
+def label_remove(key: str, *labels: str) -> None:
+    _check(_session().put(f"{_jira()}/rest/api/3/issue/{key}",
+                          json={"update": {"labels": [{"remove": l} for l in labels]}}))
+    print(f"{key}: labels removed {list(labels)}")
+
+
+def append_description(key: str, block_file: str) -> None:
+    """Add paragraphs after the last node of the ADF description. Never edits existing nodes."""
+    s = _session()
+    current = _check(s.get(f"{_jira()}/rest/api/3/issue/{key}", params={"fields": "description"})).json()
+    doc = current["fields"].get("description") or {"type": "doc", "version": 1, "content": []}
+    before = json.dumps(doc["content"], sort_keys=True)
+    added = _adf(Path(block_file).read_text(encoding="utf-8").rstrip("\n"))["content"]
+    doc = {**doc, "content": doc["content"] + [{"type": "rule"}] + added}
+    _check(s.put(f"{_jira()}/rest/api/3/issue/{key}", json={"fields": {"description": doc}}))
+    after = _check(s.get(f"{_jira()}/rest/api/3/issue/{key}", params={"fields": "description"})).json()
+    kept = after["fields"]["description"]["content"][:len(json.loads(before))]
+    if json.dumps(kept, sort_keys=True) != before:
+        sys.exit(f"{key}: WARNING the original description changed after the append; check it now")
+    print(f"{key}: appended {len(added)} paragraph(s); original content unchanged")
+
+
+def changelog(key: str, field: str = "") -> None:
+    r = _check(_session().get(f"{_jira()}/rest/api/3/issue/{key}/changelog", params={"maxResults": 100}))
+    out = []
+    for h in r.json().get("values", []):
+        for item in h.get("items", []):
+            if not field or item.get("field") == field:
+                out.append({"created": h["created"], "field": item.get("field"),
+                            "from": item.get("fromString"), "to": item.get("toString")})
+    print(json.dumps(out, default=str))
+
+
 def transition(key: str, status: str) -> None:
     s = _session()
     options = _check(s.get(f"{_jira()}/rest/api/3/issue/{key}/transitions")).json()["transitions"]
@@ -156,6 +193,7 @@ def page_create(parent_id: str, title: str, body_file: str) -> None:
 
 COMMANDS = {
     "search": search, "get": get, "create": create, "comment": comment, "label-add": label_add,
+    "label-remove": label_remove, "append-description": append_description, "changelog": changelog,
     "transition": transition, "link-issues": link_issues,
     "cql": cql, "page-get": page_get, "page-put": page_put, "page-create": page_create,
 }
