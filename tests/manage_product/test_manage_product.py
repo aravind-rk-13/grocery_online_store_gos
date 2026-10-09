@@ -17,6 +17,7 @@ from config.settings import credentials
 from pages.dashboard_page import DashboardPage
 from pages.login_page import LoginPage
 from pages.manage_product_page import ManageProductPage
+from pages.waits import timed_step
 
 pytestmark = pytest.mark.manage_product
 
@@ -93,11 +94,12 @@ def test_tc_product_06_list_url_without_session_redirects_to_login(page: Page, a
 
     anonymous = ManageProductPage(page)
     anonymous.open(ManageProductPage.URL)
-    expect(page).to_have_url(ManageProductPage.LOGIN_URL_PATTERN)
     login = LoginPage(page)
-    expect(login.username).to_be_visible()
-    expect(anonymous.heading).to_have_count(0)
-    expect(anonymous.delete_icons).to_have_count(0)
+    with timed_step(page, "no session: redirected to login, no list"):
+        expect(page).to_have_url(ManageProductPage.LOGIN_URL_PATTERN)
+        expect(login.username).to_be_visible()
+        expect(anonymous.heading).to_have_count(0)
+        expect(anonymous.delete_icons).to_have_count(0)
 
     username, password = credentials()
     login.login(username, password)
@@ -119,10 +121,11 @@ def test_tc_product_08_cancelled_delete_not_stored_after_reload(admin_page: Page
     dialog = product.click_delete_and_dismiss(row)
     assert dialog is not None and dialog[0] == "confirm", "expected a native confirm dialog"
     expect(product.row_by_code(code)).to_have_count(1)
-    admin_page.reload(wait_until="domcontentloaded")
-    product.expect_loaded()
-    expect(product.row_by_code(code)).to_have_count(1)
-    expect(product.heading).to_have_text(f"List Products({total_before})")
+    product.reload()
+    with timed_step(admin_page, "after reload: row and N unchanged"):
+        product.expect_loaded()
+        expect(product.row_by_code(code)).to_have_count(1)
+        expect(product.heading).to_have_text(f"List Products({total_before})")
     assert product.delete_requests == []
 
 
@@ -137,17 +140,20 @@ def test_tc_product_09_back_after_logout_does_not_show_list(own_session_page: Pa
     n_before = product.total_count()
 
     product.logout()
-    expect(page).to_have_url(ManageProductPage.LOGIN_URL_PATTERN)
+    with timed_step(page, "logged out: login page shown"):
+        expect(page).to_have_url(ManageProductPage.LOGIN_URL_PATTERN)
 
-    page.go_back(wait_until="domcontentloaded")
-    expect(page).to_have_url(ManageProductPage.LOGIN_URL_PATTERN)
-    expect(product.heading).to_have_count(0)
-    expect(product.delete_icons).to_have_count(0)
+    product.go_back()
+    with timed_step(page, "after Back: still the login page, no list"):
+        expect(page).to_have_url(ManageProductPage.LOGIN_URL_PATTERN)
+        expect(product.heading).to_have_count(0)
+        expect(product.delete_icons).to_have_count(0)
 
-    page.reload(wait_until="domcontentloaded")
-    expect(page).to_have_url(ManageProductPage.LOGIN_URL_PATTERN)
+    product.reload()
     login = LoginPage(page)
-    expect(login.username).to_be_visible()
+    with timed_step(page, "after Reload: still the login page"):
+        expect(page).to_have_url(ManageProductPage.LOGIN_URL_PATTERN)
+        expect(login.username).to_be_visible()
 
     username, password = credentials()
     login.login(username, password)

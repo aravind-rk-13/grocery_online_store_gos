@@ -11,6 +11,7 @@ from playwright.sync_api import Locator, Page, expect
 
 from config.settings import APP_URL
 from pages.base_page import BasePage
+from pages.waits import poll_until, show, timed_step
 
 
 class ManageProductPage(BasePage):
@@ -69,14 +70,16 @@ class ManageProductPage(BasePage):
 
     def expect_loaded(self) -> None:
         """Assert the list is open: URL, page title and the 'List Products(N)' heading."""
-        expect(self.page).to_have_url(self.URL_PATTERN)
-        expect(self.title).to_be_visible()
-        expect(self.heading).to_be_visible()
+        with timed_step(self.page, "product list loaded"):
+            expect(self.page).to_have_url(self.URL_PATTERN)
+            expect(self.title).to_be_visible()
+            expect(self.heading).to_be_visible()
 
     def total_count(self) -> int:
-        """Return N from the 'List Products(N)' heading."""
-        expect(self.heading).to_be_visible()
-        return int(re.search(r"\((\d+)\)", self.heading.inner_text()).group(1))
+        """Return N from the 'List Products(N)' heading once it shows one (polled every 500 ms, up to 4000 ms)."""
+        value = poll_until(self.heading, r"el => (el.textContent.match(/\((\d+)\)/) || [null, null])[1]",
+                           name="list heading shows N")
+        return int(value)
 
     def first_row(self) -> Locator:
         """Return the first product row of the current page."""
@@ -85,7 +88,7 @@ class ManageProductPage(BasePage):
     def row_code(self, row: Locator) -> str:
         """Return the unique product code shown in the row's first cell."""
         code = row.locator(self.ROW_CODE)
-        expect(code).to_be_visible()
+        self.expect_visible(code, "product code of the row")
         return code.inner_text().strip()
 
     def row_by_code(self, code: str) -> Locator:
@@ -104,11 +107,15 @@ class ManageProductPage(BasePage):
             seen.append((dialog.type, dialog.message))
             dialog.dismiss()  # never accept: a permanent delete on the shared console
 
-        self.page.once("dialog", _dismiss)
-        self.delete_icon_of(row).click()
+        icon = self.delete_icon_of(row)
+        with timed_step(self.page, "delete icon opens the confirm, dismissed"):
+            show(icon)
+            self.page.once("dialog", _dismiss)
+            icon.click()
         return seen[0] if seen else None
 
     def logout(self) -> None:
         """Open the profile menu in the header and click Logout."""
-        self.avatar.click()
-        self.logout_link.click()
+        with timed_step(self.page, "log out from the profile menu"):
+            self.click(self.avatar, "profile avatar")
+            self.click(self.logout_link, "Logout")

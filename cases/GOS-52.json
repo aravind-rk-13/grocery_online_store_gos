@@ -1,0 +1,429 @@
+[
+  {
+    "tc_id": "TC-USRSRCH-14",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | functional-ui | OK deletes the pending user and the count drops by 1",
+    "coverage": "functional-ui",
+    "title": "OK deletes the pending user and the count drops by 1",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Note the panel title count N and that [EXISTING_PENDING_USER_NAME] is listed", "data": "none", "expected": "Title reads 'List Users(N)'; the row is listed"},
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads"},
+      {"action": "Look for the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The row is no longer listed"},
+      {"action": "Read the panel title", "data": "none", "expected": "Title reads 'List Users(N-1)'"}
+    ],
+    "priority": "High",
+    "tier": "P1 - core delete outcome",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC1; prototype CR_002_image_2.png and CR_002_image_3.png (design)",
+    "notes": "Route, paging and whether N counts all pending users [TO BE CONFIRMED: check on build]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-15",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | boundary | Delete from exactly 2 pending users leaves List Users(1)",
+    "coverage": "boundary",
+    "title": "Delete from exactly 2 pending users leaves List Users(1)",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(2)' and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Note the panel title", "data": "none", "expected": "Title reads 'List Users(2)' with 2 data rows"},
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads"},
+      {"action": "Read the panel title and count the rows", "data": "none", "expected": "Title reads 'List Users(1)' and exactly 1 data row is listed"},
+      {"action": "Check the remaining row", "data": "none", "expected": "It is not [EXISTING_PENDING_USER_NAME] and still shows a Delete button"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - lower bound N = 2 of AC1",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC1 precondition N >= 2 (minimum)",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-USRSRCH-16",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | boundary | Deleting the last pending user shows List Users(0) and no rows",
+    "coverage": "boundary",
+    "title": "Deleting the last pending user shows List Users(0) and no rows",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(1)' and the only row is the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Note the panel title", "data": "none", "expected": "Title reads 'List Users(1)' with 1 data row"},
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads"},
+      {"action": "Read the panel title", "data": "none", "expected": "Title reads 'List Users(0)'"},
+      {"action": "Look at the table body", "data": "none", "expected": "No user rows are listed; no server error page is shown"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - boundary of AC5",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC5 (delete the last pending user)",
+    "notes": "Empty-state text [TO BE CONFIRMED: check on build]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-17",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | functional-ui | Success alert shows heading and text above the list after a delete",
+    "coverage": "functional-ui",
+    "title": "Success alert shows heading and text above the list after a delete",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads"},
+      {"action": "Look above the 'List Users' panel", "data": "none", "expected": "A green alert is shown above the list"},
+      {"action": "Read the alert heading", "data": "none", "expected": "Heading reads 'Alert!' with a check icon"},
+      {"action": "Read the alert text", "data": "none", "expected": "Text reads 'User Informations Deleted Successfully'"},
+      {"action": "Check the right side of the alert", "data": "none", "expected": "A close (x) control is visible"}
+    ],
+    "priority": "High",
+    "tier": "P1 - user feedback of the delete",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC2; prototype CR_002_image_3.png (design)",
+    "notes": "Alert wording [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-18",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | functional-ui | Closing the alert removes it and keeps the list",
+    "coverage": "functional-ui",
+    "title": "Closing the alert removes it and keeps the list",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads"},
+      {"action": "Note the success alert and the panel title count", "data": "none", "expected": "Alert is shown; title reads 'List Users(N-1)'"},
+      {"action": "Click the close (x) control of the alert", "data": "none", "expected": "The alert is removed"},
+      {"action": "Check the list", "data": "none", "expected": "The panel title and rows are unchanged; the user stays on Verify Users"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - dismiss behaviour",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC2 (dismissible); prototype CR_002_image_3.png (design)",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-USRSRCH-19",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | data-persistence | The deleted user stays gone after a page reload",
+    "coverage": "data-persistence",
+    "title": "The deleted user stays gone after a page reload",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads"},
+      {"action": "Note the panel title", "data": "none", "expected": "Title reads 'List Users(N-1)'"},
+      {"action": "Reload the page", "data": "none", "expected": "The Verify Users list reloads"},
+      {"action": "Look for [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The user is not listed"},
+      {"action": "Read the panel title", "data": "none", "expected": "Title still reads 'List Users(N-1)'"}
+    ],
+    "priority": "High",
+    "tier": "P1 - permanence of the delete",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC3 (reload)",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-USRSRCH-20",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | data-persistence | The deleted user stays gone after clicking Reset",
+    "coverage": "data-persistence",
+    "title": "The deleted user stays gone after clicking Reset",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads"},
+      {"action": "Click Reset", "data": "none", "expected": "The list reloads with no filter"},
+      {"action": "Look for [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The user is not listed"},
+      {"action": "Read the panel title", "data": "none", "expected": "Title still reads 'List Users(N-1)'"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - second persistence path of AC3",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC3 (Reset)",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-USRSRCH-21",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | edge | Refreshing after a delete deletes nothing more",
+    "coverage": "edge",
+    "title": "Refreshing after a delete deletes nothing more",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads"},
+      {"action": "Note the success alert and the panel title", "data": "none", "expected": "Alert shown; title reads 'List Users(N-1)'"},
+      {"action": "Refresh the page (F5)", "data": "none", "expected": "The page reloads; no confirm popup and no server error page"},
+      {"action": "Read the panel title and count the rows", "data": "none", "expected": "Title still reads 'List Users(N-1)'; no other user has disappeared"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - state edge",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC6",
+    "notes": "Whether the alert reappears after refresh [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-22",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | negative | OK on a row already deleted in another tab shows no server error and a consistent count",
+    "coverage": "negative",
+    "title": "OK on a row already deleted in another tab shows no server error and a consistent count",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]",
+      "A second browser tab has the same list open"
+    ],
+    "steps": [
+      {"action": "In tab B, delete [EXISTING_PENDING_USER_NAME] with the Delete button and OK", "data": "none", "expected": "Tab B shows the success alert; the user is gone"},
+      {"action": "Switch to tab A, whose list still shows the stale row", "data": "none", "expected": "The row of [EXISTING_PENDING_USER_NAME] is still shown in tab A"},
+      {"action": "In tab A, click Delete on the stale row and click OK", "data": "none", "expected": "The screen reloads"},
+      {"action": "Check the page", "data": "none", "expected": "No server error page is shown"},
+      {"action": "Compare the panel title with the rows listed", "data": "none", "expected": "The count in 'List Users(N)' equals the number of rows listed; no other user was deleted"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - concurrency failure path",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC4",
+    "notes": "Message text for the already-deleted case [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-23",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | security | Delete request without a session is redirected to login and deletes nothing",
+    "coverage": "security",
+    "title": "Delete request without a session is redirected to login and deletes nothing",
+    "preconditions": [
+      "The tester has no logged-in session (new browser context)",
+      "The delete link of the design (GET /admin/Users/Unverify_delete with id and page parameters) is known for [EXISTING_PENDING_USER_ID] [TO BE CONFIRMED: final request form]"
+    ],
+    "steps": [
+      {"action": "Open the delete link for [EXISTING_PENDING_USER_ID] directly in the address bar", "data": "[EXISTING_PENDING_USER_ID]", "expected": "The browser is redirected to /admin/login; no success alert is shown"},
+      {"action": "Log in and open Verify Users", "data": "[VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD]", "expected": "The list opens"},
+      {"action": "Look for the user with [EXISTING_PENDING_USER_ID]", "data": "none", "expected": "The user is still listed and the count is unchanged"}
+    ],
+    "priority": "High",
+    "tier": "P1 - unauthenticated data-changing request (priority raised: security, BR-001)",
+    "automate": true,
+    "automation_rationale": "No delete occurs when the redirect works; needs agreed test data and a test environment first",
+    "source": "NFR-CR002-02; BR-001; prototype CR_002_image_2.png (link form, design)",
+    "notes": "Request form (GET or POST) [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-24",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | security | Delete link with an unknown, non-numeric or injected id deletes nothing",
+    "coverage": "security",
+    "title": "Delete link with an unknown, non-numeric or injected id deletes nothing",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The delete link form of the design is known [TO BE CONFIRMED: final request form]"
+    ],
+    "steps": [
+      {"action": "Note the panel title count N", "data": "none", "expected": "Title reads 'List Users(N)'"},
+      {"action": "Open the delete link with an id that does not exist", "data": "[UNKNOWN_USER_ID]", "expected": "No server error page; no user is deleted"},
+      {"action": "Open the delete link with a non-numeric id", "data": "abc", "expected": "No server error page; no user is deleted"},
+      {"action": "Open the delete link with an SQL payload as id", "data": "[SQL_INJECTION_STRING]", "expected": "No server error page and no SQL error text; no user is deleted"},
+      {"action": "Open the delete link with a script payload as id", "data": "[XSS_STRING]", "expected": "The payload is not executed or shown unescaped; no user is deleted"},
+      {"action": "Open the Verify Users list", "data": "none", "expected": "Title still reads 'List Users(N)'"}
+    ],
+    "priority": "High",
+    "tier": "P1 - injection on a data-changing parameter (priority raised: security)",
+    "automate": false,
+    "automation_rationale": "no until a test environment exists; not against the shared console without agreed test data",
+    "source": "NFR-CR002-01/02; prototype CR_002_image_2.png (id parameter, design)",
+    "notes": "Expected message for an invalid id [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-25",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | session-state | OK after the session was cleared does not delete and returns to login",
+    "coverage": "session-state",
+    "title": "OK after the session was cleared does not delete and returns to login",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "With the popup open, end the session in another tab (log out)", "data": "none", "expected": "Session is ended"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The browser is redirected to /admin/login"},
+      {"action": "Log in again and open Verify Users", "data": "[VALID_ADMIN_USERNAME] / [VALID_ADMIN_PASSWORD]", "expected": "[EXISTING_PENDING_USER_NAME] is still listed and the count is unchanged"}
+    ],
+    "priority": "High",
+    "tier": "P2 - session expiry on a delete (priority raised: security)",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "NFR-CR002-02; BR-001",
+    "notes": "Behaviour when the session expires mid-delete [TO BE CONFIRMED: check on build]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-26",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | network | Delete while offline shows no success alert and keeps the user",
+    "coverage": "network",
+    "title": "Delete while offline shows no success alert and keeps the user",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]",
+      "The network can be switched offline in the browser"
+    ],
+    "steps": [
+      {"action": "Switch the browser to offline", "data": "none", "expected": "Network is offline"},
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The request fails"},
+      {"action": "Check the page", "data": "none", "expected": "No 'User Informations Deleted Successfully' alert is shown"},
+      {"action": "Switch the network back on and reload the list", "data": "none", "expected": "[EXISTING_PENDING_USER_NAME] is still listed; title reads 'List Users(N)'"}
+    ],
+    "priority": "Medium",
+    "tier": "P3 - failure path",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC1/AC2 (no success without a delete)",
+    "notes": "Failure message text [TO BE CONFIRMED]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-27",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | network | Slow response to the delete shows the result once and deletes one user",
+    "coverage": "network",
+    "title": "Slow response to the delete shows the result once and deletes one user",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]",
+      "The delete request can be delayed by 5 seconds in the browser network tools"
+    ],
+    "steps": [
+      {"action": "Delay the delete request by 5 seconds", "data": "none", "expected": "Throttle is active"},
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The request is sent"},
+      {"action": "Wait for the response without clicking again", "data": "none", "expected": "The screen reloads once the response arrives"},
+      {"action": "Check the alert, the row and the panel title", "data": "none", "expected": "Success alert shown; the row is gone; title reads 'List Users(N-1)'; only one user was deleted"}
+    ],
+    "priority": "Medium",
+    "tier": "P3 - slow network",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC1/AC2",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-USRSRCH-28",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | accessibility | Delete and OK can be completed with the keyboard only",
+    "coverage": "accessibility",
+    "title": "Delete and OK can be completed with the keyboard only",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Press Tab until the Delete button in the row of [EXISTING_PENDING_USER_NAME] has focus", "data": "none", "expected": "Focus is visible on the Delete button"},
+      {"action": "Press Enter", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens"},
+      {"action": "Press Enter on the focused OK button", "data": "none", "expected": "The user is deleted and the success alert is shown"},
+      {"action": "Read the panel title", "data": "none", "expected": "Title reads 'List Users(N-1)'"}
+    ],
+    "priority": "Medium",
+    "tier": "P3 - keyboard access",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "Accessibility basics; AC1",
+    "notes": "Accessible name of the Delete button [TO BE CONFIRMED: check on build]"
+  },
+  {
+    "tc_id": "TC-USRSRCH-29",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | accessibility | The success alert can be closed with the keyboard and has an accessible name",
+    "coverage": "accessibility",
+    "title": "The success alert can be closed with the keyboard and has an accessible name",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads with the success alert"},
+      {"action": "Check the alert in the accessibility tree", "data": "none", "expected": "The text 'User Informations Deleted Successfully' is exposed to assistive technology"},
+      {"action": "Press Tab until the close (x) control has focus", "data": "none", "expected": "Focus is visible and the control has an accessible name (for example Close) [TO BE CONFIRMED]"},
+      {"action": "Press Enter", "data": "none", "expected": "The alert is removed and the list stays"}
+    ],
+    "priority": "Low",
+    "tier": "P3 - keyboard access",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC2; accessibility basics; prototype CR_002_image_3.png (design)",
+    "notes": ""
+  },
+  {
+    "tc_id": "TC-USRSRCH-30",
+    "story": "GOS-52",
+    "summary": "GOS-52 | Verify Users | functional-ui | Remaining rows are unchanged after a delete",
+    "coverage": "functional-ui",
+    "title": "Remaining rows are unchanged after a delete",
+    "preconditions": [
+      "The tester is logged in to the console with a dedicated test account [VALID_ADMIN_USERNAME] [TO BE CONFIRMED: check on build]",
+      "The Verify Users list 'List Users' is open (route [TO BE CONFIRMED])",
+      "The panel title shows 'List Users(N)' with N >= 2 and the list holds the synthetic deletable pending user [EXISTING_PENDING_USER_NAME] [TO BE CONFIRMED: deletable test data]"
+    ],
+    "steps": [
+      {"action": "Note Name, Contact, Date and Status of the other rows (use placeholders in any record)", "data": "none", "expected": "Rows are noted"},
+      {"action": "Click the Delete button in the row of [EXISTING_PENDING_USER_NAME]", "data": "none", "expected": "The native popup 'Do you want to delete this User Details?' opens with OK and Cancel"},
+      {"action": "Click OK in the popup", "data": "none", "expected": "The Verify Users screen reloads"},
+      {"action": "Compare the remaining rows", "data": "none", "expected": "Only the row of [EXISTING_PENDING_USER_NAME] is missing; the other rows show the same Name, Contact, Date and Status 'Unverified'"},
+      {"action": "Check the Password column of the remaining rows", "data": "none", "expected": "Passwords stay hidden behind the reveal control"},
+      {"action": "Check the Action column", "data": "none", "expected": "Each remaining row still shows one Delete button"}
+    ],
+    "priority": "Medium",
+    "tier": "P2 - no collateral change",
+    "automate": false,
+    "automation_rationale": "no until deletable test data or a test environment exists (irreversible delete on a shared environment)",
+    "source": "AC1; BR-007; prototype CR_002_image_3.png (design)",
+    "notes": ""
+  }
+]

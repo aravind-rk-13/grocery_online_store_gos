@@ -5,6 +5,7 @@ from playwright.sync_api import Page, expect
 
 from config.settings import APP_URL
 from pages.base_page import BasePage
+from pages.waits import poll_until, timed_step
 
 
 class DashboardPage(BasePage):
@@ -39,33 +40,36 @@ class DashboardPage(BasePage):
 
     def expect_loaded(self) -> None:
         """Assert we are on the dashboard root with the sidebar visible (state signal absent on the login page)."""
-        expect(self.page).to_have_url(re.compile(re.escape(APP_URL) + r"/?$"))
-        expect(self.nav_verify_users).to_be_visible()
+        with timed_step(self.page, "dashboard loaded"):
+            expect(self.page).to_have_url(re.compile(re.escape(APP_URL) + r"/?$"))
+            expect(self.nav_verify_users).to_be_visible()
 
     def go_to_verify_users(self) -> None:
         """Open the Verify Users screen from the sidebar."""
-        self.nav_verify_users.first.click()
+        self.click(self.nav_verify_users.first, "sidebar Verify Users")
 
     def go_to_manage_product(self) -> None:
         """Open the Manage Product list from the sidebar."""
-        self.nav_manage_product.first.click()
+        self.click(self.nav_manage_product.first, "sidebar Manage Product")
 
     def manage_product_tile_count(self) -> int:
-        """Return the number shown on the Manage Product tile."""
+        """Return the number on the Manage Product tile once it shows one (polled every 500 ms, up to 4000 ms)."""
         count = self.manage_product_tile.locator(self.TILE_COUNT)
-        expect(count).to_have_text(re.compile(r"^\d+$"))
-        return int(count.inner_text())
+        value = poll_until(count, r"el => (el.textContent.trim().match(/^\d+$/) || [null])[0]",
+                           name="Manage Product tile shows a count")
+        return int(value)
 
     def sidebar_top_level_labels(self) -> list[str]:
         """Return the visible top-level sidebar labels in order."""
-        expect(self.nav_manage_product.first).to_be_visible()
+        self.expect_visible(self.nav_manage_product.first, "sidebar Manage Product")
         return [text.strip() for text in self.nav_top_level.all_inner_texts()]
 
     def tab_to_manage_product(self, max_tabs: int = 60) -> int:
         """Press Tab until the Manage Product link has focus; return the number of presses."""
         link = self.nav_manage_product.first
-        for presses in range(1, max_tabs + 1):
-            self.page.keyboard.press("Tab")
-            if link.evaluate("el => el === document.activeElement"):
-                return presses
-        raise AssertionError(f"Manage Product link did not receive focus within {max_tabs} Tab presses")
+        with timed_step(self.page, "Tab to sidebar Manage Product"):
+            for presses in range(1, max_tabs + 1):
+                self.page.keyboard.press("Tab")
+                if link.evaluate("el => el === document.activeElement"):
+                    return presses
+            raise AssertionError(f"Manage Product link did not receive focus within {max_tabs} Tab presses")
