@@ -4,5 +4,50 @@
   "unknown_username": "not-a-real-user",
   "long_string_length": 2000,
   "sql_injection": "' OR '1'='1' -- ",
-  "xss": "<script>alert(1)</script>"
+  "xss": "<script>alert(1)</script>",
+  "_invalid_combinations_note": "TC-LOGIN-22 / GOS-161: one row per kind of the Xray dataset (values are not copied). VALID = APP_USERNAME/APP_PASSWORD from .env; VALID_SWAPCASE = the .env password with its letter case swapped (in memory only); any other value is a key of this file or a literal; expect: alert | blocked:username | blocked:password",
+  "invalid_combinations": [
+    {
+      "id": "wrong-password",
+      "username": "VALID",
+      "password": "wrong_password",
+      "expect": "alert"
+    },
+    {
+      "id": "unknown-user",
+      "username": "unknown_username",
+      "password": "wrong_password",
+      "expect": "alert"
+    },
+    {
+      "id": "password-wrong-case",
+      "username": "VALID",
+      "password": "VALID_SWAPCASE",
+      "expect": "alert"
+    },
+    {
+      "id": "blank-username",
+      "username": "",
+      "password": "wrong_password",
+      "expect": "blocked:username"
+    },
+    {
+      "id": "blank-password",
+      "username": "VALID",
+      "password": "",
+      "expect": "blocked:password"
+    },
+    {
+      "id": "both-blank",
+      "username": "",
+      "password": "",
+      "expect": "blocked:username"
+    },
+    {
+      "id": "injection",
+      "username": "sql_injection",
+      "password": "sql_injection",
+      "expect": "alert"
+    }
+  ]
 }

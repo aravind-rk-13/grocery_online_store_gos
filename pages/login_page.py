@@ -75,6 +75,14 @@ class LoginPage(BasePage):
             expect(self.alert).to_contain_text(self.INVALID_MESSAGE)
             expect(self.page).to_have_url(self.LOGIN_URL_PATTERN)
 
+    def expect_blocked_client_side(self, which: str) -> None:
+        """Assert the browser's required-field check stopped the submit on 'username' or 'password':
+        a validation message on that field, no server alert, still on the login page."""
+        with timed_step(self.page, f"required-field check on {which}"):
+            assert self.validation_message(which), f"expected a required-field message on {which}"
+            expect(self.alert).to_have_count(0)
+            expect(self.page).to_have_url(self.LOGIN_URL_PATTERN)
+
     def validation_message(self, which: str) -> str:
         """Return the browser's HTML5 validation message for 'username' or 'password'."""
         field = self.username if which == "username" else self.password
