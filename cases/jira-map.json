@@ -130,7 +130,8 @@
     "TC-PRODUCT-11": "GOS-151",
     "TC-PRODUCT-12": "GOS-152",
     "TC-PRODUCT-13": "GOS-153",
-    "TC-PRODUCT-14": "GOS-154"
+    "TC-PRODUCT-14": "GOS-154",
+    "TC-LOGIN-22": "GOS-161"
   },
   "bugs": {}
 }

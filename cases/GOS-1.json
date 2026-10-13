@@ -405,5 +405,49 @@
     "automation_rationale": "Cheap",
     "source": "Coverage checklist",
     "notes": ""
+  },
+  {
+    "tc_id": "TC-LOGIN-22",
+    "story": "GOS-1",
+    "summary": "Verify that login is rejected and an error message is shown for each invalid username/password combination, and the user remains on the login page.",
+    "coverage": "negative",
+    "title": "Every invalid username/password combination is rejected and the user stays on the login page",
+    "preconditions": [
+      "User is not currently logged in",
+      "Application login page (/admin/login) is reachable"
+    ],
+    "steps": [
+      {
+        "action": "Open the login page",
+        "data": "none",
+        "expected": "Username, Password and Sign In are visible"
+      },
+      {
+        "action": "Enter the username",
+        "data": "${Username}",
+        "expected": "Field shows the value (empty if blank)"
+      },
+      {
+        "action": "Enter the password",
+        "data": "${Password}",
+        "expected": "Field shows masked characters (empty if blank)"
+      },
+      {
+        "action": "Click Sign In",
+        "data": "none",
+        "expected": "Rows 1-3, 7: alert 'Invalid Username/Password', with no hint which field was wrong. Rows 4-6: the browser's required-field message on the first empty field, and no alert"
+      },
+      {
+        "action": "Check the page",
+        "data": "none",
+        "expected": "URL is still /admin/login; no sidebar or dashboard"
+      }
+    ],
+    "priority": "High",
+    "tier": "P2",
+    "automate": true,
+    "automation_rationale": "Data-driven superset of TC-LOGIN-02/03; can replace them once automated",
+    "source": "AC2; BR-001, BR-002; created manually as GOS-161",
+    "notes": "Parameterized: Xray dataset on GOS-161 (Username, Password; 7 rows). Overlaps GOS-3 (TC-LOGIN-02) and GOS-4 (TC-LOGIN-03)"
   }
 ]
