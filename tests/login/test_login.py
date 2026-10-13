@@ -7,7 +7,9 @@ Changes vs the TypeScript version:
 - Credentials only from .env; non-sensitive data from fixtures/login.json.
 - Tier + coverage markers so the P1 smoke set can be selected (-m regression_p1).
 """
+import json
 import re
+from pathlib import Path
 
 import pytest
 from playwright.sync_api import Page, expect
@@ -131,3 +133,34 @@ def test_tc_login_11_keyboard_only_login(login_page: LoginPage):
 def test_tc_login_12_password_is_masked(login_page: LoginPage):
     """TC-LOGIN-12 (new): the password input is type=password (characters masked)."""
     expect(login_page.password).to_have_attribute("type", "password")
+
+
+def _invalid_combinations() -> list:
+    data = json.loads((Path(__file__).parents[2] / "fixtures" / "login.json").read_text(encoding="utf-8"))
+    return [pytest.param(row, id=row["id"]) for row in data["invalid_combinations"]]
+
+
+def _resolve(token: str, login_data: dict, field: str) -> str:
+    """Turn a fixture token into the value to type: VALID / VALID_SWAPCASE from .env, a fixture key, or a literal."""
+    username, password = credentials()
+    if token == "VALID":
+        return username if field == "username" else password
+    if token == "VALID_SWAPCASE":
+        return password.swapcase()
+    return login_data.get(token, token)
+
+
+@pytest.mark.regression_p2
+@pytest.mark.negative
+@pytest.mark.parametrize("row", _invalid_combinations())
+def test_tc_login_22_invalid_combination_rejected(login_page: LoginPage, test_data, row):
+    """TC-LOGIN-22 (GOS-161): each invalid username/password combination is rejected and the user stays on the
+    login page. Alert rows get 'Invalid Username/Password'; blank rows are stopped by the browser's required check."""
+    login_data = test_data["login"]
+    login_page.login(_resolve(row["username"], login_data, "username"),
+                     _resolve(row["password"], login_data, "password"))
+    if row["expect"] == "alert":
+        login_page.expect_rejected()
+    else:
+        login_page.expect_blocked_client_side(row["expect"].split(":", 1)[1])
+    expect(DashboardPage(login_page.page).nav_verify_users).to_have_count(0)
