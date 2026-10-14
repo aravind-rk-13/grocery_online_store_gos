@@ -4,3 +4,6 @@
 - Never: .env contents, passwords (even demo ones), API tokens, Xray client secrets, real customer PII.
 - Only org-managed AI seats (no free consumer chat tools) for any client work.
 - Test data in fixtures/ must be synthetic or non-sensitive.
+
+
+    
