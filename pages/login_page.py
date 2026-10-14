@@ -79,3 +79,5 @@ class LoginPage(BasePage):
         """Return the browser's HTML5 validation message for 'username' or 'password'."""
         field = self.username if which == "username" else self.password
         return field.evaluate("el => el.validationMessage")
+
+
